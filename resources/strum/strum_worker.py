@@ -18,8 +18,15 @@ from pathlib import Path
 from typing import Any
 
 EVENT_PREFIX = "__OCTAVE_EVENT__"
-GITHUB_REPO_URL = "https://github.com/opria123/strum"
-GITHUB_ZIP_URL = "https://codeload.github.com/opria123/strum/zip/refs/heads/master"
+# Code (pipeline source) comes from Willyssj3/strum -- an independent, actively
+# -developed continuation of opria123/strum (credited in strum's own README).
+# Checkpoints stay pointed at opria123's Hugging Face repo below: this fork
+# hasn't published its own trained weights yet (fine-tuning is planned but not
+# done -- see strum/ROADMAP.md Phase C), so opria123's checkpoints are still
+# the real, valid weights to use. Repointing HF_REPO_ID before that exists
+# would just 404.
+GITHUB_REPO_URL = "https://github.com/Willyssj3/strum"
+GITHUB_ZIP_URL = "https://codeload.github.com/Willyssj3/strum/zip/refs/heads/master"
 HF_REPO_ID = "opria123/strum"
 HF_REPO_URL = "https://huggingface.co/opria123/strum"
 SOURCE_FOLDER_NAME = "strum-source"
@@ -27,7 +34,7 @@ SOURCE_FOLDER_NAME = "strum-source"
 # (new pipeline params, new checkpoints, etc.). The cached source under
 # <cache_dir>/strum-source/.octave-source-version is compared on every run and
 # the cache is wiped + re-downloaded on mismatch.
-STRUM_SOURCE_VERSION = "2026-05-06.1"
+STRUM_SOURCE_VERSION = "2026-08-04.1"  # bumped: source repo repointed opria123 -> Willyssj3
 SOURCE_VERSION_FILE = ".octave-source-version"
 SNAPSHOT_FOLDER_NAME = "strum-checkpoints-snapshot"
 # Hard wall-clock ceiling for stem separation. Slow (often older) CPUs can

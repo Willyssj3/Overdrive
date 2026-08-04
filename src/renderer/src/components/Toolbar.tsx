@@ -1082,7 +1082,6 @@ export function Toolbar(): React.JSX.Element {
 
       <div className="toolbar-separator" />
 
-      {/* Auto-charter integration (placeholder) */}
       <div className="toolbar-group">
         <button
           className="toolbar-button toolbar-button-accent"

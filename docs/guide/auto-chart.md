@@ -8,7 +8,7 @@ The auto-charter is bundled but still evolving. Output quality varies by genre, 
 
 ## STRUM
 
-**STRUM** (Stem-aware Transcription, Rhythm & Universal Mapping) is the open-source audio-to-chart engine that powers Auto-Chart. It lives in its own repository at [github.com/opria123/strum](https://github.com/opria123/strum) and is bundled with OCTAVE under [`resources/strum/`](https://github.com/opria123/octave/tree/master/resources/strum). It runs locally — no cloud, no upload.
+**STRUM** (Stem-aware Transcription, Rhythm & Universal Mapping) is the open-source audio-to-chart engine that powers Auto-Chart. This build of OCTAVE runs [Willyssj3/strum](https://github.com/Willyssj3/strum), an independent, actively-developed continuation of the original [opria123/strum](https://github.com/opria123/strum) (credited there). It's bundled with OCTAVE under [`resources/strum/`](https://github.com/Willyssj3/octave/tree/beta/resources/strum) and runs locally — no cloud, no upload.
 
 What STRUM does, in order:
 
@@ -55,4 +55,4 @@ In dev builds, OCTAVE prefers a project-local `.venv\Scripts\python.exe` if it e
 
 - [Advanced options →](/guide/auto-chart-advanced) — track gating, manual BPM, tempo maps, harmonies, offline mode
 - [Auto-Chart troubleshooting →](/troubleshooting/auto-chart-issues)
-- [STRUM on GitHub ↗](https://github.com/opria123/strum) — source, issues, and standalone CLI usage
+- [STRUM on GitHub ↗](https://github.com/Willyssj3/strum) — source, issues, and standalone CLI usage (credits the original at [opria123/strum](https://github.com/opria123/strum))

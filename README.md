@@ -25,6 +25,10 @@
 
 ---
 
+> **This is an independent continuation of [opria123/octave](https://github.com/opria123/octave)**, maintained by [Willyssj3](https://github.com/Willyssj3). All credit for the original app and its STRUM integration goes to opria123. See [opria123/octave](https://github.com/opria123/octave) for the original.
+
+---
+
 ## Installation
 
 ### Download (Recommended)

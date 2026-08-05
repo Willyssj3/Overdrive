@@ -253,9 +253,20 @@ async function downloadFile(url: string, destination: string, runId: string | un
 async function extractTarGz(archivePath: string, destDir: string): Promise<void> {
   await mkdir(destDir, { recursive: true })
   // tar is built into Windows 10 1803+, macOS, and Linux. -xzf works
-  // identically across all three.
+  // identically across all three -- *if* it's actually the bsdtar that
+  // ships in System32. On dev machines with Git for Windows or MSYS2/Cygwin
+  // ahead of System32 on PATH, `tar` resolves to a non-Windows-aware build
+  // that doesn't recognize "C:\..." as a drive letter: it treats the colon
+  // as an rsh-style "host:path" remote-archive separator and fails with
+  // "tar (child): Cannot connect to C: resolve failed" before extracting
+  // anything. Bypass PATH entirely on Windows and call System32's tar.exe
+  // directly so a shadowing tar on PATH can never be picked up.
+  const tarBin =
+    process.platform === 'win32'
+      ? join(process.env.SystemRoot ?? 'C:\\Windows', 'System32', 'tar.exe')
+      : 'tar'
   await new Promise<void>((resolve, reject) => {
-    execFile('tar', ['-xzf', archivePath, '-C', destDir], (err) => {
+    execFile(tarBin, ['-xzf', archivePath, '-C', destDir], (err) => {
       if (err) reject(err)
       else resolve()
     })

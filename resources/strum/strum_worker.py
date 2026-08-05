@@ -921,10 +921,23 @@ def build_pipeline(
                         f"whisper.cpp produced no JSON output at {json_path}; "
                         f"tmpdir contents={listing}; stderr head:\n{err_excerpt}"
                     )
-                try:
-                    payload = json.loads(json_path.read_text(encoding="utf-8"))
-                except Exception as exc:
-                    raise RuntimeError(f"whisper.cpp JSON parse failed: {exc}") from exc
+                # whisper-cli.exe on Windows doesn't reliably write its JSON
+                # output as UTF-8 -- non-ASCII lyric characters (curly quotes,
+                # accents) can land as raw cp1252 bytes, which breaks a plain
+                # UTF-8 decode (e.g. a lone 0xC2 with no valid continuation
+                # byte). Fall back to cp1252, then latin-1 (which never
+                # fails) rather than losing the whole transcription over it.
+                raw_bytes = json_path.read_bytes()
+                payload = None
+                last_exc = None
+                for encoding in ("utf-8", "cp1252", "latin-1"):
+                    try:
+                        payload = json.loads(raw_bytes.decode(encoding))
+                        break
+                    except Exception as exc:
+                        last_exc = exc
+                if payload is None:
+                    raise RuntimeError(f"whisper.cpp JSON parse failed: {last_exc}") from last_exc
 
             # whisper.cpp -ojf JSON shape (current upstream):
             #   { "transcription": [

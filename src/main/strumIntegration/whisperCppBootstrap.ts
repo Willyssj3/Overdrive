@@ -200,8 +200,15 @@ async function downloadFile(
 
 async function extractTarGz(archivePath: string, destDir: string): Promise<void> {
   await mkdir(destDir, { recursive: true })
+  // See runtimeBootstrap.ts's extractTarGz for why this can't just be
+  // execFile('tar', ...): a non-Windows-aware tar shadowing System32's on
+  // PATH (e.g. Git for Windows) misreads "C:\..." as a remote host spec.
+  const tarBin =
+    process.platform === 'win32'
+      ? join(process.env.SystemRoot ?? 'C:\\Windows', 'System32', 'tar.exe')
+      : 'tar'
   await new Promise<void>((resolve, reject) => {
-    execFile('tar', ['-xzf', archivePath, '-C', destDir], (err) => {
+    execFile(tarBin, ['-xzf', archivePath, '-C', destDir], (err) => {
       if (err) reject(err)
       else resolve()
     })

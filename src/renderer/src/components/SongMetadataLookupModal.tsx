@@ -89,7 +89,7 @@ export function SongMetadataLookupModal({
       let artworkApplied = false
       if (artwork) {
         artworkApplied = await window.api.writeAlbumArt(folderPath, artwork)
-        if (!artworkApplied) throw new Error('OCTAVE could not save the selected album artwork.')
+        if (!artworkApplied) throw new Error('Overdrive could not save the selected album artwork.')
         publishAlbumArtUpdate({ folderPath, dataUrl: artwork })
       }
       onApply(

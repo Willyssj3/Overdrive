@@ -108,7 +108,7 @@ export function Toolbar(): React.JSX.Element {
   // = detect by beat-tracking the audio (see strum_worker _beat_track_tempo_map).
   const [autoChartManualBpm, setAutoChartManualBpm] = useState('')
   const [autoChartAdvancedOpen, setAutoChartAdvancedOpen] = useState(false)
-  // Optional user-supplied tempo map. Empty = use STRUM's auto-detection.
+  // Optional user-supplied tempo map. Empty = use Overdrive Engine's auto-detection.
   // First entry's BPM (sorted by timeSec) overrides initial detected tempo.
   const [autoChartTempoEvents, setAutoChartTempoEvents] = useState<
     Array<{ timeSec: string; bpm: string }>
@@ -641,7 +641,7 @@ export function Toolbar(): React.JSX.Element {
       isRunning: true,
       error: null,
       warnings: [],
-      message: 'Launching STRUM...',
+      message: 'Launching Overdrive Engine...',
       percent: 0
     }))
 
@@ -1088,8 +1088,8 @@ export function Toolbar(): React.JSX.Element {
           disabled={!enableAutoChart}
           title={
             enableAutoChart
-              ? 'Generate a chart package from audio with STRUM'
-              : 'Enable STRUM auto-charting in Settings'
+              ? 'Generate a chart package from audio with Overdrive Engine'
+              : 'Enable Overdrive Engine auto-charting in Settings'
           }
           onClick={openAutoChartModal}
         >
@@ -1284,7 +1284,7 @@ export function Toolbar(): React.JSX.Element {
               <div>
                 <h2 className="settings-modal-title">Auto-Chart from Audio</h2>
                 <p className="settings-modal-subtitle">
-                  Run STRUM on local audio files, folders, or URLs and load the generated chart
+                  Run Overdrive Engine on local audio files, folders, or URLs and load the generated chart
                   package output.
                 </p>
               </div>
@@ -2142,7 +2142,7 @@ export function Toolbar(): React.JSX.Element {
                                 </div>
                               </div>
                               <p style={{ fontSize: 12, opacity: 0.7, margin: '0 0 8px' }}>
-                                Uncheck any track you do not want STRUM to generate. All are charted
+                                Uncheck any track you do not want Overdrive Engine to generate. All are charted
                                 by default.
                               </p>
                               <div

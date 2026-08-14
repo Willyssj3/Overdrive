@@ -1,6 +1,6 @@
 // whisper.cpp bootstrap.
 //
-// We replace STRUM's bundled `openai-whisper` package (~2 GB once its
+// We replace Overdrive Engine's bundled `openai-whisper` package (~2 GB once its
 // torch + CUDA wheels are pulled in transitively, plus tiktoken/numba)
 // with a native C++ port from https://github.com/ggerganov/whisper.cpp.
 // The binary is ~5 MB; the ggml-large-v3 q5_0 model is ~547 MB. Total
@@ -122,7 +122,7 @@ function getTarget(variant: BinaryVariant): BinaryTarget {
   const target = getTargetForVariant(process.platform, process.arch, variant)
   if (!target) {
     throw new Error(
-      `OCTAVE does not yet ship a whisper.cpp binary for `
+      `Overdrive does not yet ship a whisper.cpp binary for `
         + `${process.platform}-${process.arch} (${variant}).`
     )
   }

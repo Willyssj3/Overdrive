@@ -1,12 +1,12 @@
-# Contributing to OCTAVE
+# Contributing to Overdrive
 
 Thanks for your interest in contributing! Here's how to get started.
 
 ## Development Setup
 
 ```bash
-git clone https://github.com/opria123/octave.git
-cd octave
+git clone https://github.com/Willyssj3/overdrive.git
+cd overdrive
 npm install
 npm run dev
 ```
@@ -64,7 +64,7 @@ pass before a PR can be merged into `beta`.
 
 ## Releases & Beta Testing
 
-OCTAVE ships through two automated channels. Both build Windows, macOS, and
+Overdrive ships through two automated channels. Both build Windows, macOS, and
 Linux installers and publish a GitHub Release; users auto-update via
 electron-updater.
 

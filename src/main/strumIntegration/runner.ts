@@ -99,7 +99,7 @@ function getStageRank(stage: AutoChartStage): number {
 }
 
 function logStrum(runId: string, message: string, detail?: unknown): void {
-  const prefix = `[STRUM][${runId}]`
+  const prefix = `[OverdriveEngine][${runId}]`
   if (detail !== undefined) {
     console.log(prefix, message, detail)
     return
@@ -108,7 +108,7 @@ function logStrum(runId: string, message: string, detail?: unknown): void {
 }
 
 function warnStrum(runId: string, message: string, detail?: unknown): void {
-  const prefix = `[STRUM][${runId}]`
+  const prefix = `[OverdriveEngine][${runId}]`
   if (detail !== undefined) {
     console.warn(prefix, message, detail)
     return
@@ -145,10 +145,10 @@ function openRunLog(runId: string): WriteStream | null {
     const stamp = new Date().toISOString().replace(/[:.]/g, '-')
     const file = join(dir, `${stamp}_${runId}.log`)
     const stream = createWriteStream(file, { flags: 'a' })
-    stream.write(`# STRUM run log\n# runId=${runId}\n# started=${new Date().toISOString()}\n# packaged=${app.isPackaged}\n# platform=${process.platform}-${process.arch}\n# logPath=${file}\n\n`)
+    stream.write(`# Overdrive Engine run log\n# runId=${runId}\n# started=${new Date().toISOString()}\n# packaged=${app.isPackaged}\n# platform=${process.platform}-${process.arch}\n# logPath=${file}\n\n`)
     return stream
   } catch (err) {
-    console.warn('[STRUM] failed to open run log:', err)
+    console.warn('[Overdrive Engine] failed to open run log:', err)
     return null
   }
 }
@@ -229,7 +229,7 @@ async function findPythonCommand(runId?: string): Promise<PythonCommand> {
   if (isBootstrapTarget()) {
     const requirementsPath = getStrumRequirementsPath()
     if (!existsSync(requirementsPath)) {
-      throw new Error(`STRUM requirements file not found at ${requirementsPath}`)
+      throw new Error(`Overdrive Engine requirements file not found at ${requirementsPath}`)
     }
     const bootstrapped = await ensureBootstrappedPython(requirementsPath, runId)
     return { command: bootstrapped, baseArgs: [] }
@@ -366,12 +366,12 @@ function handleStructuredEvent(
     }
 
     if (kind === 'error') {
-      completion.error = String(payload.message ?? 'STRUM worker failed.')
+      completion.error = String(payload.message ?? 'Overdrive Engine worker failed.')
       broadcast('strum:error', payload)
       return true
     }
   } catch {
-    completion.error = 'STRUM worker emitted malformed structured output.'
+    completion.error = 'Overdrive Engine worker emitted malformed structured output.'
   }
 
   return true
@@ -390,7 +390,7 @@ export async function runAutoChart(options: Omit<AutoChartRunOptions, 'cacheDir'
   const cacheDir = join(app.getPath('userData'), 'cache', 'strum')
   const workerScript = getWorkerScriptPath()
   if (!existsSync(workerScript)) {
-    throw new Error(`STRUM worker script was not found at ${workerScript}`)
+    throw new Error(`Overdrive Engine worker script was not found at ${workerScript}`)
   }
 
   await mkdir(cacheDir, { recursive: true })
@@ -406,7 +406,7 @@ export async function runAutoChart(options: Omit<AutoChartRunOptions, 'cacheDir'
   broadcast('strum:progress', {
     runId,
     stage: 'bootstrap',
-    message: 'Starting STRUM auto-chart run...',
+    message: 'Starting Overdrive Engine auto-chart run...',
     percent: 0
   } satisfies AutoChartProgressEvent)
 
@@ -541,7 +541,7 @@ export async function runAutoChart(options: Omit<AutoChartRunOptions, 'cacheDir'
       broadcast('strum:progress', {
         runId,
         stage: lastProgressStage,
-        message: `Still processing... no new STRUM logs for ${silenceSec}s (this stage can take several minutes).`,
+        message: `Still processing... no new Overdrive Engine logs for ${silenceSec}s (this stage can take several minutes).`,
         percent: lastProgressPercent
       } satisfies AutoChartProgressEvent)
     }, HEARTBEAT_TICK_MS)
@@ -661,7 +661,7 @@ export async function runAutoChart(options: Omit<AutoChartRunOptions, 'cacheDir'
       }
 
       if (signal === 'SIGTERM') {
-        reject(new Error('STRUM auto-chart run was cancelled.'))
+        reject(new Error('Overdrive Engine auto-chart run was cancelled.'))
         return
       }
 
@@ -670,7 +670,7 @@ export async function runAutoChart(options: Omit<AutoChartRunOptions, 'cacheDir'
         return
       }
 
-      const detail = completion.error ?? `STRUM worker exited with code ${code ?? 'unknown'}.`
+      const detail = completion.error ?? `Overdrive Engine worker exited with code ${code ?? 'unknown'}.`
       reject(new Error(detail))
     })
   })
@@ -698,7 +698,7 @@ export async function cancelAutoChart(runId: string): Promise<boolean> {
 }
 
 /**
- * Synchronously terminate every still-running STRUM worker. Intended for the
+ * Synchronously terminate every still-running Overdrive Engine worker. Intended for the
  * Electron `before-quit` hook so orphan Python processes don't keep the
  * installer-detectable process count above 1 during auto-update.
  */

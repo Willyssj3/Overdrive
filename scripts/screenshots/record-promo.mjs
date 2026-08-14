@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * OCTAVE promo-video recorder.
+ * Overdrive promo-video recorder.
  *
  * Drives the packaged main bundle through a ~50-second scripted tour, captures
  * the OCTAVE window via ffmpeg's gdigrab (Windows), then muxes in the demo
@@ -233,7 +233,7 @@ async function main() {
   const songOgg = path.join(stagedSongDir, 'song.ogg')
   if (!fs.existsSync(songOgg)) throw new Error(`[promo] Expected song.ogg at ${songOgg}`)
 
-  console.log('[promo] Launching OCTAVE…')
+  console.log('[promo] Launching Overdrive…')
   const { app, page } = await launchOctave({ userData: fixture.userData })
 
   // Fill the primary display so nothing is clipped, then capture that exact region.

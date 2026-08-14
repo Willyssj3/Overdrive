@@ -93,7 +93,7 @@ jobs:
           ny = pathlib.Path('vendor/libnyquist/CMakeLists.txt')
           if ny.exists():
               text = ny.read_text()
-              guard = '# OCTAVE: ensure C++ exceptions on MSVC/ClangCL'
+              guard = '# Overdrive: ensure C++ exceptions on MSVC/ClangCL'
               if guard not in text:
                   inject = (
                       f'\n{guard}\n'
@@ -298,7 +298,7 @@ jobs:
             gh release create demucs-cpp-cache \
               --repo "${GITHUB_REPOSITORY}" \
               --title "demucs.cpp binary cache" \
-              --notes "Persistent cache of native demucs.cpp binaries downloaded by OCTAVE on first launch. Do not delete; users are pinned to specific versions via DEMUCS_CPP_BIN_VERSION." \
+              --notes "Persistent cache of native demucs.cpp binaries downloaded by Overdrive on first launch. Do not delete; users are pinned to specific versions via DEMUCS_CPP_BIN_VERSION." \
               --prerelease=false
           fi
 

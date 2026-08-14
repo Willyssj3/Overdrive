@@ -1,11 +1,13 @@
 <div align="center">
-  <img src="resources/octave.svg" alt="OCTAVE" width="128" height="128" />
+  <img src="resources/octave.svg" alt="Overdrive" width="128" height="128" />
 
-  # OCTAVE
+  # Overdrive
 
-  **Orchestrated Chart & Track Authoring Visual Editor**
+  *(previously released as OCTAVE)*
 
-  [![GitHub release](https://img.shields.io/github/v/release/opria123/octave?style=flat-square&color=00F2FE)](https://github.com/opria123/octave/releases/latest)
+  **Visual Chart & Track Editor**
+
+  [![GitHub release](https://img.shields.io/github/v/release/Willyssj3/overdrive?style=flat-square&color=00F2FE)](https://github.com/Willyssj3/overdrive/releases/latest)
   [![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
   [![Electron](https://img.shields.io/badge/Electron-39-47848F?style=flat-square&logo=electron&logoColor=white)](https://www.electronjs.org/)
   [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
@@ -33,25 +35,25 @@
 
 ### Download (Recommended)
 
-Grab the latest release for your platform from the [**Releases page**](https://github.com/opria123/octave/releases/latest):
+Grab the latest release for your platform from the [**Releases page**](https://github.com/Willyssj3/overdrive/releases/latest):
 
 | Platform | File |
 |----------|------|
-| **Windows** | `octave-x.x.x-setup.exe` |
-| **macOS** | `octave-x.x.x.dmg` |
-| **Linux** | `octave-x.x.x.AppImage` or `.deb` |
+| **Windows** | `overdrive-x.x.x-setup.exe` |
+| **macOS** | `overdrive-x.x.x.dmg` |
+| **Linux** | `overdrive-x.x.x.AppImage` or `.deb` |
 
 > **Windows**: You may see a SmartScreen warning on first launch — click "More info" → "Run anyway".
 >
 > **macOS**: Right-click the app and select "Open" if Gatekeeper blocks it.
 >
-> **Linux AppImage**: Run `chmod +x octave-*.AppImage` then `./octave-*.AppImage`.
+> **Linux AppImage**: Run `chmod +x overdrive-*.AppImage` then `./overdrive-*.AppImage`.
 
 ### Build from Source
 
 ```bash
-git clone https://github.com/opria123/octave.git
-cd octave
+git clone https://github.com/Willyssj3/overdrive.git
+cd overdrive
 npm install
 npm run build:win    # or build:mac / build:linux
 ```
@@ -62,7 +64,7 @@ npm run build:win    # or build:mac / build:linux
 
 ### Opening a Project
 
-1. Launch OCTAVE
+1. Launch Overdrive
 2. Click **File → Open Folder** (or drag a folder onto the window)
 3. Select a folder containing your song files (`.mid` or `.chart` + audio stems)
 4. Songs appear in the **Project Explorer** on the left — click one to load it
@@ -108,7 +110,7 @@ The interface has four main areas:
 
 - **Ctrl+S** saves in the original format (`.mid` or `.chart`)
 - Use **File → Export** to convert between formats
-- OCTAVE preserves all metadata, tempo maps, and instrument data on round-trip
+- Overdrive preserves all metadata, tempo maps, and instrument data on round-trip
 
 ---
 
@@ -165,21 +167,21 @@ npm install
 npm run dev
 ```
 
-### STRUM Auto-Charting
+### Overdrive Engine Auto-Charting
 
-OCTAVE can run the STRUM auto-chart pipeline to generate chart packages from audio.
+Overdrive can run the Overdrive Engine auto-chart pipeline to generate chart packages from audio.
 
 End users:
-- Release builds are self-contained. Users install the OCTAVE app artifact only.
-- The bundled Python runtime and STRUM Python dependencies ship inside the app.
+- Release builds are self-contained. Users install the Overdrive app artifact only.
+- The bundled Python runtime and Overdrive Engine Python dependencies ship inside the app.
 - App auto-updates replace the app bundle, so bundled Python/runtime changes ship with the release automatically.
 
 Development builds:
 - The auto-chart feature uses a local Python 3.11+ environment in development.
-- Set `OCTAVE_STRUM_PYTHON` if you want to point OCTAVE at a specific interpreter.
+- Set `OCTAVE_STRUM_PYTHON` if you want to point Overdrive at a specific interpreter.
 
 Release engineering:
-- Packaging runs `npm run prepare:python-runtime` before `electron-builder` so the current build machine's Python 3.11+ runtime and STRUM dependencies are copied into app resources.
+- Packaging runs `npm run prepare:python-runtime` before `electron-builder` so the current build machine's Python 3.11+ runtime and Overdrive Engine dependencies are copied into app resources.
 - Set `OCTAVE_BUNDLED_PYTHON` if the build should use a specific Python interpreter.
 - FFmpeg must still be available on `PATH` for Whisper/audio decoding.
 
@@ -202,9 +204,9 @@ python -m pip install -r resources/strum/requirements.txt
 ```
 
 Notes:
-- OCTAVE resolves the STRUM device automatically in this order: CUDA → Apple MPS → CPU.
+- Overdrive resolves the Overdrive Engine device automatically in this order: CUDA → Apple MPS → CPU.
 - Vanilla PyPI `torch` is the default. The CUDA index URL above is optional and only for NVIDIA users who want the PyTorch CUDA wheel explicitly.
-- STRUM checkpoints are downloaded on first run from the Hugging Face repo and cached outside the source tree.
+- Overdrive Engine checkpoints are downloaded on first run from the Hugging Face repo and cached outside the source tree.
 
 ### Scripts
 

@@ -214,7 +214,7 @@ jobs:
         run: |
           COMMITS=$(cat /tmp/commits.txt)
           {
-            echo "## OCTAVE ${{ needs.tag.outputs.tag }}"
+            echo "## Overdrive ${{ needs.tag.outputs.tag }}"
             echo ""
             echo "### What's Changed"
             echo "$COMMITS"
@@ -224,7 +224,7 @@ jobs:
             echo "- **macOS**: \`.dmg\` disk image"
             echo "- **Linux**: \`.AppImage\`"
             echo ""
-            echo "On first launch OCTAVE downloads a self-contained Python runtime (~1.5 GB) into your user-data folder. The runtime survives app updates and is shared across versions."
+            echo "On first launch Overdrive downloads a self-contained Python runtime (~1.5 GB) into your user-data folder. The runtime survives app updates and is shared across versions."
             echo ""
             echo "---"
             echo "*Built automatically from \`master\`*"
@@ -244,7 +244,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.tag.outputs.tag }}
-          name: OCTAVE ${{ needs.tag.outputs.tag }}
+          name: Overdrive ${{ needs.tag.outputs.tag }}
           body_path: /tmp/release-body.md
           files: artifacts/*
           draft: false

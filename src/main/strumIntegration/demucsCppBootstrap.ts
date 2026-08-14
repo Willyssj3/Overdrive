@@ -1,6 +1,6 @@
 // demucs.cpp bootstrap.
 //
-// We replace STRUM's bundled `demucs` Python package (~600 MB with torch
+// We replace Overdrive Engine's bundled `demucs` Python package (~600 MB with torch
 // wheels it pulls in transitively) with a native C++ port from
 // https://github.com/sevagh/demucs.cpp. The binary is ~10 MB statically
 // linked; the htdemucs_6s ggml weights are ~53 MB. Total disk footprint
@@ -98,7 +98,7 @@ function getTarget(): BinaryTarget {
   const target = TARGETS[`${process.platform}-${process.arch}`]
   if (!target) {
     throw new Error(
-      `OCTAVE does not yet ship a demucs.cpp binary for `
+      `Overdrive does not yet ship a demucs.cpp binary for `
         + `${process.platform}-${process.arch}. Supported: ${Object.keys(TARGETS).join(', ')}.`
     )
   }

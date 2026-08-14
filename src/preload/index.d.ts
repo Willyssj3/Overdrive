@@ -70,7 +70,7 @@ interface ChartEditorAPI {
   }) => Promise<{ success: boolean; error?: string }>
   onExportProgress: (callback: (percent: number) => void) => () => void
 
-  // STRUM auto-chart APIs
+  // Overdrive Engine auto-chart APIs
   startAutoChart: (options: {
     outputDir: string
     files: string[]
@@ -104,7 +104,7 @@ interface ChartEditorAPI {
     }
     /**
      * Optional user-supplied tempo map. If provided, the first event
-     * (sorted by timeSec) overrides STRUM's auto-detected BPM and the
+     * (sorted by timeSec) overrides Overdrive Engine's auto-detected BPM and the
      * full list is written to notes.mid; note ticks are retimed so
      * real-world note positions stay aligned with the audio.
      */

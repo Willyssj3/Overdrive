@@ -166,7 +166,7 @@ export function SettingsModal(): React.JSX.Element | null {
                   checked={draftEnableAutoChart}
                   onChange={(event) => setDraftEnableAutoChart(event.target.checked)}
                 />
-                <span>Enable STRUM auto-charting</span>
+                <span>Enable Overdrive Engine auto-charting</span>
               </label>
               <div className="settings-field-stack">
                 <label className="settings-field-label" htmlFor="auto-chart-output-dir">Default output folder</label>

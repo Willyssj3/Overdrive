@@ -97,7 +97,7 @@ export interface AutoChartRunOptions {
   /** Only snap drum onsets already within this many ms of a grid line. Default 40. */
   snapDrumsWindowMs?: number
   /**
-   * Automatic tempo refinement (default on). After STRUM writes notes.mid the
+   * Automatic tempo refinement (default on). After Overdrive Engine writes notes.mid the
    * worker re-fits the tempo grid to the detected note onsets — correcting a
    * slightly-wrong global BPM (and clear octave errors) and, for genuinely
    * drifting songs, building a piecewise tempo map. Real-world note times are
@@ -125,7 +125,7 @@ export interface AutoChartRunOptions {
   }
   /**
    * Optional user-supplied tempo map: a sorted (by `timeSec`) list of
-   * tempo events. When provided, the first event's BPM overrides STRUM's
+   * tempo events. When provided, the first event's BPM overrides Overdrive Engine's
    * auto-detected initial tempo and the full list is written to the
    * resulting notes.mid; note ticks are retimed so real-world note
    * positions stay aligned with the audio.

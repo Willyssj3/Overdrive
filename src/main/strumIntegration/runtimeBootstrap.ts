@@ -37,7 +37,7 @@ const PYTHON_BUILD_STANDALONE_TAG = '20250409'
 const PYTHON_VERSION = '3.12.10'
 
 // Pre-built Python runtime tarballs are uploaded to a persistent GitHub
-// release named `runtime-cache` on the OCTAVE repo by
+// release named `runtime-cache` on the Overdrive repo by
 // .github/workflows/python-runtime-tarball.yml. Asset name pattern is
 // `python-runtime-<platform>-<arch>-<requirementsShortHash>.tar.gz`.
 //
@@ -131,7 +131,7 @@ function getRuntimeExecutable(): string {
   const target = TARGETS[`${process.platform}-${process.arch}`]
   if (!target) {
     throw new Error(
-      `OCTAVE does not yet ship a bootstrappable Python runtime for `
+      `Overdrive does not yet ship a bootstrappable Python runtime for `
       + `${process.platform}-${process.arch}. Supported: ${Object.keys(TARGETS).join(', ')}.`
     )
   }

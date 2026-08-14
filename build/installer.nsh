@@ -1,21 +1,21 @@
-; Custom NSIS hooks for OCTAVE installer.
+; Custom NSIS hooks for Overdrive installer.
 ;
 ; Problem: When the user runs auto-update, the installer shows
-; "OCTAVE cannot be closed" because lingering python.exe child processes
-; (spawned by the STRUM worker) hold open handles to files inside the
-; install dir, AND/OR the OCTAVE.exe parent itself isn't fully gone yet.
+; "Overdrive cannot be closed" because lingering python.exe child processes
+; (spawned by the Overdrive Engine worker) hold open handles to files inside the
+; install dir, AND/OR the Overdrive.exe parent itself isn't fully gone yet.
 ;
 ; Solution: Before any install/uninstall step runs, force-kill anything that
-; could be holding files: OCTAVE.exe (with /T to take down children) and any
+; could be holding files: Overdrive.exe (with /T to take down children) and any
 ; python.exe whose image path is inside our install directory.
 ;
 ; We use PowerShell (guaranteed on Windows 10+) instead of cmd/wmic because
 ; quoting is far more reliable and wmic was removed/optional on Win11.
 
-!macro octaveKillRunning
-  ; Kill OCTAVE.exe and every child process. Both casings to be safe.
-  nsExec::Exec 'taskkill /F /T /IM octave.exe'
-  nsExec::Exec 'taskkill /F /T /IM OCTAVE.exe'
+!macro overdriveKillRunning
+  ; Kill Overdrive.exe and every child process. Both casings to be safe.
+  nsExec::Exec 'taskkill /F /T /IM overdrive.exe'
+  nsExec::Exec 'taskkill /F /T /IM Overdrive.exe'
 
   ; Kill any python.exe whose ExecutablePath is inside the install dir.
   ; -ErrorAction SilentlyContinue + try/catch makes a no-match a no-op.
@@ -29,13 +29,13 @@
 !macroend
 
 !macro customInit
-  !insertmacro octaveKillRunning
+  !insertmacro overdriveKillRunning
 !macroend
 
 !macro customInstall
-  !insertmacro octaveKillRunning
+  !insertmacro overdriveKillRunning
 !macroend
 
 !macro customUnInit
-  !insertmacro octaveKillRunning
+  !insertmacro overdriveKillRunning
 !macroend

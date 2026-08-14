@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * OCTAVE screenshot harness.
+ * Overdrive screenshot harness.
  *
  * Captures docs screenshots into docs/public/screenshots/ by driving the
  * packaged main bundle (out/main/index.js) through Playwright's Electron API.
@@ -125,7 +125,7 @@ async function main() {
     fixture = await stageFixture([])
   }
 
-  console.log('[screenshots] Launching OCTAVE…')
+  console.log('[screenshots] Launching Overdrive…')
   const { app, page } = await launchOctave({ userData: fixture.userData })
   const bounds = await maximizeWindow(app)
   console.log(`[screenshots] window: ${bounds.width}x${bounds.height} @ (${bounds.x},${bounds.y})`)

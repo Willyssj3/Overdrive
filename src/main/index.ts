@@ -43,7 +43,7 @@ try {
 // Allow AudioContext to start without user gesture requirement in Electron
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required')
 
-// Enforce a single running OCTAVE instance. Without this, NSIS auto-update
+// Enforce a single running Overdrive instance. Without this, NSIS auto-update
 // fails with "two running versions" because the installer refuses to replace
 // the binary while another copy is open. The second launch focuses the
 // existing window instead.
@@ -67,7 +67,7 @@ app.on('before-quit', () => {
   try {
     killAllRunningJobs()
   } catch (error) {
-    console.warn('[Quit] Failed to terminate STRUM workers:', error)
+    console.warn('[Quit] Failed to terminate Overdrive Engine workers:', error)
   }
 })
 
@@ -165,7 +165,7 @@ async function handleMacCustomInstall(downloadedFile: string, version: string): 
   const { response } = await dialog.showMessageBox(win, {
     type: 'info',
     title: 'Update Ready',
-    message: `OCTAVE v${version} is ready to install`,
+    message: `Overdrive v${version} is ready to install`,
     detail: 'The app will close and restart to apply the update. You may be prompted for your administrator password.',
     buttons: ['Restart Now', 'Later'],
     defaultId: 0,
@@ -174,7 +174,7 @@ async function handleMacCustomInstall(downloadedFile: string, version: string): 
 
   if (response !== 0) return
 
-  const currentAppBundle = resolve(process.execPath, '../../..')  // /Applications/OCTAVE.app
+  const currentAppBundle = resolve(process.execPath, '../../..')  // /Applications/Overdrive.app
   const tempDir = join(app.getPath('temp'), 'octave-update-' + version + '-' + Date.now())
   const scriptPath = join(app.getPath('temp'), 'octave-update-' + Date.now() + '.sh')
 
@@ -305,7 +305,7 @@ protocol.registerSchemesAsPrivileged([
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.opria123.octave')
+  electronApp.setAppUserModelId('com.willyssj3.overdrive')
 
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     const responseHeaders = details.responseHeaders ?? {}
@@ -444,11 +444,11 @@ app.whenReady().then(() => {
           if (response === 0) {
             // Tear down Python workers BEFORE quitAndInstall so the NSIS
             // installer doesn't see lingering child processes that block the
-            // "OCTAVE cannot be closed" check.
+            // "Overdrive cannot be closed" check.
             try {
               killAllRunningJobs()
             } catch (error) {
-              console.warn('[Updater] Failed to terminate STRUM workers before install:', error)
+              console.warn('[Updater] Failed to terminate Overdrive Engine workers before install:', error)
             }
             // isSilent=true, isForceRunAfter=true — closes & relaunches.
             autoUpdater.quitAndInstall(true, true)
@@ -746,7 +746,7 @@ ipcMain.handle('dialog:showItemInFolder', async (_event, filePath: string) => {
 })
 
 ipcMain.handle('strum:getDefaultOutputFolder', async () => {
-  const defaultOutputFolder = join(app.getPath('documents'), 'OCTAVE', 'Auto-Chart Output')
+  const defaultOutputFolder = join(app.getPath('documents'), 'Overdrive', 'Auto-Chart Output')
   await mkdir(defaultOutputFolder, { recursive: true })
   return defaultOutputFolder
 })
@@ -958,7 +958,7 @@ ipcMain.handle('song:createFolder', async (_event, parentPath: string, folderNam
   try {
     await mkdir(songPath, { recursive: true })
     // Write a minimal song.ini
-    const ini = `[song]\nname = ${safeName}\nartist = Unknown Artist\ncharter = OCTAVE\n`
+    const ini = `[song]\nname = ${safeName}\nartist = Unknown Artist\ncharter = Overdrive\n`
     await writeFile(join(songPath, 'song.ini'), ini, 'utf-8')
     // Copy audio file into song folder if provided
     if (audioSourcePath) {
@@ -1045,7 +1045,7 @@ ipcMain.handle('song:searchMetadata', async (_event, rawRequest: SongMetadataSea
     const response = await net.fetch(`https://musicbrainz.org/ws/2/recording/?${params}`, {
       headers: {
         Accept: 'application/json',
-        'User-Agent': `OCTAVE/${app.getVersion()} (https://github.com/opria123/octave)`
+        'User-Agent': `Overdrive/${app.getVersion()} (https://github.com/Willyssj3/overdrive)`
       }
     })
     if (!response.ok) throw new Error(`MusicBrainz search failed (${response.status}).`)
@@ -1088,7 +1088,7 @@ ipcMain.handle('song:fetchMetadataArtwork', async (_event, artwork: MetadataArtw
   }
 
   const response = await net.fetch(artworkUrl, {
-    headers: { 'User-Agent': `OCTAVE/${app.getVersion()} (https://github.com/opria123/octave)` }
+    headers: { 'User-Agent': `Overdrive/${app.getVersion()} (https://github.com/Willyssj3/overdrive)` }
   })
   if (response.status === 404) return null
   if (!response.ok) throw new Error(`Cover Art Archive lookup failed (${response.status}).`)
@@ -1443,7 +1443,7 @@ ipcMain.handle('song:importAudio', async (_event, songPath: string, audioSourceP
 // stems: in the CH/YARG convention song.ogg is the backing/catch-all track
 // (the Demucs "other" stem in auto-charted songs) and the games mix it with
 // every stem at playback, so the editor does the same (issue #45). Legacy
-// OCTAVE exports wrote a silent song.ogg next to the stems — mixing that in
+// Overdrive exports wrote a silent song.ogg next to the stems — mixing that in
 // is harmless.
 ipcMain.handle('song:readAudio', async (_event, songPath: string) => {
   if (!isPathAllowed(songPath)) return null

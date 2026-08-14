@@ -1,17 +1,17 @@
 {
-  "name": "octave",
+  "name": "overdrive",
   "version": "1.0.17",
-  "description": "OCTAVE — Orchestrated Chart & Track Authoring Visual Editor for rhythm games",
+  "description": "Overdrive — Orchestrated Chart & Track Authoring Visual Editor for rhythm games",
   "main": "./out/main/index.js",
   "author": "opria123",
   "license": "MIT",
-  "homepage": "https://github.com/opria123/octave",
+  "homepage": "https://github.com/Willyssj3/overdrive",
   "repository": {
     "type": "git",
-    "url": "https://github.com/opria123/octave.git"
+    "url": "https://github.com/Willyssj3/overdrive.git"
   },
   "bugs": {
-    "url": "https://github.com/opria123/octave/issues"
+    "url": "https://github.com/Willyssj3/overdrive/issues"
   },
   "keywords": [
     "chart-editor",

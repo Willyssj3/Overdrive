@@ -475,7 +475,7 @@ def copy_source_root(source_root: Path, destination_root: Path, run_id: str) -> 
         emit_progress(
             run_id,
             "bootstrap",
-            f"Staging local STRUM source: {source_entry.name}",
+            f"Staging local Overdrive Engine source: {source_entry.name}",
             percent=min(99, int((index / total) * 100)),
         )
 
@@ -521,7 +521,7 @@ def bootstrap_source(cache_dir: Path, run_id: str) -> Path:
     if configured:
         configured_path = Path(configured).expanduser().resolve()
         if is_valid_source_root(configured_path):
-            emit_progress(run_id, "bootstrap", f"Using local STRUM source override: {configured_path}", percent=100)
+            emit_progress(run_id, "bootstrap", f"Using local Overdrive Engine source override: {configured_path}", percent=100)
             return configured_path
 
     source_root = cache_dir / SOURCE_FOLDER_NAME
@@ -529,12 +529,12 @@ def bootstrap_source(cache_dir: Path, run_id: str) -> Path:
         version_marker = source_root / SOURCE_VERSION_FILE
         cached_version = version_marker.read_text(encoding="utf-8").strip() if version_marker.exists() else ""
         if cached_version == STRUM_SOURCE_VERSION:
-            emit_progress(run_id, "bootstrap", "Using cached STRUM source.", percent=100)
+            emit_progress(run_id, "bootstrap", "Using cached Overdrive Engine source.", percent=100)
             return source_root
         emit_progress(
             run_id,
             "bootstrap",
-            f"Cached STRUM source is stale (have='{cached_version or 'none'}', want='{STRUM_SOURCE_VERSION}'). Refreshing...",
+            f"Cached Overdrive Engine source is stale (have='{cached_version or 'none'}', want='{STRUM_SOURCE_VERSION}'). Refreshing...",
             percent=0,
         )
         try:
@@ -544,7 +544,7 @@ def bootstrap_source(cache_dir: Path, run_id: str) -> Path:
 
     local_source = resolve_local_source_override()
     if local_source is not None:
-        emit_progress(run_id, "bootstrap", f"Using local STRUM source: {local_source}", percent=0)
+        emit_progress(run_id, "bootstrap", f"Using local Overdrive Engine source: {local_source}", percent=0)
         try:
             copy_source_root(local_source, source_root, run_id)
         except Exception as exc:
@@ -552,14 +552,14 @@ def bootstrap_source(cache_dir: Path, run_id: str) -> Path:
                 f"Failed to stage local STRUM source from {local_source}."
             ) from exc
 
-        emit_progress(run_id, "bootstrap", "STRUM source ready from local checkout.", percent=100)
+        emit_progress(run_id, "bootstrap", "Overdrive Engine source ready from local checkout.", percent=100)
         try:
             (source_root / SOURCE_VERSION_FILE).write_text(STRUM_SOURCE_VERSION, encoding="utf-8")
         except Exception:
             pass
         return source_root
 
-    emit_progress(run_id, "bootstrap", "Downloading STRUM source...", percent=0)
+    emit_progress(run_id, "bootstrap", "Downloading Overdrive Engine source...", percent=0)
     with tempfile.TemporaryDirectory(prefix="octave-strum-src-") as temp_dir_name:
         temp_dir = Path(temp_dir_name)
         zip_path = temp_dir / "strum-main.zip"
@@ -593,7 +593,7 @@ def bootstrap_source(cache_dir: Path, run_id: str) -> Path:
     except Exception:
         pass
 
-    emit_progress(run_id, "bootstrap", "STRUM source ready.", percent=100)
+    emit_progress(run_id, "bootstrap", "Overdrive Engine source ready.", percent=100)
     return source_root
 
 
@@ -620,12 +620,12 @@ def mirror_checkpoint_layout(snapshot_root: Path, flat_root: Path, run_id: str) 
 def bootstrap_checkpoints(modules: dict[str, Any], cache_dir: Path, source_root: Path, run_id: str) -> Path:
     flat_root = source_root / "checkpoints"
     if all((flat_root / relative).exists() for relative in CHECKPOINT_MAP.values()):
-        emit_progress(run_id, "download", "Using cached STRUM checkpoints.", percent=100)
+        emit_progress(run_id, "download", "Using cached Overdrive Engine checkpoints.", percent=100)
         return flat_root
 
     snapshot_root = cache_dir / SNAPSHOT_FOLDER_NAME
     snapshot_root.mkdir(parents=True, exist_ok=True)
-    emit_progress(run_id, "download", "Downloading STRUM checkpoints from Hugging Face...", percent=0)
+    emit_progress(run_id, "download", "Downloading Overdrive Engine checkpoints from Hugging Face...", percent=0)
     try:
         modules["huggingface_hub"].snapshot_download(
             repo_id=HF_REPO_ID,
@@ -644,7 +644,7 @@ def bootstrap_checkpoints(modules: dict[str, Any], cache_dir: Path, source_root:
         ) from exc
 
     mirror_checkpoint_layout(snapshot_root, flat_root, run_id)
-    emit_progress(run_id, "download", "STRUM checkpoints ready.", percent=100)
+    emit_progress(run_id, "download", "Overdrive Engine checkpoints ready.", percent=100)
     return flat_root
 
 
@@ -2850,9 +2850,9 @@ def _tag_song_as_ai_generated(song_folder: Path) -> None:
     if "auto_chart" not in lowered:
         additions.append("auto_chart = True")
     if "auto_chart_tool" not in lowered:
-        additions.append("auto_chart_tool = STRUM (OCTAVE AI auto-charter)")
+        additions.append("auto_chart_tool = Overdrive Engine (Overdrive AI auto-charter)")
     if "charter" not in lowered:
-        additions.append("charter = STRUM (AI auto-charted)")
+        additions.append("charter = Overdrive (AI auto-charted)")
     if not additions:
         return
 
@@ -2967,7 +2967,7 @@ def run_pipeline(payload: dict[str, Any]) -> int:
     torch_module = modules["torch"]
     device = resolve_device(torch_module)
     install_logging_bridge(run_id)
-    emit_progress(run_id, "bootstrap", f"Selected STRUM device: {device}", percent=0)
+    emit_progress(run_id, "bootstrap", f"Selected Overdrive Engine device: {device}", percent=0)
     emit_device_diagnostics(run_id, torch_module, device)
     print(f"Selected STRUM device: {device}", flush=True)
 
@@ -3157,7 +3157,7 @@ def load_payload(payload_file: Path) -> dict[str, Any]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run STRUM auto-charting for OCTAVE.")
+    parser = argparse.ArgumentParser(description="Run Overdrive Engine auto-charting for Overdrive.")
     parser.add_argument("--payload-file", required=True, type=Path)
     args = parser.parse_args()
 

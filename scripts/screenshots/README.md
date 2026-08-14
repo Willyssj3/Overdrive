@@ -1,6 +1,6 @@
 # Screenshot Harness
 
-Automated screenshot capture for OCTAVE's documentation site, using [Playwright's Electron driver](https://playwright.dev/docs/api/class-electronapplication).
+Automated screenshot capture for Overdrive's documentation site, using [Playwright's Electron driver](https://playwright.dev/docs/api/class-electronapplication).
 
 ## What it does
 

@@ -119,16 +119,16 @@ export function SetupModal(): React.JSX.Element | null {
         <p className="setup-modal-body">
           {isUpgrade ? (
             <>
-              OCTAVE was updated and the bundled AI runtime needs to be refreshed
+              Overdrive was updated and the bundled AI runtime needs to be refreshed
               to match (new dependency versions, GPU support, or a Python upgrade).
               Your existing runtime will be replaced. This may take several minutes
               on first launch; future updates only re-run when something changes.
             </>
           ) : (
             <>
-              OCTAVE uses a self-contained Python runtime to power Auto-Chart, stem
+              Overdrive uses a self-contained Python runtime to power Auto-Chart, stem
               separation, and lyric transcription. This is a one-time download
-              (~1.5 GB) installed in your user data folder. Updates to OCTAVE will
+              (~1.5 GB) installed in your user data folder. Updates to Overdrive will
               not need to re-download it.
             </>
           )}

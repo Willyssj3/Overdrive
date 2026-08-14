@@ -2,7 +2,7 @@ name: Build Python runtime tarballs
 
 # Builds pre-provisioned Python runtimes (python-build-standalone + pip-installed
 # AI deps) and uploads them to the persistent `runtime-cache` GitHub release so
-# packaged OCTAVE clients can skip the multi-minute first-launch pip install.
+# packaged Overdrive clients can skip the multi-minute first-launch pip install.
 #
 # Asset name: python-runtime-<platform>-<arch>-<requirementsShortHash>.tar.gz
 # - <platform>: process.platform from Node (win32 / darwin / linux)
@@ -58,7 +58,7 @@ jobs:
           if ! gh release view runtime-cache >/dev/null 2>&1; then
             gh release create runtime-cache \
               --title "Python runtime cache" \
-              --notes "Pre-built Python runtime tarballs for OCTAVE first-launch setup. Assets are appended automatically by .github/workflows/python-runtime-tarball.yml whenever resources/strum/requirements.txt changes." \
+              --notes "Pre-built Python runtime tarballs for Overdrive first-launch setup. Assets are appended automatically by .github/workflows/python-runtime-tarball.yml whenever resources/strum/requirements.txt changes." \
               --latest=false
           fi
 

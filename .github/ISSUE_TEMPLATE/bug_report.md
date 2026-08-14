@@ -23,7 +23,7 @@ If applicable, add screenshots to help explain the problem.
 
 **Environment:**
 - OS: [e.g. Windows 11, macOS 14, Ubuntu 24.04]
-- OCTAVE version: [e.g. v0.2.0]
+- Overdrive version: [e.g. v0.2.0]
 - File format: [.mid / .chart]
 
 **Additional context**

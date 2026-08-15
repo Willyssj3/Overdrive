@@ -32,14 +32,35 @@ function openDatabase(): Promise<IDBDatabase> {
   })
 }
 
+// Cache entries written before the song.ini string-coercion fix may still have
+// a number where a purely-numeric title/artist ("11", "80s") was misread as
+// one -- sanitize on read so old IndexedDB entries can't reintroduce the
+// "value.trim is not a function" crash after the source of truth was fixed.
+function sanitizeCachedSong(song: CachedLibrarySong): CachedLibrarySong {
+  const m = song.metadata as unknown as Record<string, unknown>
+  return {
+    ...song,
+    metadata: {
+      ...song.metadata,
+      name: String(m.name ?? song.folderName ?? ''),
+      artist: String(m.artist ?? 'Unknown Artist'),
+      ...(m.album !== undefined ? { album: String(m.album) } : {}),
+      ...(m.genre !== undefined ? { genre: String(m.genre) } : {}),
+      ...(m.year !== undefined ? { year: String(m.year) } : {}),
+      ...(m.charter !== undefined ? { charter: String(m.charter) } : {})
+    }
+  }
+}
+
 export async function readLibraryCache(folderPath: string): Promise<CachedLibrarySong[]> {
   const database = await openDatabase()
   try {
-    return await new Promise((resolve, reject) => {
+    const songs = await new Promise<CachedLibrarySong[]>((resolve, reject) => {
       const request = database.transaction(STORE_NAME).objectStore(STORE_NAME).get(folderPath)
       request.onsuccess = () => resolve((request.result as CachedLibrary | undefined)?.songs ?? [])
       request.onerror = () => reject(request.error ?? new Error('Failed to read library cache'))
     })
+    return songs.map(sanitizeCachedSong)
   } finally {
     database.close()
   }

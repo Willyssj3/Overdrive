@@ -251,12 +251,17 @@ export function ProjectExplorer(): React.JSX.Element {
               addedAt: songFolder.addedAt,
               metadata: {
                 ...(iniData ?? {}),
-                name: (iniData?.name as string) || (iniData?.title as string) || songFolder.name,
-                artist: (iniData?.artist as string) || 'Unknown Artist',
-                album: iniData?.album as string,
-                genre: iniData?.genre as string,
+                // song.ini values are type-guessed per-field by the main-process parser
+                // (parseIniFile), so a purely numeric title/artist/etc. like "11" or "80s"
+                // comes back as a JS number, not a string -- String(...) here is a real
+                // runtime coercion, not just a type assertion, so downstream .trim()/
+                // .toLowerCase() calls (search, grouping) never see a non-string.
+                name: String(iniData?.name ?? '') || String(iniData?.title ?? '') || songFolder.name,
+                artist: String(iniData?.artist ?? '') || 'Unknown Artist',
+                album: iniData?.album !== undefined ? String(iniData.album) : undefined,
+                genre: iniData?.genre !== undefined ? String(iniData.genre) : undefined,
                 year: iniData?.year !== undefined ? String(iniData.year) : undefined,
-                charter: iniData?.charter as string,
+                charter: iniData?.charter !== undefined ? String(iniData.charter) : undefined,
                 song_length: iniData?.song_length as number,
                 preview_start_time: iniData?.preview_start_time as number
               }

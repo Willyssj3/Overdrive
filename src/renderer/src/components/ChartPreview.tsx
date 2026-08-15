@@ -1,6 +1,6 @@
 // Chart Preview - YARG-accurate 3D highway with FBX models and textures
 // Split into modules under ./chartPreview/ for maintainability
-import { useEffect, useState, useCallback, useRef, Suspense, Component } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo, Suspense, Component } from 'react'
 import type { ReactNode, ErrorInfo } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
@@ -59,6 +59,66 @@ class PreviewErrorBoundary extends Component<
     }
     return this.props.children
   }
+}
+
+// Atmospheric backdrop -- a faint, edge-weighted static/scanline haze behind
+// the highway's vanishing point, echoing the logo's "waveform dissolving
+// into pixels" motif. Non-interactive, unlit (raw ShaderMaterial), and kept
+// subtle by design so it never competes with note readability.
+const atmosphereVertexShader = `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}
+`
+const atmosphereFragmentShader = `
+uniform float uTime;
+uniform vec3 uColor;
+varying vec2 vUv;
+
+float hash(vec2 p) {
+  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+}
+
+void main() {
+  vec2 uv = vUv;
+  float d = distance(uv, vec2(0.5, 0.42));
+  float edge = smoothstep(0.12, 0.62, d);
+  float scan = sin((uv.y * 140.0) + uTime * 0.6) * 0.5 + 0.5;
+  scan = pow(scan, 6.0);
+  vec2 grid = floor(uv * vec2(90.0, 50.0));
+  float n = hash(grid + floor(uTime * 6.0));
+  float pixelStatic = step(0.985, n);
+  float alpha = (scan * 0.05 + pixelStatic * 0.35) * edge * 0.5;
+  gl_FragColor = vec4(uColor, alpha);
+}
+`
+
+function AtmosphereBackdrop(): React.JSX.Element {
+  const matRef = useRef<THREE.ShaderMaterial>(null)
+  const uniforms = useMemo(
+    () => ({ uTime: { value: 0 }, uColor: { value: new THREE.Color('#3A4A63') } }),
+    []
+  )
+  useFrame((_, delta) => {
+    if (matRef.current) matRef.current.uniforms.uTime.value += delta
+  })
+  return (
+    <mesh position={[0, 4, STRIKE_LINE_POS - 34]} raycast={() => null}>
+      <planeGeometry args={[70, 34]} />
+      <shaderMaterial
+        ref={matRef}
+        vertexShader={atmosphereVertexShader}
+        fragmentShader={atmosphereFragmentShader}
+        uniforms={uniforms}
+        transparent
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+        toneMapped={false}
+      />
+    </mesh>
+  )
 }
 
 const DEFAULT_VENUE_VISUAL: VenueVisualState = {
@@ -309,8 +369,9 @@ function HighwayWrapper({
         hasVocalOverlay={hasVocalOverlay}
         visibleTrackCount={visibleTrackCount}
       />
-      {!hasVideo && <fog attach="fog" args={['#050508', 18, 45]} />}
-      {!hasVideo && <color attach="background" args={['#050508']} />}
+      {!hasVideo && <fog attach="fog" args={['#060708', 18, 45]} />}
+      {!hasVideo && <color attach="background" args={['#060708']} />}
+      {!hasVideo && <AtmosphereBackdrop />}
 
       {/* Highway lighting is intentionally fixed — venue cues never modulate it.
           The venue is its own visual layer (BackgroundVideo + cssFilter); the

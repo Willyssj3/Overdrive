@@ -23,18 +23,21 @@ const strikelineBaseMaterial = new THREE.MeshStandardMaterial({
   metalness: 0.7,
   roughness: 0.3
 })
+// Signal-blue ("Señal Forjada" token) -- idle vs. playing intensity is driven
+// by isPlaying prop below, since this material is shared across every
+// Strikeline instance and playback state is global to the scene.
 const strikelineGlowBarMaterial = new THREE.MeshStandardMaterial({
   color: '#FFFFFF',
-  emissive: '#4466CC',
-  emissiveIntensity: 1.5,
+  emissive: '#6E8CB8',
+  emissiveIntensity: 0.9,
   metalness: 0.9,
   roughness: 0.1,
   toneMapped: false
 })
 const strikelineUnderGlowMaterial = new THREE.MeshBasicMaterial({
-  color: '#2244AA',
+  color: '#3A4A63',
   transparent: true,
-  opacity: 0.15,
+  opacity: 0.12,
   toneMapped: false
 })
 
@@ -172,11 +175,15 @@ function FretPad({
 export function Strikeline({
   instrumentType,
   offsetX = 0,
-  pressedLanes
+  pressedLanes,
+  isPlaying = false,
+  starPowerActive = false
 }: {
   instrumentType: InstrumentRenderType
   offsetX?: number
   pressedLanes: { index: number; brightness: number }[]
+  isPlaying?: boolean
+  starPowerActive?: boolean
 }): React.JSX.Element {
   const isProKeys = instrumentType === 'proKeys'
   const isVocals = instrumentType === 'vocals'
@@ -189,6 +196,18 @@ export function Strikeline({
   const { laneCount, laneWidth } = getLaneConfig(instrumentType)
   const isDrum = instrumentType === 'drums'
   const assets = useContext(HighwayAssetsContext)
+
+  // Star Power "charged" accent -- per-instance (not module-shared like the
+  // base glow bar) so one instrument's active phrase never bleeds its color
+  // into another instrument's strikeline when several tracks play at once.
+  const spGlowMaterial = useMemo(() => {
+    return new THREE.MeshBasicMaterial({
+      color: '#8FF0FF',
+      transparent: true,
+      opacity: 0.55,
+      toneMapped: false
+    })
+  }, [])
 
   // Memoized materials for dynamic strikeline overlays
   const simplifiedGlowMaterial = useMemo(() => {
@@ -269,6 +288,13 @@ export function Strikeline({
     kickFlashMat.opacity = kickBrightness * 0.5
   }, [kickFlashMat, kickBrightness])
 
+  // Strikeline "powers on" when playback starts -- brighter glow, stronger
+  // under-glow bleed. Shared across all instrument tracks (same isPlaying).
+  useEffect(() => {
+    strikelineGlowBarMaterial.emissiveIntensity = isPlaying ? 2.1 : 0.9
+    strikelineUnderGlowMaterial.opacity = isPlaying ? 0.26 : 0.12
+  }, [isPlaying])
+
   useEffect(() => {
     profile.notes.forEach((_, i) => {
       const pressed = pressedLanes.find((p) => p.index === i)
@@ -283,6 +309,7 @@ export function Strikeline({
   // Safely dispose of memoized GPU materials and geometries on unmount
   useEffect(() => {
     return () => {
+      spGlowMaterial.dispose()
       simplifiedGlowMaterial.dispose()
       kickUnderGlowMaterial.dispose()
       kickFretMaterialDrums.dispose()
@@ -292,7 +319,7 @@ export function Strikeline({
       kickFlashGeo.dispose()
       kickFlashMat.dispose()
     }
-  }, [simplifiedGlowMaterial, kickUnderGlowMaterial, kickFretMaterialDrums, kickFretMaterialNonDrums, laneGlowMaterials, laneGlowGeo, kickFlashGeo, kickFlashMat])
+  }, [spGlowMaterial, simplifiedGlowMaterial, kickUnderGlowMaterial, kickFretMaterialDrums, kickFretMaterialNonDrums, laneGlowMaterials, laneGlowGeo, kickFlashGeo, kickFlashMat])
 
   return (
     <group position={[offsetX, 0, 0]}>
@@ -300,6 +327,9 @@ export function Strikeline({
       <mesh position={[0, 0.015, STRIKE_LINE_POS]} geometry={strikelineBaseGeo} material={strikelineBaseMaterial} />
       <mesh position={[0, 0.035, STRIKE_LINE_POS - 0.01]} rotation={[0.15, 0, 0]} geometry={strikelineGlowBarGeo} material={strikelineGlowBarMaterial} />
       <mesh position={[0, 0.001, STRIKE_LINE_POS + 0.08]} geometry={strikelineUnderGlowGeo} material={strikelineUnderGlowMaterial} />
+      {starPowerActive && (
+        <mesh position={[0, 0.038, STRIKE_LINE_POS - 0.01]} rotation={[0.15, 0, 0]} geometry={strikelineGlowBarGeo} material={spGlowMaterial} />
+      )}
 
       {/* Glow under pressed lanes */}
       {!isProKeys && !isVocals && profile.notes.map((_, i) => {

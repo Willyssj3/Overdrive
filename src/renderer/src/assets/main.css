@@ -1,5 +1,23 @@
 /* Chart Editor - Main Styles */
 
+/* Display face -- panel headers and primary CTAs only, never body text.
+   Latin subset (google fonts v17), covers Spanish diacritics
+   (á é í ó ú ñ ¿ ¡) in full -- verified before committing to this face. */
+@font-face {
+  font-family: 'Rajdhani';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/rajdhani-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Rajdhani';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/rajdhani-700.woff2') format('woff2');
+}
+
 /* CSS Variables - "Señal Forjada" (Forged Signal) dark theme, tokens verified
    against Overdrive.png. Token NAMES are unchanged from the previous theme
    (hundreds of existing component rules reference them) -- only values move,

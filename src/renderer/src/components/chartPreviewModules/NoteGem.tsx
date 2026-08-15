@@ -108,6 +108,27 @@ function checkAssetsChange(assets: HighwayAssets | null): void {
   }
 }
 
+// Fresnel rim term injected into the standard shader -- a cool "studio light"
+// edge highlight so gems read as lit chrome/gem hybrids rather than flat
+// color blocks, independent of the baked emissive map. vViewPosition/vNormal
+// are always declared for MeshStandardMaterial's fragment shader.
+const RIM_COLOR = new THREE.Color('#9fb8e8')
+function addRimLight(mat: THREE.MeshStandardMaterial, intensity: number): void {
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.rimColor = { value: RIM_COLOR }
+    shader.uniforms.rimIntensity = { value: intensity }
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', '#include <common>\nuniform vec3 rimColor;\nuniform float rimIntensity;')
+      .replace(
+        '#include <dithering_fragment>',
+        `float rimFresnel = pow(1.0 - saturate(dot(normalize(vNormal), normalize(vViewPosition))), 3.0);
+        gl_FragColor.rgb += rimColor * rimFresnel * rimIntensity;
+        #include <dithering_fragment>`
+      )
+  }
+  mat.needsUpdate = true
+}
+
 export function getSharedNoteMaterial(
   color: string,
   isSelected: boolean,
@@ -130,6 +151,7 @@ export function getSharedNoteMaterial(
       opacity: isGhost ? 0.5 : 1,
       toneMapped: false
     })
+    addRimLight(mat, isGhost ? 0.2 : 0.45)
     sharedMaterials.set(key, mat)
   }
   return mat
@@ -211,6 +233,7 @@ export function getSharedKickHeadMaterial(
       roughness: 0.3,
       toneMapped: false
     })
+    addRimLight(mat, 0.4)
     sharedKickHeadMaterials.set(key, mat)
   }
   return mat

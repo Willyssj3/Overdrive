@@ -1,5 +1,6 @@
 // Highway Edit Layer - Click-to-place/erase editing via raycasting
-import { useMemo, useState, useCallback, useRef } from 'react'
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import {
   TRACK_WIDTH, STRIKE_LINE_POS, HIGHWAY_LENGTH, COLORS, DRUM_KICK_COLOR,
@@ -8,8 +9,86 @@ import {
 } from './constants'
 import type { InstrumentRenderType } from './constants'
 import { getSongStore, useUIStore } from '../../stores'
+import { sharedGeometries } from './NoteGem'
 import type { Note, NoteFlags, NoteModifiers, Instrument, Difficulty, ProGuitarString } from '../../types'
 import type { HighwayAssets, EditingTool } from './types'
+
+// A brief expanding/fading spark at the exact spot a note was just placed --
+// imperative pooled meshes (same pattern as HitEffectsGroup in
+// AnimatedHighwayScene) so it never triggers React re-renders on the click path.
+const PLACEMENT_BURST_DURATION_MS = 350
+
+type PlacementBurst = { x: number; z: number; color: string; startTime: number }
+
+function PlacementBurstGroup({
+  queueRef
+}: {
+  queueRef: React.MutableRefObject<PlacementBurst[]>
+}): React.JSX.Element {
+  const groupRef = useRef<THREE.Group>(null)
+  const poolRef = useRef<
+    { sphere: THREE.Mesh; sphereMat: THREE.MeshBasicMaterial; ring: THREE.Mesh; ringMat: THREE.MeshBasicMaterial }[]
+  >([])
+
+  useEffect(() => {
+    return () => {
+      for (const item of poolRef.current) {
+        item.sphereMat.dispose()
+        item.ringMat.dispose()
+      }
+    }
+  }, [])
+
+  useFrame(() => {
+    const group = groupRef.current
+    if (!group) return
+    const now = performance.now()
+    if (queueRef.current.length > 0) {
+      queueRef.current = queueRef.current.filter((b) => now - b.startTime < PLACEMENT_BURST_DURATION_MS)
+    }
+    const active = queueRef.current
+
+    for (const item of poolRef.current) {
+      item.sphere.visible = false
+      item.ring.visible = false
+    }
+
+    active.forEach((b, i) => {
+      let item = poolRef.current[i]
+      if (!item) {
+        const sphereMat = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, toneMapped: false })
+        const sphere = new THREE.Mesh(sharedGeometries.flashSphere, sphereMat)
+        const ringMat = new THREE.MeshBasicMaterial({
+          transparent: true,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+          toneMapped: false
+        })
+        const ring = new THREE.Mesh(sharedGeometries.flashRing, ringMat)
+        ring.rotation.x = -Math.PI / 2
+        group.add(sphere, ring)
+        item = { sphere, sphereMat, ring, ringMat }
+        poolRef.current[i] = item
+      }
+      const progress = Math.min(1, (now - b.startTime) / PLACEMENT_BURST_DURATION_MS)
+      const scale = 0.22 + progress * 1.0
+      const opacity = Math.max(0, (1 - progress) * 0.75)
+      item.sphereMat.color.set(b.color)
+      item.sphereMat.opacity = opacity
+      item.sphere.position.set(b.x, 0.05, b.z)
+      item.sphere.scale.setScalar(scale)
+      item.sphere.visible = true
+      item.ringMat.color.set(b.color)
+      item.ringMat.opacity = opacity * 0.6
+      item.ring.position.set(b.x, 0.04, b.z)
+      const ringScale = scale * 1.7
+      item.ring.scale.set(ringScale, ringScale, 1)
+      item.ring.visible = true
+    })
+  })
+
+  return <group ref={groupRef} />
+}
 
 // Build note flags from UI toggle modifiers
 function buildNoteFlags(instrument: Instrument, mods: NoteModifiers): NoteFlags | undefined {
@@ -219,6 +298,7 @@ export function HighwayEditLayer({
     preAddSnapshot?: unknown
   } | null>(null)
   const isDragging = useRef(false)
+  const burstQueueRef = useRef<PlacementBurst[]>([])
 
   const highwayCenterZ = STRIKE_LINE_POS - HIGHWAY_LENGTH / 2
 
@@ -448,6 +528,15 @@ export function HighwayEditLayer({
           ...(normalizedFlags ? { flags: normalizedFlags } : {}),
           ...(isProGtr ? { string: noteLane as ProGuitarString, fret: 0 } : {})
         })
+        burstQueueRef.current = [
+          ...burstQueueRef.current.slice(-7),
+          {
+            x: e.point.x,
+            z: e.point.z,
+            color: isKickPlacement ? DRUM_KICK_COLOR : (colors[lane % colors.length] || '#FFFFFF'),
+            startTime: performance.now()
+          }
+        ]
         // For non-drum instruments, start sustain drag
         if (instrument !== 'drums') {
           const newNotes = store.getState().song.notes
@@ -529,6 +618,7 @@ export function HighwayEditLayer({
           <meshBasicMaterial color="#FF3333" transparent opacity={0.6} side={THREE.DoubleSide} toneMapped={false} />
         </mesh>
       )}
+      <PlacementBurstGroup queueRef={burstQueueRef} />
     </group>
   )
 }

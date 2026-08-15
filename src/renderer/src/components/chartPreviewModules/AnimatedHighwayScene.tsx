@@ -264,11 +264,17 @@ export function AnimatedHighwayScene({
           )
         }
 
+        // Star Power "charged" state -- true only while playback is actually
+        // inside one of THIS instrument's phrases, never during idle editing.
+        const spActive = isPlaying && starPowerPhrases.some(
+          (sp) => sp.instrument === instrument && currentTick >= sp.tick && currentTick <= sp.tick + sp.duration
+        )
+
         return (
           <group key={instrument}>
             <TrackLabel instrument={instrument} offsetX={offsetX} />
             <Highway instrumentType={instrumentType} offsetX={offsetX} currentTick={currentTick} pixelsPerTick={pixelsPerTick} proKeysViewStart={proKeysViewStart} />
-            <Strikeline instrumentType={instrumentType} offsetX={offsetX} pressedLanes={lanePresses} />
+            <Strikeline instrumentType={instrumentType} offsetX={offsetX} pressedLanes={lanePresses} isPlaying={isPlaying} starPowerActive={spActive} />
             <BeatGrid currentTick={currentTick} ticksPerBeat={480} pixelsPerTick={pixelsPerTick} offsetX={offsetX} tempoEvents={tempoEvents} />
             {waveform && (
               <HighwayWaveform waveform={waveform} currentTick={currentTick} pixelsPerTick={pixelsPerTick} offsetX={offsetX} />
@@ -282,6 +288,7 @@ export function AnimatedHighwayScene({
               songId={songId}
               editTool={editTool}
               selectedSpId={selectedSpId}
+              isPlaying={isPlaying}
             />
             <SoloOverlay
               sections={soloSections}
@@ -342,7 +349,8 @@ function StarPowerOverlay({
   offsetX,
   songId,
   editTool,
-  selectedSpId
+  selectedSpId,
+  isPlaying
 }: {
   phrases: { id: string; tick: number; duration: number; instrument: string }[]
   instrument: string
@@ -352,6 +360,7 @@ function StarPowerOverlay({
   songId: string
   editTool: string
   selectedSpId: string | null
+  isPlaying: boolean
 }): React.JSX.Element {
   const visibleTicks = HIGHWAY_LENGTH / pixelsPerTick + 500
   const visible = phrases.filter(
@@ -382,6 +391,14 @@ function StarPowerOverlay({
         const length = startZ - endZ
         const centerZ = endZ + length / 2
         const isSelected = sp.id === selectedSpId
+        // "Charged" state: playback is actually inside this phrase right now
+        // (vs. just viewing/editing it) -- a gentle brightness pulse derived
+        // from currentTick itself, so it animates naturally during playback
+        // without needing a separate wall-clock frame loop.
+        const isActive = isPlaying && currentTick >= sp.tick && currentTick <= sp.tick + sp.duration
+        const pulse = isActive ? 0.6 + 0.4 * Math.sin(currentTick * 0.025) : 0
+        const opacity = isActive ? 0.28 + pulse * 0.24 : isSelected ? 0.25 : 0.12
+        const color = isActive ? '#8FF0FF' : isSelected ? '#33EEFF' : '#00CCFF'
         return (
           <mesh
             key={`sp-${sp.id}`}
@@ -390,9 +407,9 @@ function StarPowerOverlay({
           >
             <boxGeometry args={[TRACK_WIDTH * 0.98, 0.002, Math.abs(length)]} />
             <meshBasicMaterial
-              color={isSelected ? '#33EEFF' : '#00CCFF'}
+              color={color}
               transparent
-              opacity={isSelected ? 0.25 : 0.12}
+              opacity={opacity}
               depthWrite={false}
               toneMapped={false}
             />

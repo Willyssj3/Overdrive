@@ -112,8 +112,39 @@
   background-position: 100% 0;
 }
 
+/* AI progress fill -- one of the five sanctioned orange-ramp uses (see
+   assets/main.css). A pixel-tick overlay dissolves into the shimmering
+   gradient, echoing the logo's waveform-to-pixels motif on the one bar
+   in the app that represents the AI auto-charting pipeline actually running. */
+.auto-chart-progress-bar .toolbar-updater-bar-fill {
+  background: var(--orange-gradient);
+  background-size: 200% 100%;
+  animation: toolbar-accent-shimmer 2.4s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.auto-chart-progress-bar .toolbar-updater-bar-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.4) 0px,
+    rgba(255, 255, 255, 0.4) 2px,
+    transparent 2px,
+    transparent 6px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .toolbar-button-accent:not(:disabled) {
+    animation: none;
+  }
+
+  .auto-chart-progress-bar .toolbar-updater-bar-fill {
     animation: none;
   }
 }

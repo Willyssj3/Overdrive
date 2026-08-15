@@ -444,9 +444,10 @@
 }
 
 .edit-tool-button.active {
-  border-color: var(--accent-color);
+  border-color: var(--orange-core);
   background: var(--accent-color-transparent);
   color: var(--text-primary);
+  box-shadow: 0 0 0 1px var(--orange-core), 0 0 8px rgba(245, 130, 31, 0.45);
 }
 
 /* Note modifier toggles (shared) */

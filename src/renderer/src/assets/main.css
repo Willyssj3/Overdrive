@@ -1,31 +1,40 @@
 /* Chart Editor - Main Styles */
 
-/* CSS Variables - Dark Theme */
+/* CSS Variables - "Señal Forjada" (Forged Signal) dark theme, tokens verified
+   against Overdrive.png. Token NAMES are unchanged from the previous theme
+   (hundreds of existing component rules reference them) -- only values move,
+   plus a small set of new brand-specific tokens are added for Fase 1 to
+   adopt (chrome/orange ramps, signal-blue, lane colors, gradients). */
 :root {
-  /* Background colors */
-    --bg-primary: #111315;
-    --bg-secondary: #171a1d;
-    --bg-tertiary: #1f2428;
-    --bg-hover: #283036;
-    --bg-active: #313b44;
+  /* Background colors -- 3-tier surface system (void / panel / panel-raised) */
+    --bg-primary: #060708;
+    --bg-secondary: #111318;
+    --bg-tertiary: #171a20;
+    --bg-hover: #1e222a;
+    --bg-active: #262c35;
 
   /* Text colors */
-    --text-primary: #e7ecef;
-    --text-secondary: #afb8bf;
-    --text-muted: #78848d;
+    --text-primary: #f2f3f5;
+    --text-secondary: #9aa0a6;
+    --text-muted: #565b63;
 
   /* Border colors */
-    --border-color: #2c343b;
-    --border-color-hover: #3a454e;
+    --border-color: #2a2d33;
+    --border-color-hover: #3a3f47;
 
-  /* Accent colors */
-    --accent-color: #f2a65a;
-    --accent-color-hover: #ffb56f;
-    --accent-color-transparent: rgba(242, 166, 90, 0.2);
-    --accent-secondary: #41c6b8;
-    --accent-secondary-transparent: rgba(65, 198, 184, 0.18);
+  /* Accent colors -- primary accent is the logo's orange ramp midpoint;
+     secondary accent is the logo's waveform/signal blue, recalibrated
+     steel-toned rather than vivid to match the real PNG sampling */
+    --accent-color: #f5821f;
+    --accent-color-hover: #ffc145;
+    --accent-color-transparent: rgba(245, 130, 31, 0.2);
+    --accent-secondary: #6e8cb8;
+    --accent-secondary-transparent: rgba(110, 140, 184, 0.18);
 
-  /* Status colors */
+  /* Status colors -- deliberately independent from the lane colors below
+     even where a value is close, so a future lane recolor can't silently
+     break error/success states (and to stay unambiguous for colorblind
+     users) */
     --success-color: #49d17d;
     --warning-color: #f2a65a;
     --danger-color: #f06d6d;
@@ -42,6 +51,36 @@
 
     --font-ui: 'Aptos', 'Segoe UI Variable', 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
     --font-mono: 'Cascadia Code', 'IBM Plex Mono', 'Consolas', monospace;
+    --font-display: 'Rajdhani', 'Oswald', 'Segoe UI Semibold', var(--font-ui);
+
+  /* Chrome ramp -- "OVER" half of the wordmark, panel headers, neutral iconography */
+    --chrome-100: #eef1f5;
+    --chrome-300: #c9ced6;
+    --chrome-600: #7a8291;
+    --chrome-900: #2a2d33;
+    --chrome-gradient: linear-gradient(135deg, var(--chrome-100), var(--chrome-300) 45%, var(--chrome-600));
+
+  /* Orange ramp -- "DRIVE" half, primary action only (Auto-Chart, Open Folder,
+     active tab underline, active-tool ring, AI progress fill -- max ~5 uses
+     app-wide, do not reach for this for anything else) */
+    --orange-hot: #ffc145;
+    --orange-core: #f5821f;
+    --orange-deep: #e8432c;
+    --orange-gradient: linear-gradient(135deg, var(--orange-hot), var(--orange-core) 55%, var(--orange-deep));
+
+  /* Signal blue -- strikeline glow during playback, AI loader, secondary accent */
+    --signal-blue: #6e8cb8;
+    --signal-blue-dim: #3a4a63;
+
+  /* Lane colors -- functional only (identify which of the 5 frets/lanes a
+     note belongs to). Matches the logo exactly. Deliberately NOT reused as
+     semantic success/danger colors -- see status colors above. */
+    --lane-green: #3ddc5a;
+    --lane-red: #e8392f;
+    --lane-yellow: #f5c518;
+    --lane-blue: #2e9df5;
+    --lane-orange: #f5821f;
+    --lane-gradient: linear-gradient(90deg, var(--lane-green), var(--lane-red), var(--lane-yellow), var(--lane-blue), var(--lane-orange));
 }
 
 /* Reset and base styles */
@@ -63,8 +102,7 @@ body {
   line-height: 1.5;
   color: var(--text-primary);
   background:
-    radial-gradient(circle at 20% -10%, rgba(242, 166, 90, 0.12), transparent 45%),
-    radial-gradient(circle at 100% 0%, rgba(65, 198, 184, 0.1), transparent 40%),
+    radial-gradient(ellipse 900px 500px at 50% -10%, rgba(110, 140, 184, 0.10), transparent 60%),
     var(--bg-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

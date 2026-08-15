@@ -301,18 +301,19 @@
 .explorer-open-button {
   margin-top: 16px;
   padding: 9px 18px;
-  background-color: var(--accent-color);
+  background: var(--orange-gradient);
+  background-size: 200% 100%;
   color: #1f1a13;
   border: none;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-position 0.2s ease;
 }
 
 .explorer-open-button:hover {
-  background-color: var(--accent-color-hover);
+  background-position: 100% 0;
 }
 
 /* New Song Dialog */

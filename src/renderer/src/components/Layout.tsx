@@ -112,6 +112,7 @@ export function Layout(): React.JSX.Element {
             <ChartPreview />
           </div>
         </div>
+        <div className="lane-stripe" />
       </div>
     )
   }
@@ -142,6 +143,7 @@ export function Layout(): React.JSX.Element {
           </Allotment.Pane>
         </Allotment>
       </div>
+      <div className="lane-stripe" />
     </div>
   )
 }

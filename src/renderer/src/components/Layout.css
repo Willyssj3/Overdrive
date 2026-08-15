@@ -16,6 +16,15 @@
   min-height: 0;
 }
 
+/* Permanent brand watermark -- the 5 lane colors, taken directly from the
+   underline below the tagline in Overdrive.png. Static, independent of any
+   panel's state. */
+.lane-stripe {
+  flex-shrink: 0;
+  height: 3px;
+  background: var(--lane-gradient);
+}
+
 /* ==================== */
 /* Allotment overrides for dark theme */
 /* ==================== */
@@ -83,7 +92,8 @@
   justify-content: space-between;
   padding: 10px 14px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)) , var(--bg-tertiary);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, var(--chrome-600), var(--chrome-900) 70%, transparent) 1;
   font-size: 11px;
   font-weight: 600;
   text-transform: none;

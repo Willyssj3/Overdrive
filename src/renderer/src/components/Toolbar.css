@@ -95,14 +95,32 @@
 }
 
 .toolbar-button-accent {
-  background-color: var(--accent-color);
+  background: var(--orange-gradient);
+  background-size: 200% 100%;
   border-color: rgba(0, 0, 0, 0.18);
   color: #1f1a13;
   font-weight: 700;
+  position: relative;
+  overflow: hidden;
+}
+
+.toolbar-button-accent:not(:disabled) {
+  animation: toolbar-accent-shimmer 5s ease-in-out infinite;
 }
 
 .toolbar-button-accent:hover:not(:disabled) {
-  background-color: var(--accent-color-hover);
+  background-position: 100% 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toolbar-button-accent:not(:disabled) {
+    animation: none;
+  }
+}
+
+@keyframes toolbar-accent-shimmer {
+  0%, 85%, 100% { background-position: 0% 0; }
+  92% { background-position: 100% 0; }
 }
 
 .toolbar-icon {

@@ -28,6 +28,13 @@ interface SongEntry {
   hasKeys: boolean
 }
 
+// song.ini values arrive as `string | number` -- a title such as "1979" is
+// legitimately parsed as a number. Everything downstream treats metadata as
+// text, so coerce at the boundary rather than casting and hoping.
+function iniText(value: string | number | undefined): string {
+  return value === undefined || value === null ? '' : String(value)
+}
+
 function isCurrentLibrarySong(songId: string, folderPath: string, loadVersion: number): boolean {
   const project = useProjectStore.getState()
   return (

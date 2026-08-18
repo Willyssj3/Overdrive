@@ -1048,8 +1048,11 @@ export function EditToolSelector({
   )
 }
 
-// Note modifier toggle buttons (shared between 3D preview and piano roll)
-export function NoteModifierToggles(): React.JSX.Element {
+// Note modifier toggle buttons (shared between 3D preview and piano roll).
+// includeTalkie adds the vocal talkie (spoken note) toggle -- meaningful only
+// where vocal notes are being edited directly (the piano roll), so the 3D
+// chart preview overlay leaves it off by default.
+export function NoteModifierToggles({ includeTalkie = false }: { includeTalkie?: boolean }): React.JSX.Element {
   const { t } = useTranslation()
   const mods = useUIStore((s) => s.noteModifiers)
   const toggle = useUIStore((s) => s.toggleModifier)
@@ -1061,7 +1064,10 @@ export function NoteModifierToggles(): React.JSX.Element {
     { key: 'accent', label: t('noteModifiers.accent'), shortcut: hotkeys.toggleAccent, activeColor: '#FF6666' },
     { key: 'openOrKick', label: t('noteModifiers.openKick'), shortcut: hotkeys.toggleOpenOrKick, activeColor: '#CC44FF' },
     { key: 'starPower', label: t('noteModifiers.starPower'), shortcut: hotkeys.toggleStarPower, activeColor: '#00CED1' },
-    { key: 'solo', label: t('noteModifiers.solo'), shortcut: hotkeys.toggleSolo, activeColor: '#FFD700' }
+    { key: 'solo', label: t('noteModifiers.solo'), shortcut: hotkeys.toggleSolo, activeColor: '#FFD700' },
+    ...(includeTalkie
+      ? [{ key: 'talkie' as const, label: t('noteModifiers.talkie'), shortcut: hotkeys.toggleTalkie, activeColor: '#888888' }]
+      : [])
   ]
 
   return (
@@ -1072,7 +1078,9 @@ export function NoteModifierToggles(): React.JSX.Element {
           className={`modifier-toggle-button ${mods[btn.key] ? 'active' : ''}`}
           style={mods[btn.key] ? { backgroundColor: btn.activeColor, color: '#000' } : undefined}
           onClick={() => toggle(btn.key)}
-          title={`${btn.label} (${btn.shortcut})`}
+          title={btn.key === 'openOrKick'
+            ? `${btn.label} (${btn.shortcut}) - Hold Shift while placing a kick for 2x`
+            : `${btn.label} (${btn.shortcut})`}
         >
           <span>{btn.label}</span>
           <kbd>{btn.shortcut}</kbd>

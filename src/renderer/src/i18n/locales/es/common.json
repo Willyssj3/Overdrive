@@ -23,7 +23,8 @@
     "accent": "Acento",
     "openKick": "Abierta/Bombo",
     "starPower": "Star Power",
-    "solo": "Solo"
+    "solo": "Solo",
+    "talkie": "Talkie"
   },
   "layout": {
     "allTopPanelsHiddenTitle": "Todos los paneles superiores están ocultos",

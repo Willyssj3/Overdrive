@@ -10,6 +10,7 @@ import {
 } from '../utils/difficultyReduction'
 import { getAudioDuration, getAudioSources, onAudioLoaded, playPitchPreview, stopPitchPreview } from '../services/audioService'
 import { VocalPitchPlaybackToggle } from './VocalPitchPlaybackToggle'
+import { EditToolSelector, NoteModifierToggles } from './chartPreviewModules/UIOverlays'
 import { buildTickAlignedWaveformPeaks } from '../services/waveformService'
 import './MidiEditor.css'
 
@@ -1958,70 +1959,6 @@ function ProKeysNotes({
   )
 }
 
-// Edit tool selector for MidiEditor toolbar
-function MidiEditToolSelector(): React.JSX.Element {
-  const editTool = useUIStore((s) => s.editTool)
-  const setEditTool = useUIStore((s) => s.setEditTool)
-  const hotkeys = useSettingsStore((s) => s.hotkeys)
-  const tools: { id: EditingTool; label: string; icon: string; shortcut: string }[] = [
-    { id: 'select', label: 'Select', icon: '🖱️', shortcut: hotkeys.toolSelect },
-    { id: 'place', label: 'Place', icon: '✏️', shortcut: hotkeys.toolPlace },
-    { id: 'erase', label: 'Erase', icon: '🗑️', shortcut: hotkeys.toolErase }
-  ]
-
-  return (
-    <div className="edit-tool-selector">
-      {tools.map((tool) => (
-        <button
-          key={tool.id}
-          className={`edit-tool-button ${editTool === tool.id ? 'active' : ''}`}
-          onClick={() => setEditTool(tool.id)}
-          title={`${tool.label} (${tool.shortcut})`}
-        >
-          <span>{tool.icon}</span>
-          <span>{tool.label}</span>
-        </button>
-      ))}
-    </div>
-  )
-}
-
-// Note modifier toggle buttons
-function NoteModifierToggles(): React.JSX.Element {
-  const mods = useUIStore((s) => s.noteModifiers)
-  const toggle = useUIStore((s) => s.toggleModifier)
-  const hotkeys = useSettingsStore((s) => s.hotkeys)
-
-  const buttons: { key: keyof typeof mods; label: string; shortcut: string; activeColor: string }[] = [
-    { key: 'cymbalOrTap', label: 'Cymbal/Tap', shortcut: hotkeys.toggleCymbalOrTap, activeColor: '#FFD700' },
-    { key: 'ghostOrHopo', label: 'Ghost/HOPO', shortcut: hotkeys.toggleGhostOrHopo, activeColor: '#88BBFF' },
-    { key: 'accent', label: 'Accent', shortcut: hotkeys.toggleAccent, activeColor: '#FF6666' },
-    { key: 'openOrKick', label: 'Open/Kick', shortcut: hotkeys.toggleOpenOrKick, activeColor: '#CC44FF' },
-    { key: 'starPower', label: 'Star Power', shortcut: hotkeys.toggleStarPower, activeColor: '#00CED1' },
-    { key: 'solo', label: 'Solo', shortcut: hotkeys.toggleSolo, activeColor: '#FFD700' },
-    { key: 'talkie', label: 'Talkie', shortcut: hotkeys.toggleTalkie, activeColor: '#888888' }
-  ]
-
-  return (
-    <div className="note-modifier-toggles">
-      {buttons.map((btn) => (
-        <button
-          key={btn.key}
-          className={`modifier-toggle-button ${mods[btn.key] ? 'active' : ''}`}
-          style={mods[btn.key] ? { backgroundColor: btn.activeColor, color: '#000' } : undefined}
-          onClick={() => toggle(btn.key)}
-          title={btn.key === 'openOrKick'
-            ? `${btn.label} (${btn.shortcut}) - Hold Shift while placing a kick for 2x`
-            : `${btn.label} (${btn.shortcut})`}
-        >
-          <span>{btn.label}</span>
-          <kbd>{btn.shortcut}</kbd>
-        </button>
-      ))}
-    </div>
-  )
-}
-
 // Shortcut help button (same as the one in ChartPreview, rendered locally)
 function MidiShortcutHelpButton(): React.JSX.Element {
   const [open, setOpen] = useState(false)
@@ -2652,6 +2589,7 @@ export function MidiEditor(): React.JSX.Element {
   // Get song store â€” use reactive selectors for data that changes during playback
   const songStore = activeSongId ? getSongStore(activeSongId) : null
   const editTool = useUIStore((s) => s.editTool)
+  const setEditTool = useUIStore((s) => s.setEditTool)
   const [notes, setNotes] = useState<Note[]>([])
   const eraserCursor = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 21h10'/%3E%3Cpath d='M5.5 11.5 17 23'/%3E%3Cpath d='m2 17 4.5-4.5 6 6L8 23z'/%3E%3Cpath d='m6.5 12.5 6-6 5 5-6 6'/%3E%3Cpath d='m12.5 6.5 4-4 5 5-4 4'/%3E%3C/svg%3E") 4 20, auto`
   const gridCursor = editTool === 'place' ? 'crosshair' : editTool === 'erase' ? eraserCursor : 'default'
@@ -3966,8 +3904,8 @@ export function MidiEditor(): React.JSX.Element {
     <div className="midi-editor" ref={containerRef}>
       {/* Toolbar */}
       <div className="midi-toolbar">
-        <MidiEditToolSelector />
-        <NoteModifierToggles />
+        <EditToolSelector editTool={editTool} setEditTool={setEditTool} />
+        <NoteModifierToggles includeTalkie />
         <SnapSelector
           value={snapDivision}
           onChange={(v) => {

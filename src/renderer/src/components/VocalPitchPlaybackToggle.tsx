@@ -2,16 +2,18 @@
 // (issues #10, #58). Shared between the MIDI editor's vocal pitch header and
 // the chart preview's vocal track overlay so the option is visible wherever
 // vocal notes are shown.
+import { useTranslation } from 'react-i18next'
 import { useUIStore } from '../stores'
 
 export function VocalPitchPlaybackToggle({ showLabel = false }: { showLabel?: boolean }): React.JSX.Element {
+  const { t } = useTranslation()
   const enabled = useUIStore((s) => s.vocalPitchPlayback)
   const toggle = useUIStore((s) => s.toggleVocalPitchPlayback)
   return (
     <button
       title={enabled
-        ? 'Pitch playback on: vocal note pitches sound while the song plays'
-        : 'Pitch playback off: click to hear vocal note pitches while the song plays'}
+        ? t('vocalPitchToggle.tooltipOn')
+        : t('vocalPitchToggle.tooltipOff')}
       style={{
         fontSize: 10, padding: '1px 5px', border: 'none', borderRadius: 3,
         cursor: 'pointer', lineHeight: 1.4,
@@ -21,7 +23,7 @@ export function VocalPitchPlaybackToggle({ showLabel = false }: { showLabel?: bo
       }}
       onClick={toggle}
     >
-      🔊{showLabel ? ' Pitch' : ''}
+      🔊{showLabel ? ` ${t('vocalPitchToggle.label')}` : ''}
     </button>
   )
 }

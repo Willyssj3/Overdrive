@@ -709,5 +709,163 @@
     "hiddenDescription": "Use View menu to re-enable Piano Roll or Timeline.",
     "pianoRoll": "Piano Roll",
     "timeline": "Timeline"
+  },
+  "validationPreview": {
+    "badges": {
+      "error": "✖ Error",
+      "warning": "⚠ Warning",
+      "resolved": "Resolved"
+    },
+    "header": {
+      "tick": "Tick {{tick}}",
+      "jumpToTick": "Jump to Tick"
+    },
+    "quickEdit": {
+      "label": "Quick Edit:",
+      "lanes": {
+        "kick": "Kick",
+        "doubleKick": "2Kick",
+        "snare": "Snare",
+        "yellowTom": "Y-Tom",
+        "yellowCymbal": "Y-Cym",
+        "blueTom": "B-Tom",
+        "blueCymbal": "B-Cym",
+        "greenTom": "G-Tom",
+        "greenCymbal": "G-Cym",
+        "open": "Open",
+        "green": "Green",
+        "red": "Red",
+        "yellow": "Yellow",
+        "blue": "Blue",
+        "orange": "Orange"
+      }
+    },
+    "suggestions": {
+      "label": "Quick suggestions:",
+      "keepOnly": "Keep only {{lane1}} & {{lane2}}",
+      "makeRoll": "Make roll: change {{fromLane}} to {{toLane}}",
+      "deleteLane": "Delete {{lane}}",
+      "removeDuplicate": "Remove duplicate note on {{lane}}"
+    },
+    "status": {
+      "resolved": "Resolved (passes validation)",
+      "unresolved": "Unresolved draft"
+    },
+    "actions": {
+      "revert": "Revert",
+      "applyFix": "Apply Fix"
+    }
+  },
+  "vocalPitchToggle": {
+    "tooltipOn": "Pitch playback on: vocal note pitches sound while the song plays",
+    "tooltipOff": "Pitch playback off: click to hear vocal note pitches while the song plays",
+    "label": "Pitch"
+  },
+  "midiEditor": {
+    "laneLabels": {
+      "kick": "Kick",
+      "doubleKick": "Double Kick",
+      "snare": "Snare",
+      "yellowTom": "Yellow Tom",
+      "yellowCymbal": "Yellow Cymbal",
+      "blueTom": "Blue Tom",
+      "blueCymbal": "Blue Cymbal",
+      "greenTom": "Green Tom",
+      "greenCymbal": "Green Cymbal",
+      "green": "Green",
+      "red": "Red",
+      "yellow": "Yellow",
+      "blue": "Blue",
+      "orange": "Orange",
+      "open": "Open"
+    },
+    "laneMarkers": {
+      "drumRoll": "Drum Roll",
+      "trill": "Trill",
+      "tremolo": "Tremolo",
+      "bre": "BRE",
+      "discoFlip": "Disco Flip"
+    },
+    "laneNames": {
+      "starPower": "Star Power",
+      "solo": "Solo",
+      "laneMarkers": "Lane Markers"
+    },
+    "waveformStrip": {
+      "unavailable": "Waveform unavailable",
+      "label": "Waveform"
+    },
+    "vocalNotes": {
+      "talkieLabel": "TALKIE"
+    },
+    "shortcutHelp": {
+      "markDoubleBass": "Mark as double bass (double kick)"
+    },
+    "toolbar": {
+      "snapLabel": "Snap:",
+      "snapToGridButton": "Snap to Grid",
+      "snapToGridTooltipSelected": "Nudge {{count}} selected note(s) that sit just off the 1/{{division}} grid onto it (off-grid notes are left alone)",
+      "snapToGridTooltipAll": "Nudge notes that sit just off the 1/{{division}} grid onto it (off-grid notes are left alone)",
+      "zoomLabel": "Zoom:",
+      "waveformLabel": "Waveform:",
+      "waveformMixOption": "Mix",
+      "fretLabel": "Fret:",
+      "scrollHint": "Scroll: vertical | Shift+Scroll: horizontal | Ctrl+Scroll: zoom"
+    },
+    "swapLanesTool": {
+      "tooltip": "Swap all notes between two lanes",
+      "buttonLabel": "Swap Lanes",
+      "instrumentLabel": "Instrument",
+      "laneALabel": "Lane A",
+      "laneBLabel": "Lane B",
+      "allDifficultiesLabel": "All difficulties",
+      "swapButton": "Swap"
+    },
+    "generateFromExpertTool": {
+      "tooltipEmpty": "Chart something on Expert first — lower difficulties are derived from it",
+      "tooltipReady": "Derive Hard / Medium / Easy from the Expert chart",
+      "buttonLabel": "Generate from Expert",
+      "instrumentsLabel": "Instruments",
+      "difficultiesLabel": "Difficulties to write",
+      "overwriteWarning": "Replaces {{count}} existing note(s) on the selected difficulties. Undo (Ctrl+Z) restores them.",
+      "generateButton": "Generate"
+    },
+    "instrumentNames": {
+      "drums": "Drums",
+      "guitar": "Guitar",
+      "bass": "Bass",
+      "keys": "Keys",
+      "proKeys": "Pro Keys",
+      "proGuitar": "Pro Guitar",
+      "proBass": "Pro Bass",
+      "vocals": "Vocals"
+    },
+    "difficultyNames": {
+      "hard": "Hard",
+      "medium": "Medium",
+      "easy": "Easy"
+    },
+    "emptyState": {
+      "title": "No Song Selected",
+      "description": "Select a song to edit its notes in the piano roll"
+    },
+    "harmonyParts": {
+      "tabs": {
+        "main": "Main",
+        "h1": "H1",
+        "h2": "H2",
+        "h3": "H3"
+      },
+      "fullNames": {
+        "main": "Main Vocals",
+        "h1": "Harmony 1",
+        "h2": "Harmony 2",
+        "h3": "Harmony 3"
+      },
+      "addTooltip": "Add {{part}}",
+      "removeTooltip": "Remove all notes from {{part}}",
+      "deleteConfirm": "Delete all notes and phrases for {{part}}?",
+      "deleteButton": "Del"
+    }
   }
 }

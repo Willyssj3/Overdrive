@@ -1,5 +1,7 @@
 // MIDI Editor - Piano roll style note editor
 import { useRef, useEffect, useLayoutEffect, useState, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import { useProjectStore, getSongStore, useSettingsStore, useUIStore } from '../stores'
 import type { Note, NoteFlags, NoteModifiers, Instrument, DrumLane, GuitarLane, Difficulty, EditingTool, StarPowerPhrase, SoloSection, LaneMarker, LaneMarkerType, VocalNote, VocalPhrase, HarmonyPart,TempoEvent } from '../types'
 import { PRO_KEYS_MIN, PRO_KEYS_MAX, SUSTAIN_THRESHOLD_MID, SUSTAIN_THRESHOLD_CHART } from '../types'
@@ -110,26 +112,27 @@ function midiNoteName(midi: number): string {
   return `${NOTE_NAMES[midi % 12]}${Math.floor(midi / 12) - 1}`
 }
 
-function formatLaneLabel(lane: string): string {
-  const labels: Record<string, string> = {
-    kick: 'Kick',
-    doubleKick: 'Kick 2x',
-    snare: 'Snare',
-    yellowTom: 'Yellow Tom',
-    yellowCymbal: 'Yellow Cymbal',
-    blueTom: 'Blue Tom',
-    blueCymbal: 'Blue Cymbal',
-    greenTom: 'Green Tom',
-    greenCymbal: 'Green Cymbal',
-    green: 'Green',
-    red: 'Red',
-    yellow: 'Yellow',
-    blue: 'Blue',
-    orange: 'Orange',
-    open: 'Open'
-  }
+const LANE_LABEL_KEYS: Record<string, string> = {
+  kick: 'kick',
+  doubleKick: 'doubleKick',
+  snare: 'snare',
+  yellowTom: 'yellowTom',
+  yellowCymbal: 'yellowCymbal',
+  blueTom: 'blueTom',
+  blueCymbal: 'blueCymbal',
+  greenTom: 'greenTom',
+  greenCymbal: 'greenCymbal',
+  green: 'green',
+  red: 'red',
+  yellow: 'yellow',
+  blue: 'blue',
+  orange: 'orange',
+  open: 'open'
+}
 
-  return labels[lane] || lane
+function formatLaneLabel(t: TFunction, lane: string): string {
+  const key = LANE_LABEL_KEYS[lane]
+  return key ? t(`midiEditor.laneLabels.${key}`) : lane
 }
 
 function PianoRollWaveformStrip({
@@ -151,6 +154,7 @@ function PianoRollWaveformStrip({
   tempoEvents: TempoEvent[]
   sourcePath?: string
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [audioVersion, setAudioVersion] = useState(0)
 
@@ -212,14 +216,14 @@ function PianoRollWaveformStrip({
       ctx.font = '11px sans-serif'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
-      ctx.fillText('Waveform unavailable', w / 2, h / 2)
+      ctx.fillText(t('midiEditor.waveformStrip.unavailable'), w / 2, h / 2)
     }
-  }, [waveform, currentTick, scrollX, width, zoomLevel])
+  }, [waveform, currentTick, scrollX, width, zoomLevel, t])
 
   return (
     <div className="midi-waveform-strip" aria-hidden="true">
       <div className="midi-waveform-label" style={{ width: headerWidth }}>
-        Waveform
+        {t('midiEditor.waveformStrip.label')}
       </div>
       <div className="midi-waveform-canvas-wrap">
         <canvas ref={canvasRef} className="midi-waveform-canvas" />
@@ -407,6 +411,7 @@ function StarPowerLane({
   editTool: EditingTool
   snapDivision: number
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const height = MIDI_EDITOR_CONFIG.spRowHeight
   const pixelsPerTick = MIDI_EDITOR_CONFIG.pixelsPerTick * zoomLevel
   const dragRef = useRef<{
@@ -609,7 +614,7 @@ function StarPowerLane({
                 whiteSpace: 'nowrap',
                 pointerEvents: 'none'
               }}>
-                Star Power
+                {t('midiEditor.laneNames.starPower')}
               </span>
             )}
           </div>
@@ -645,6 +650,7 @@ function SoloLane({
   editTool: EditingTool
   snapDivision: number
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const height = MIDI_EDITOR_CONFIG.spRowHeight
   const pixelsPerTick = MIDI_EDITOR_CONFIG.pixelsPerTick * zoomLevel
   const dragRef = useRef<{
@@ -797,7 +803,7 @@ function SoloLane({
                 fontSize: 9, fontWeight: 600, color: '#000', textShadow: '0 0 4px rgba(255,255,255,0.3)',
                 whiteSpace: 'nowrap', pointerEvents: 'none'
               }}>
-                Solo
+                {t('midiEditor.laneNames.solo')}
               </span>
             )}
           </div>
@@ -815,8 +821,12 @@ const LANE_MARKER_COLORS: Record<string, string> = {
   bre: 'rgba(220,50,50,0.65)',
   discoFlip: 'rgba(180,60,220,0.55)'
 }
-const LANE_MARKER_LABELS: Record<string, string> = {
-  drumRoll: 'Drum Roll', trill: 'Trill', tremolo: 'Tremolo', bre: 'BRE', discoFlip: 'Disco Flip'
+const LANE_MARKER_LABEL_KEYS: Record<string, string> = {
+  drumRoll: 'drumRoll', trill: 'trill', tremolo: 'tremolo', bre: 'bre', discoFlip: 'discoFlip'
+}
+function getLaneMarkerLabel(t: TFunction, type: string): string {
+  const key = LANE_MARKER_LABEL_KEYS[type]
+  return key ? t(`midiEditor.laneMarkers.${key}`) : type
 }
 function LaneMarkerLane({
   markers,
@@ -835,6 +845,7 @@ function LaneMarkerLane({
   editTool: EditingTool
   snapDivision: number
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const height = MIDI_EDITOR_CONFIG.spRowHeight
   const pixelsPerTick = MIDI_EDITOR_CONFIG.pixelsPerTick * zoomLevel
   const isDrum = instrument === 'drums'
@@ -926,16 +937,16 @@ function LaneMarkerLane({
     <div style={{ position: 'relative', flex: 1, height, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       {/* Type selector tabs */}
       <div style={{ display: 'flex', height: 12, gap: 2, paddingLeft: 2, paddingTop: 1, flexShrink: 0 }}>
-        {availableTypes.map((t) => (
+        {availableTypes.map((markerType) => (
           <button
-            key={t}
-            onClick={() => setActiveType(t)}
+            key={markerType}
+            onClick={() => setActiveType(markerType)}
             style={{
               fontSize: 8, padding: '0 3px', height: 10, border: 'none', borderRadius: 2, cursor: 'pointer',
-              backgroundColor: activeType === t ? LANE_MARKER_COLORS[t] : 'rgba(255,255,255,0.08)',
-              color: activeType === t ? '#fff' : 'rgba(255,255,255,0.5)'
+              backgroundColor: activeType === markerType ? LANE_MARKER_COLORS[markerType] : 'rgba(255,255,255,0.08)',
+              color: activeType === markerType ? '#fff' : 'rgba(255,255,255,0.5)'
             }}
-          >{LANE_MARKER_LABELS[t]}</button>
+          >{getLaneMarkerLabel(t, markerType)}</button>
         ))}
       </div>
       {/* Marker canvas area */}
@@ -961,7 +972,7 @@ function LaneMarkerLane({
             >
               {w > 30 && (
                 <span style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%,-50%)', fontSize: 8, color: '#fff', whiteSpace: 'nowrap', pointerEvents: 'none' }}>
-                  {LANE_MARKER_LABELS[marker.type]}
+                  {getLaneMarkerLabel(t, marker.type)}
                 </span>
               )}
             </div>
@@ -1421,6 +1432,7 @@ function VocalNotes({
   onGridMouseDown: (e: React.MouseEvent<HTMLElement>) => void
   starPowerPhrases: StarPowerPhrase[]
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [editingLyric, setEditingLyric] = useState<{
     noteId: string; x: number; y: number; lyric: string
@@ -1594,7 +1606,7 @@ function VocalNotes({
         ctx.font = 'bold 10px sans-serif'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
-        ctx.fillText('TALKIE', x + nw / 2, totalHeight / 2)
+        ctx.fillText(t('midiEditor.vocalNotes.talkieLabel'), x + nw / 2, totalHeight / 2)
       }
 
       if (note.lyric) {
@@ -1665,7 +1677,7 @@ function VocalNotes({
         ctx.fillText(note.lyric, x + 2, y - 2, Math.max(nw, 60))
       }
     }
-  }, [visibleNotes, selectedNoteIds, width, height, partPhrases, starPowerPhrases, pixelsPerTick, scrollX, pitchRange, pitchMax, pitchMin, rowHeight, harmonyPart])
+  }, [visibleNotes, selectedNoteIds, width, height, partPhrases, starPowerPhrases, pixelsPerTick, scrollX, pitchRange, pitchMax, pitchMin, rowHeight, harmonyPart, t])
 
   // Hit testing
   const handleClick = useCallback(
@@ -1961,6 +1973,7 @@ function ProKeysNotes({
 
 // Shortcut help button (same as the one in ChartPreview, rendered locally)
 function MidiShortcutHelpButton(): React.JSX.Element {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -2026,7 +2039,7 @@ function MidiShortcutHelpButton(): React.JSX.Element {
         ref={buttonRef}
         className={`shortcut-help-toggle ${open ? 'active' : ''}`}
         onClick={() => setOpen((v) => !v)}
-        title="Keyboard Shortcuts"
+        title={t('uiOverlays.shortcutHelp.title')}
       >
         ?
       </button>
@@ -2042,42 +2055,42 @@ function MidiShortcutHelpButton(): React.JSX.Element {
             zIndex: 4000
           }}
         >
-          <div className="shortcut-help-title">Keyboard Shortcuts</div>
+          <div className="shortcut-help-title">{t('uiOverlays.shortcutHelp.title')}</div>
           <div className="shortcut-help-section">
-            <div className="shortcut-help-section-title">Tools</div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toolSelect}</kbd></div><span className="shortcut-desc">Select tool</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toolPlace}</kbd></div><span className="shortcut-desc">Place tool</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toolErase}</kbd></div><span className="shortcut-desc">Erase tool</span></div>
+            <div className="shortcut-help-section-title">{t('uiOverlays.shortcutHelp.sections.tools')}</div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toolSelect}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.selectTool')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toolPlace}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.placeTool')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toolErase}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.eraseTool')}</span></div>
           </div>
           <div className="shortcut-help-section">
-            <div className="shortcut-help-section-title">Note Modifiers (toggle)</div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleCymbalOrTap}</kbd></div><span className="shortcut-desc">Cymbal / Tap</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleGhostOrHopo}</kbd></div><span className="shortcut-desc">Ghost / HOPO</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleAccent}</kbd></div><span className="shortcut-desc">Accent</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleOpenOrKick}</kbd></div><span className="shortcut-desc">Open / Kick</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleStarPower}</kbd></div><span className="shortcut-desc">Star Power mode</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleSolo}</kbd></div><span className="shortcut-desc">Solo section mode</span></div>
+            <div className="shortcut-help-section-title">{t('uiOverlays.shortcutHelp.sections.noteModifiers')}</div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleCymbalOrTap}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.cymbalTap')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleGhostOrHopo}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.ghostHopo')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleAccent}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.accent')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleOpenOrKick}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.openKick')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleStarPower}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.starPowerMode')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.toggleSolo}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.soloMode')}</span></div>
           </div>
           <div className="shortcut-help-section">
-            <div className="shortcut-help-section-title">Editing</div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.copy}</kbd></div><span className="shortcut-desc">Copy</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.paste}</kbd></div><span className="shortcut-desc">Paste at playhead</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.undo}</kbd></div><span className="shortcut-desc">Undo</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.redo}</kbd></div><span className="shortcut-desc">Redo</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.deleteSelection}</kbd></div><span className="shortcut-desc">Delete selected</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.createStarPower}</kbd></div><span className="shortcut-desc">Star Power from selection</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Esc</kbd></div><span className="shortcut-desc">Clear selection</span></div>
+            <div className="shortcut-help-section-title">{t('uiOverlays.shortcutHelp.sections.editing')}</div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.copy}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.copy')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.paste}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.paste')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.undo}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.undo')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.redo}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.redo')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.deleteSelection}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.deleteSelected')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>{hotkeys.createStarPower}</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.starPowerFromSelection')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Esc</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.clearSelection')}</span></div>
           </div>
           <div className="shortcut-help-section">
-            <div className="shortcut-help-section-title">Click Modifiers</div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Ctrl</kbd><span className="shortcut-plus">+</span><kbd>Click</kbd></div><span className="shortcut-desc">Multi-select</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Click</kbd><span className="shortcut-plus">+</span><kbd>Drag</kbd></div><span className="shortcut-desc">Box select / Sustain</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Shift</kbd><span className="shortcut-plus">+</span><kbd>Kick Place</kbd></div><span className="shortcut-desc">Mark kick as Double Bass (2x)</span></div>
+            <div className="shortcut-help-section-title">{t('uiOverlays.shortcutHelp.sections.clickModifiers')}</div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Ctrl</kbd><span className="shortcut-plus">+</span><kbd>Click</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.multiSelect')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Click</kbd><span className="shortcut-plus">+</span><kbd>Drag</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.boxSelect')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Shift</kbd><span className="shortcut-plus">+</span><kbd>Kick Place</kbd></div><span className="shortcut-desc">{t('midiEditor.shortcutHelp.markDoubleBass')}</span></div>
           </div>
           <div className="shortcut-help-section">
-            <div className="shortcut-help-section-title">Pro Guitar/Bass</div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Dbl-click</kbd></div><span className="shortcut-desc">Edit fret number inline</span></div>
-            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Up</kbd> / <kbd>Down</kbd></div><span className="shortcut-desc">Fret +1 / -1</span></div>
+            <div className="shortcut-help-section-title">{t('uiOverlays.shortcutHelp.sections.proGuitarBass')}</div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Dbl-click</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.editFretInline')}</span></div>
+            <div className="shortcut-row"><div className="shortcut-keys"><kbd>Up</kbd> / <kbd>Down</kbd></div><span className="shortcut-desc">{t('uiOverlays.shortcutHelp.desc.fretAdjust')}</span></div>
           </div>
         </div>
       )}
@@ -2230,9 +2243,10 @@ function SnapSelector({
   value: number
   onChange: (value: number) => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   return (
     <div className="midi-snap-selector">
-      <label>Snap:</label>
+      <label>{t('midiEditor.toolbar.snapLabel')}</label>
       <select value={value} onChange={(e) => onChange(parseInt(e.target.value))}>
         {MIDI_EDITOR_CONFIG.snapDivisions.map((div) => (
           <option key={div} value={div}>
@@ -2323,6 +2337,7 @@ function SwapLanesTool({
   activeDifficulty: Difficulty
   defaultInstrument: Instrument
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const { open, setOpen, toggle: togglePopover, anchor, buttonRef, popoverRef } = useToolbarPopover()
   const [instrument, setInstrument] = useState<Instrument>(
     SWAP_LANE_OPTIONS[defaultInstrument].length > 0 ? defaultInstrument : 'guitar'
@@ -2346,10 +2361,10 @@ function SwapLanesTool({
         ref={buttonRef}
         className="edit-tool-button"
         onClick={togglePopover}
-        title="Swap all notes between two lanes"
+        title={t('midiEditor.swapLanesTool.tooltip')}
       >
         <span>↔</span>
-        <span>Swap Lanes</span>
+        <span>{t('midiEditor.swapLanesTool.buttonLabel')}</span>
       </button>
       {open && anchor && (
         <div
@@ -2358,7 +2373,7 @@ function SwapLanesTool({
           style={{ position: 'fixed', ...anchor, zIndex: 1000 }}
         >
           <label className="midi-swap-popover-row">
-            <span>Instrument</span>
+            <span>{t('midiEditor.swapLanesTool.instrumentLabel')}</span>
             <select
               value={instrument}
               onChange={(e) => setInstrument(e.target.value as Instrument)}
@@ -2367,27 +2382,27 @@ function SwapLanesTool({
                 .filter((i) => SWAP_LANE_OPTIONS[i].length > 0)
                 .map((i) => (
                   <option key={i} value={i}>
-                    {i}
+                    {t(`midiEditor.instrumentNames.${i}`)}
                   </option>
                 ))}
             </select>
           </label>
           <label className="midi-swap-popover-row">
-            <span>Lane A</span>
+            <span>{t('midiEditor.swapLanesTool.laneALabel')}</span>
             <select value={laneA} onChange={(e) => setLaneA(e.target.value)}>
               {lanes.map((l) => (
                 <option key={l} value={l}>
-                  {l}
+                  {formatLaneLabel(t, l)}
                 </option>
               ))}
             </select>
           </label>
           <label className="midi-swap-popover-row">
-            <span>Lane B</span>
+            <span>{t('midiEditor.swapLanesTool.laneBLabel')}</span>
             <select value={laneB} onChange={(e) => setLaneB(e.target.value)}>
               {lanes.map((l) => (
                 <option key={l} value={l}>
-                  {l}
+                  {formatLaneLabel(t, l)}
                 </option>
               ))}
             </select>
@@ -2398,10 +2413,10 @@ function SwapLanesTool({
               checked={scopeAll}
               onChange={(e) => setScopeAll(e.target.checked)}
             />
-            <span>All difficulties</span>
+            <span>{t('midiEditor.swapLanesTool.allDifficultiesLabel')}</span>
           </label>
           <div className="midi-swap-popover-actions">
-            <button onClick={() => setOpen(false)}>Cancel</button>
+            <button onClick={() => setOpen(false)}>{t('common.cancel')}</button>
             <button
               className="primary"
               disabled={laneA === laneB}
@@ -2410,29 +2425,13 @@ function SwapLanesTool({
                 setOpen(false)
               }}
             >
-              Swap
+              {t('midiEditor.swapLanesTool.swapButton')}
             </button>
           </div>
         </div>
       )}
     </div>
   )
-}
-
-const INSTRUMENT_LABELS: Partial<Record<Instrument, string>> = {
-  drums: 'Drums',
-  guitar: 'Guitar',
-  bass: 'Bass',
-  keys: 'Keys',
-  proKeys: 'Pro Keys',
-  proGuitar: 'Pro Guitar',
-  proBass: 'Pro Bass'
-}
-
-const DIFFICULTY_LABELS: Record<DerivedDifficulty, string> = {
-  hard: 'Hard',
-  medium: 'Medium',
-  easy: 'Easy'
 }
 
 // Generate from Expert — derive lower difficulties using the same reduction
@@ -2445,6 +2444,7 @@ function GenerateFromExpertTool({
   notes: Note[]
   onGenerate: (instruments: Instrument[], targets: DerivedDifficulty[]) => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const { open, setOpen, toggle: togglePopover, anchor, buttonRef, popoverRef } = useToolbarPopover()
 
   // Only instruments that actually have an Expert chart can be reduced.
@@ -2498,12 +2498,12 @@ function GenerateFromExpertTool({
         disabled={available.length === 0}
         title={
           available.length === 0
-            ? 'Chart something on Expert first — lower difficulties are derived from it'
-            : 'Derive Hard / Medium / Easy from the Expert chart'
+            ? t('midiEditor.generateFromExpertTool.tooltipEmpty')
+            : t('midiEditor.generateFromExpertTool.tooltipReady')
         }
       >
         <span>⇩</span>
-        <span>Generate from Expert</span>
+        <span>{t('midiEditor.generateFromExpertTool.buttonLabel')}</span>
       </button>
       {open && anchor && (
         <div
@@ -2511,7 +2511,7 @@ function GenerateFromExpertTool({
           className="midi-swap-popover midi-generate-popover"
           style={{ position: 'fixed', ...anchor, zIndex: 1000 }}
         >
-          <div className="midi-generate-section-label">Instruments</div>
+          <div className="midi-generate-section-label">{t('midiEditor.generateFromExpertTool.instrumentsLabel')}</div>
           {available.map((instrument) => (
             <label key={instrument} className="midi-swap-popover-checkbox">
               <input
@@ -2521,11 +2521,11 @@ function GenerateFromExpertTool({
                   setSelectedInstruments((s) => toggle(s, instrument))
                 }
               />
-              <span>{INSTRUMENT_LABELS[instrument] ?? instrument}</span>
+              <span>{t(`midiEditor.instrumentNames.${instrument}`)}</span>
             </label>
           ))}
 
-          <div className="midi-generate-section-label">Difficulties to write</div>
+          <div className="midi-generate-section-label">{t('midiEditor.generateFromExpertTool.difficultiesLabel')}</div>
           {DERIVED_DIFFICULTIES.map((difficulty) => (
             <label key={difficulty} className="midi-swap-popover-checkbox">
               <input
@@ -2533,19 +2533,18 @@ function GenerateFromExpertTool({
                 checked={selectedTargets.has(difficulty)}
                 onChange={() => setSelectedTargets((s) => toggle(s, difficulty))}
               />
-              <span>{DIFFICULTY_LABELS[difficulty]}</span>
+              <span>{t(`midiEditor.difficultyNames.${difficulty}`)}</span>
             </label>
           ))}
 
           {overwriteCount > 0 && (
             <div className="midi-generate-warning">
-              Replaces {overwriteCount} existing note{overwriteCount === 1 ? '' : 's'} on the
-              selected difficulties. Undo (Ctrl+Z) restores them.
+              {t('midiEditor.generateFromExpertTool.overwriteWarning', { count: overwriteCount })}
             </div>
           )}
 
           <div className="midi-swap-popover-actions">
-            <button onClick={() => setOpen(false)}>Cancel</button>
+            <button onClick={() => setOpen(false)}>{t('common.cancel')}</button>
             <button
               className="primary"
               disabled={!canRun}
@@ -2554,7 +2553,7 @@ function GenerateFromExpertTool({
                 setOpen(false)
               }}
             >
-              Generate
+              {t('midiEditor.generateFromExpertTool.generateButton')}
             </button>
           </div>
         </div>
@@ -2565,6 +2564,7 @@ function GenerateFromExpertTool({
 
 // Main MIDI Editor component
 export function MidiEditor(): React.JSX.Element {
+  const { t } = useTranslation()
   const { activeSongId } = useProjectStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const [dimensions, setDimensions] = useState({ width: 800, height: 300 })
@@ -3887,9 +3887,9 @@ export function MidiEditor(): React.JSX.Element {
       <div className="midi-editor">
         <div className="empty-state">
           <div className="empty-state-icon">PR</div>
-          <div className="empty-state-title">No Song Selected</div>
+          <div className="empty-state-title">{t('midiEditor.emptyState.title')}</div>
           <div className="empty-state-description">
-            Select a song to edit its notes in the piano roll
+            {t('midiEditor.emptyState.description')}
           </div>
         </div>
       </div>
@@ -3917,12 +3917,12 @@ export function MidiEditor(): React.JSX.Element {
           className="midi-snap-to-grid-button"
           title={
             selectedNoteIds.length > 0
-              ? `Nudge ${selectedNoteIds.length} selected note(s) that sit just off the 1/${snapDivision} grid onto it (off-grid notes are left alone)`
-              : `Nudge notes that sit just off the 1/${snapDivision} grid onto it (off-grid notes are left alone)`
+              ? t('midiEditor.toolbar.snapToGridTooltipSelected', { count: selectedNoteIds.length, division: snapDivision })
+              : t('midiEditor.toolbar.snapToGridTooltipAll', { division: snapDivision })
           }
           onClick={() => songStore?.getState().snapNotesToGrid()}
         >
-          Snap to Grid
+          {t('midiEditor.toolbar.snapToGridButton')}
         </button>
         <SwapLanesTool
           activeDifficulty={activeDifficulty}
@@ -3938,13 +3938,13 @@ export function MidiEditor(): React.JSX.Element {
           }
         />
         <div className="midi-zoom-controls">
-          <label>Zoom:</label>
+          <label>{t('midiEditor.toolbar.zoomLabel')}</label>
           <button onClick={() => setZoomLevel((z) => z * 0.8)}>-</button>
           <span>{Math.round(zoomLevel * 100)}%</span>
           <button onClick={() => setZoomLevel((z) => z * 1.25)}>+</button>
         </div>
         <div className="midi-waveform-source">
-          <label htmlFor="midi-waveform-source">Waveform:</label>
+          <label htmlFor="midi-waveform-source">{t('midiEditor.toolbar.waveformLabel')}</label>
           <select
             id="midi-waveform-source"
             value={selectedWaveformSource}
@@ -3953,7 +3953,7 @@ export function MidiEditor(): React.JSX.Element {
               updateSettings({ waveformAudioSourcePath: value === '__mix__' ? undefined : value })
             }}
           >
-            <option value="__mix__">Mix</option>
+            <option value="__mix__">{t('midiEditor.toolbar.waveformMixOption')}</option>
             {waveformSources.map((source) => (
               <option key={source.filePath} value={source.filePath}>{source.filename}</option>
             ))}
@@ -3974,7 +3974,7 @@ export function MidiEditor(): React.JSX.Element {
               border: '1px solid rgba(249,115,22,0.4)', borderRadius: 4,
               background: 'rgba(249,115,22,0.08)', fontSize: 11, color: '#F97316'
             }}>
-              <span style={{ fontWeight: 600 }}>Fret:</span>
+              <span style={{ fontWeight: 600 }}>{t('midiEditor.toolbar.fretLabel')}</span>
               <input
                 type="number"
                 min={0}
@@ -4000,7 +4000,7 @@ export function MidiEditor(): React.JSX.Element {
             </div>
           )
         })()}
-        <div className="midi-scroll-hint">Scroll: vertical | Shift+Scroll: horizontal | Ctrl+Scroll: zoom</div>
+        <div className="midi-scroll-hint">{t('midiEditor.toolbar.scrollHint')}</div>
         <MidiShortcutHelpButton />
       </div>
 
@@ -4067,7 +4067,7 @@ export function MidiEditor(): React.JSX.Element {
                   onClick={toggleCollapse}
                 >
                   <span style={{ marginRight: 6, fontSize: 9 }}>{isCollapsed ? '>' : 'v'}</span>
-                  {({ proKeys: 'Pro Keys', proGuitar: 'Pro Guitar', proBass: 'Pro Bass' } as Record<string, string>)[instrument] || instrument.charAt(0).toUpperCase() + instrument.slice(1)}
+                  {t(`midiEditor.instrumentNames.${instrument}`)}
                 </div>
 
                 {!isCollapsed && (
@@ -4085,7 +4085,7 @@ export function MidiEditor(): React.JSX.Element {
                       }}
                     >
                       <span className="midi-lane-color" style={{ backgroundColor: SP_COLOR }} />
-                      <span className="midi-lane-name">Star Power</span>
+                      <span className="midi-lane-name">{t('midiEditor.laneNames.starPower')}</span>
                     </div>
                     <StarPowerLane
                       phrases={starPowerPhrases}
@@ -4113,7 +4113,7 @@ export function MidiEditor(): React.JSX.Element {
                       }}
                     >
                       <span className="midi-lane-color" style={{ backgroundColor: SOLO_COLOR }} />
-                      <span className="midi-lane-name">Solo</span>
+                      <span className="midi-lane-name">{t('midiEditor.laneNames.solo')}</span>
                     </div>
                     <SoloLane
                       sections={soloSections}
@@ -4142,7 +4142,7 @@ export function MidiEditor(): React.JSX.Element {
                         }}
                       >
                         <span className="midi-lane-color" style={{ backgroundColor: 'rgba(255,140,0,0.7)' }} />
-                        <span className="midi-lane-name">Lane Markers</span>
+                        <span className="midi-lane-name">{t('midiEditor.laneNames.laneMarkers')}</span>
                       </div>
                       <LaneMarkerLane
                         markers={laneMarkers}
@@ -4188,7 +4188,7 @@ export function MidiEditor(): React.JSX.Element {
                             borderRadius: 4
                           }}>
                             {([0, 1, 2, 3] as HarmonyPart[]).map((part) => {
-                              const partLabels = ['Main', 'H1', 'H2', 'H3']
+                              const partKeys = ['main', 'h1', 'h2', 'h3']
                               const partColors = ['#E879F9', '#60A5FA', '#34D399', '#FBBF24']
                               const hasNotes = vocalNotes.some((n) => n.harmonyPart === part)
                               if (!hasNotes && part !== 0 && part !== activeHarmonyPart) return null
@@ -4204,7 +4204,7 @@ export function MidiEditor(): React.JSX.Element {
                                   }}
                                   onClick={() => songStore?.getState().setActiveHarmonyPart(part)}
                                 >
-                                  {partLabels[part]}
+                                  {t(`midiEditor.harmonyParts.tabs.${partKeys[part]}`)}
                                 </button>
                               )
                             })}
@@ -4212,12 +4212,13 @@ export function MidiEditor(): React.JSX.Element {
                             <VocalPitchPlaybackToggle />
                             {/* Add harmony part button */}
                             {(() => {
+                              const partKeys = ['main', 'h1', 'h2', 'h3']
                               const usedParts = new Set(vocalNotes.map((n) => n.harmonyPart))
                               const nextPart = ([1, 2, 3] as HarmonyPart[]).find((p) => !usedParts.has(p))
                               if (nextPart === undefined) return null
                               return (
                                 <button
-                                  title={`Add Harmony ${nextPart}`}
+                                  title={t('midiEditor.harmonyParts.addTooltip', { part: t(`midiEditor.harmonyParts.fullNames.${partKeys[nextPart]}`) })}
                                   style={{
                                     fontSize: 10, padding: '1px 5px', border: '1px dashed rgba(255,255,255,0.3)',
                                     borderRadius: 3, cursor: 'pointer', backgroundColor: 'transparent', color: '#aaa',
@@ -4230,23 +4231,27 @@ export function MidiEditor(): React.JSX.Element {
                               )
                             })()}
                             {/* Remove current harmony part button (not Main) */}
-                            {activeHarmonyPart !== 0 && (
-                              <button
-                                title={`Remove all notes from ${['Main', 'H1', 'H2', 'H3'][activeHarmonyPart]}`}
-                                style={{
-                                  fontSize: 10, padding: '1px 5px', border: '1px dashed rgba(255,100,100,0.4)',
-                                  borderRadius: 3, cursor: 'pointer', backgroundColor: 'transparent', color: '#f88',
-                                  lineHeight: 1, marginLeft: 'auto'
-                                }}
-                                onClick={() => {
-                                  if (confirm(`Delete all notes and phrases for ${['Main', 'H1', 'H2', 'H3'][activeHarmonyPart]}?`)) {
-                                    songStore?.getState().deleteHarmonyPartNotes(activeHarmonyPart)
-                                  }
-                                }}
-                              >
-                                Del
-                              </button>
-                            )}
+                            {activeHarmonyPart !== 0 && (() => {
+                              const partKeys = ['main', 'h1', 'h2', 'h3']
+                              const activePartName = t(`midiEditor.harmonyParts.fullNames.${partKeys[activeHarmonyPart]}`)
+                              return (
+                                <button
+                                  title={t('midiEditor.harmonyParts.removeTooltip', { part: activePartName })}
+                                  style={{
+                                    fontSize: 10, padding: '1px 5px', border: '1px dashed rgba(255,100,100,0.4)',
+                                    borderRadius: 3, cursor: 'pointer', backgroundColor: 'transparent', color: '#f88',
+                                    lineHeight: 1, marginLeft: 'auto'
+                                  }}
+                                  onClick={() => {
+                                    if (confirm(t('midiEditor.harmonyParts.deleteConfirm', { part: activePartName }))) {
+                                      songStore?.getState().deleteHarmonyPartNotes(activeHarmonyPart)
+                                    }
+                                  }}
+                                >
+                                  {t('midiEditor.harmonyParts.deleteButton')}
+                                </button>
+                              )
+                            })()}
                           </div>
                         </div>
                       ) : isProKeys ? (
@@ -4302,7 +4307,7 @@ export function MidiEditor(): React.JSX.Element {
                               className="midi-lane-color"
                               style={{ backgroundColor: MIDI_EDITOR_CONFIG.laneColors[lane] }}
                             />
-                            <span className="midi-lane-name">{formatLaneLabel(lane)}</span>
+                            <span className="midi-lane-name">{formatLaneLabel(t, lane)}</span>
                           </div>
                         ))
                       )}

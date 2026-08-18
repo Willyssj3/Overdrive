@@ -709,5 +709,163 @@
     "hiddenDescription": "Usá el menú Ver para volver a activar Piano Roll o Línea de Tiempo.",
     "pianoRoll": "Piano Roll",
     "timeline": "Línea de Tiempo"
+  },
+  "validationPreview": {
+    "badges": {
+      "error": "✖ Error",
+      "warning": "⚠ Advertencia",
+      "resolved": "Resuelto"
+    },
+    "header": {
+      "tick": "Tick {{tick}}",
+      "jumpToTick": "Ir al Tick"
+    },
+    "quickEdit": {
+      "label": "Edición rápida:",
+      "lanes": {
+        "kick": "Bombo",
+        "doubleKick": "2x Bombo",
+        "snare": "Redoblante",
+        "yellowTom": "Tom Amarillo",
+        "yellowCymbal": "Cymbal Amarillo",
+        "blueTom": "Tom Azul",
+        "blueCymbal": "Cymbal Azul",
+        "greenTom": "Tom Verde",
+        "greenCymbal": "Cymbal Verde",
+        "open": "Abierta",
+        "green": "Verde",
+        "red": "Roja",
+        "yellow": "Amarilla",
+        "blue": "Azul",
+        "orange": "Naranja"
+      }
+    },
+    "suggestions": {
+      "label": "Sugerencias rápidas:",
+      "keepOnly": "Mantené solo {{lane1}} y {{lane2}}",
+      "makeRoll": "Hacer redoble: cambiar {{fromLane}} a {{toLane}}",
+      "deleteLane": "Eliminar {{lane}}",
+      "removeDuplicate": "Eliminar nota duplicada en {{lane}}"
+    },
+    "status": {
+      "resolved": "Resuelto (pasa la validación)",
+      "unresolved": "Borrador sin resolver"
+    },
+    "actions": {
+      "revert": "Revertir",
+      "applyFix": "Aplicar arreglo"
+    }
+  },
+  "vocalPitchToggle": {
+    "tooltipOn": "Reproducción de tono activada: los tonos de las notas vocales suenan mientras se reproduce la canción",
+    "tooltipOff": "Reproducción de tono desactivada: hacé clic para escuchar los tonos de las notas vocales mientras se reproduce la canción",
+    "label": "Tono"
+  },
+  "midiEditor": {
+    "laneLabels": {
+      "kick": "Bombo",
+      "doubleKick": "Bombo Doble",
+      "snare": "Redoblante",
+      "yellowTom": "Tom Amarillo",
+      "yellowCymbal": "Cymbal Amarillo",
+      "blueTom": "Tom Azul",
+      "blueCymbal": "Cymbal Azul",
+      "greenTom": "Tom Verde",
+      "greenCymbal": "Cymbal Verde",
+      "green": "Verde",
+      "red": "Roja",
+      "yellow": "Amarilla",
+      "blue": "Azul",
+      "orange": "Naranja",
+      "open": "Abierta"
+    },
+    "laneMarkers": {
+      "drumRoll": "Redoble",
+      "trill": "Trino",
+      "tremolo": "Trémolo",
+      "bre": "BRE",
+      "discoFlip": "Disco Flip"
+    },
+    "laneNames": {
+      "starPower": "Star Power",
+      "solo": "Solo",
+      "laneMarkers": "Marcadores de Carril"
+    },
+    "waveformStrip": {
+      "unavailable": "Forma de onda no disponible",
+      "label": "Forma de onda"
+    },
+    "vocalNotes": {
+      "talkieLabel": "TALKIE"
+    },
+    "shortcutHelp": {
+      "markDoubleBass": "Marcar como doble bombo (2x)"
+    },
+    "toolbar": {
+      "snapLabel": "Ajuste:",
+      "snapToGridButton": "Ajustar a la Grilla",
+      "snapToGridTooltipSelected": "Corre las {{count}} notas seleccionadas que están apenas fuera de la grilla de 1/{{division}} para alinearlas (las notas realmente fuera de grilla quedan sin tocar)",
+      "snapToGridTooltipAll": "Corre las notas que están apenas fuera de la grilla de 1/{{division}} para alinearlas (las notas realmente fuera de grilla quedan sin tocar)",
+      "zoomLabel": "Zoom:",
+      "waveformLabel": "Forma de onda:",
+      "waveformMixOption": "Mezcla",
+      "fretLabel": "Traste:",
+      "scrollHint": "Scroll: vertical | Shift+Scroll: horizontal | Ctrl+Scroll: zoom"
+    },
+    "swapLanesTool": {
+      "tooltip": "Intercambiá todas las notas entre dos carriles",
+      "buttonLabel": "Intercambiar Carriles",
+      "instrumentLabel": "Instrumento",
+      "laneALabel": "Carril A",
+      "laneBLabel": "Carril B",
+      "allDifficultiesLabel": "Todas las dificultades",
+      "swapButton": "Intercambiar"
+    },
+    "generateFromExpertTool": {
+      "tooltipEmpty": "Charteá algo en Experto primero — las dificultades inferiores se derivan de eso",
+      "tooltipReady": "Derivá Difícil / Medio / Fácil a partir del chart de Experto",
+      "buttonLabel": "Generar desde Experto",
+      "instrumentsLabel": "Instrumentos",
+      "difficultiesLabel": "Dificultades a escribir",
+      "overwriteWarning": "Reemplaza {{count}} nota(s) existentes en las dificultades seleccionadas. Deshacer (Ctrl+Z) las restaura.",
+      "generateButton": "Generar"
+    },
+    "instrumentNames": {
+      "drums": "Batería",
+      "guitar": "Guitarra",
+      "bass": "Bajo",
+      "keys": "Teclado",
+      "proKeys": "Pro Keys",
+      "proGuitar": "Pro Guitar",
+      "proBass": "Pro Bass",
+      "vocals": "Voces"
+    },
+    "difficultyNames": {
+      "hard": "Difícil",
+      "medium": "Medio",
+      "easy": "Fácil"
+    },
+    "emptyState": {
+      "title": "Ninguna canción seleccionada",
+      "description": "Seleccioná una canción para editar sus notas en el piano roll"
+    },
+    "harmonyParts": {
+      "tabs": {
+        "main": "Principal",
+        "h1": "H1",
+        "h2": "H2",
+        "h3": "H3"
+      },
+      "fullNames": {
+        "main": "Voz principal",
+        "h1": "Armonía 1",
+        "h2": "Armonía 2",
+        "h3": "Armonía 3"
+      },
+      "addTooltip": "Agregar {{part}}",
+      "removeTooltip": "Eliminar todas las notas de {{part}}",
+      "deleteConfirm": "¿Eliminar todas las notas y frases de {{part}}?",
+      "deleteButton": "Bor"
+    }
   }
 }

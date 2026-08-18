@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { ValidationIssue, SongData, Note, Instrument, Difficulty } from '../types'
 import { getSongStore, useSettingsStore, useUIStore } from '../stores'
 import {
@@ -74,6 +75,7 @@ function GridCell({
 }
 
 export function ValidationPreviewCard({ issue, song, activeSongId }: Props): React.JSX.Element {
+  const { t } = useTranslation()
   const tick = issue.tick ?? 0
   const instrument = issue.instrument ?? 'drums'
   const difficulty = issue.difficulty ?? 'expert'
@@ -652,7 +654,10 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
           for (let j = i + 1; j < handNotes.length; j++) {
             const n1 = handNotes[i]
             const n2 = handNotes[j]
-            const label = `Keep only ${n1.lane} & ${n2.lane}`
+            const label = t('validationPreview.suggestions.keepOnly', {
+              lane1: n1.lane,
+              lane2: n2.lane
+            })
 
             list.push({
               label,
@@ -685,7 +690,10 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
             if (l1 === -1 || l2 === -1 || l1 === l2) continue
 
             list.push({
-              label: `Make roll: change ${n2.lane} to ${n1.lane}`,
+              label: t('validationPreview.suggestions.makeRoll', {
+                fromLane: n2.lane,
+                toLane: n1.lane
+              }),
               action: () => {
                 return draftNotes.map((n) =>
                   n.id === n2.id ? { ...n, lane: n1.lane, flags: n1.flags } : n
@@ -694,7 +702,10 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
             })
 
             list.push({
-              label: `Make roll: change ${n1.lane} to ${n2.lane}`,
+              label: t('validationPreview.suggestions.makeRoll', {
+                fromLane: n1.lane,
+                toLane: n2.lane
+              }),
               action: () => {
                 return draftNotes.map((n) =>
                   n.id === n1.id ? { ...n, lane: n2.lane, flags: n2.flags } : n
@@ -707,7 +718,7 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
 
       for (const note of notesAtTick) {
         list.push({
-          label: `Delete ${note.lane}`,
+          label: t('validationPreview.suggestions.deleteLane', { lane: note.lane }),
           action: () => {
             return draftNotes.filter((n) => n.id !== note.id)
           }
@@ -728,7 +739,7 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
       for (const [lane, notesInLane] of laneGroups.entries()) {
         if (notesInLane.length >= 2) {
           list.push({
-            label: `Remove duplicate note on ${lane}`,
+            label: t('validationPreview.suggestions.removeDuplicate', { lane }),
             action: () => {
               const idsToRemove = notesInLane.slice(1).map((n) => n.id)
               return draftNotes.filter((n) => !idsToRemove.includes(n.id))
@@ -739,7 +750,7 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
     }
 
     return list
-  }, [issue.message, draftNotes, tick])
+  }, [issue.message, draftNotes, tick, t])
 
   const uniqueSuggestions = useMemo(() => {
     const seen = new Set<string>()
@@ -813,7 +824,9 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
               color: issue.severity === 'error' ? '#ff6b6b' : '#ffcc44'
             }}
           >
-            {issue.severity === 'error' ? '✖ Error' : '⚠ Warning'}
+            {issue.severity === 'error'
+              ? t('validationPreview.badges.error')
+              : t('validationPreview.badges.warning')}
           </span>
         </div>
         <div style={{ fontSize: '13px', lineHeight: 1.4 }}>{issue.message}</div>
@@ -855,10 +868,14 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
               transition: 'all 0.2s'
             }}
           >
-            {isDraftValid ? 'Resolved' : issue.severity === 'error' ? '✖ Error' : '⚠ Warning'}
+            {isDraftValid
+              ? t('validationPreview.badges.resolved')
+              : issue.severity === 'error'
+                ? t('validationPreview.badges.error')
+                : t('validationPreview.badges.warning')}
           </span>
           <span style={{ fontSize: '12px', color: '#888', fontWeight: 600 }}>
-            {instrument} • {difficulty} • Tick {tick}
+            {instrument} • {difficulty} • {t('validationPreview.header.tick', { tick })}
           </span>
         </div>
         <button
@@ -881,7 +898,7 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
             e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
           }}
         >
-          Jump to Tick
+          {t('validationPreview.header.jumpToTick')}
         </button>
       </div>
 
@@ -923,7 +940,7 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
                 textTransform: 'uppercase'
               }}
             >
-              Quick Edit:
+              {t('validationPreview.quickEdit.label')}
             </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {lanes.map((lane) => {
@@ -944,65 +961,65 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
 
                 if (instrument === 'drums') {
                   if (lane === 'kick') {
-                    btnLabel = 'Kick'
+                    btnLabel = t('validationPreview.quickEdit.lanes.kick')
                     btnColor = 'rgba(255, 132, 0, 0.15)'
                     activeColor = '#FF8400'
                   } else if (lane === 'doubleKick') {
-                    btnLabel = '2Kick'
+                    btnLabel = t('validationPreview.quickEdit.lanes.doubleKick')
                     btnColor = 'rgba(184, 81, 0, 0.15)'
                     activeColor = '#B85100'
                   } else if (lane === 'snare') {
-                    btnLabel = 'Snare'
+                    btnLabel = t('validationPreview.quickEdit.lanes.snare')
                     btnColor = 'rgba(255, 29, 35, 0.15)'
                     activeColor = '#FF1D23'
                   } else if (lane === 'yellowTom') {
-                    btnLabel = 'Y-Tom'
+                    btnLabel = t('validationPreview.quickEdit.lanes.yellowTom')
                     btnColor = 'rgba(255, 233, 0, 0.15)'
                     activeColor = '#FFE900'
                   } else if (lane === 'yellowCymbal') {
-                    btnLabel = 'Y-Cym'
+                    btnLabel = t('validationPreview.quickEdit.lanes.yellowCymbal')
                     btnColor = 'rgba(255, 233, 0, 0.15)'
                     activeColor = '#FFE900'
                   } else if (lane === 'blueTom') {
-                    btnLabel = 'B-Tom'
+                    btnLabel = t('validationPreview.quickEdit.lanes.blueTom')
                     btnColor = 'rgba(0, 191, 255, 0.15)'
                     activeColor = '#00BFFF'
                   } else if (lane === 'blueCymbal') {
-                    btnLabel = 'B-Cym'
+                    btnLabel = t('validationPreview.quickEdit.lanes.blueCymbal')
                     btnColor = 'rgba(0, 191, 255, 0.15)'
                     activeColor = '#00BFFF'
                   } else if (lane === 'greenTom') {
-                    btnLabel = 'G-Tom'
+                    btnLabel = t('validationPreview.quickEdit.lanes.greenTom')
                     btnColor = 'rgba(121, 211, 4, 0.15)'
                     activeColor = '#79D304'
                   } else if (lane === 'greenCymbal') {
-                    btnLabel = 'G-Cym'
+                    btnLabel = t('validationPreview.quickEdit.lanes.greenCymbal')
                     btnColor = 'rgba(121, 211, 4, 0.15)'
                     activeColor = '#79D304'
                   }
                 } else if (instrument === 'guitar' || instrument === 'bass') {
                   if (lane === 'open') {
-                    btnLabel = 'Open'
+                    btnLabel = t('validationPreview.quickEdit.lanes.open')
                     btnColor = 'rgba(200, 0, 255, 0.15)'
                     activeColor = '#C800FF'
                   } else if (lane === 'green') {
-                    btnLabel = 'Green'
+                    btnLabel = t('validationPreview.quickEdit.lanes.green')
                     btnColor = 'rgba(121, 211, 4, 0.15)'
                     activeColor = '#79D304'
                   } else if (lane === 'red') {
-                    btnLabel = 'Red'
+                    btnLabel = t('validationPreview.quickEdit.lanes.red')
                     btnColor = 'rgba(255, 29, 35, 0.15)'
                     activeColor = '#FF1D23'
                   } else if (lane === 'yellow') {
-                    btnLabel = 'Yellow'
+                    btnLabel = t('validationPreview.quickEdit.lanes.yellow')
                     btnColor = 'rgba(255, 233, 0, 0.15)'
                     activeColor = '#FFE900'
                   } else if (lane === 'blue') {
-                    btnLabel = 'Blue'
+                    btnLabel = t('validationPreview.quickEdit.lanes.blue')
                     btnColor = 'rgba(0, 191, 255, 0.15)'
                     activeColor = '#00BFFF'
                   } else if (lane === 'orange') {
-                    btnLabel = 'Orange'
+                    btnLabel = t('validationPreview.quickEdit.lanes.orange')
                     btnColor = 'rgba(255, 132, 0, 0.15)'
                     activeColor = '#FF8400'
                   }
@@ -1057,7 +1074,7 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
                 textTransform: 'uppercase'
               }}
             >
-              Quick suggestions:
+              {t('validationPreview.suggestions.label')}
             </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {uniqueSuggestions.map((sug, idx) => (
@@ -1120,7 +1137,9 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
                 transition: 'color 0.2s'
               }}
             >
-              {isDraftValid ? 'Resolved (passes validation)' : 'Unresolved draft'}
+              {isDraftValid
+                ? t('validationPreview.status.resolved')
+                : t('validationPreview.status.unresolved')}
             </span>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
@@ -1147,7 +1166,7 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
                   e.currentTarget.style.color = '#aaa'
                 }}
               >
-                Revert
+                {t('validationPreview.actions.revert')}
               </button>
             )}
             <button
@@ -1172,7 +1191,7 @@ export function ValidationPreviewCard({ issue, song, activeSongId }: Props): Rea
                 if (isDraftValid) e.currentTarget.style.transform = 'scale(1)'
               }}
             >
-              Apply Fix
+              {t('validationPreview.actions.applyFix')}
             </button>
           </div>
         </div>

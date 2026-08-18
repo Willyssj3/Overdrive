@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import './SetupModal.css'
 
 type RuntimeStatus = {
@@ -29,6 +30,7 @@ type ProgressState = {
  *   an inline setup CTA when the runtime isn't ready.
  */
 export function SetupModal(): React.JSX.Element | null {
+  const { t } = useTranslation()
   const [status, setStatus] = useState<RuntimeStatus | null>(null)
   const [progress, setProgress] = useState<ProgressState | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -74,11 +76,11 @@ export function SetupModal(): React.JSX.Element | null {
     startedRef.current = true
     setInstalling(true)
     setError(null)
-    setProgress({ stage: 'bootstrap', message: 'Starting setup\u2026', percent: 0 })
+    setProgress({ stage: 'bootstrap', message: t('setupModal.progress.starting'), percent: 0 })
     try {
       const result = await window.api.bootstrapRuntime()
       if (!result.ok) {
-        setError(result.message ?? 'Setup failed.')
+        setError(result.message ?? t('setupModal.error.fallback'))
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
@@ -115,23 +117,11 @@ export function SetupModal(): React.JSX.Element | null {
   return (
     <div className="setup-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="setup-modal-title">
       <div className="setup-modal">
-        <h2 id="setup-modal-title">{isUpgrade ? 'Update AI runtime' : 'Set up AI features'}</h2>
+        <h2 id="setup-modal-title">
+          {isUpgrade ? t('setupModal.title.update') : t('setupModal.title.setup')}
+        </h2>
         <p className="setup-modal-body">
-          {isUpgrade ? (
-            <>
-              Overdrive was updated and the bundled AI runtime needs to be refreshed
-              to match (new dependency versions, GPU support, or a Python upgrade).
-              Your existing runtime will be replaced. This may take several minutes
-              on first launch; future updates only re-run when something changes.
-            </>
-          ) : (
-            <>
-              Overdrive uses a self-contained Python runtime to power Auto-Chart, stem
-              separation, and lyric transcription. This is a one-time download
-              (~1.5 GB) installed in your user data folder. Updates to Overdrive will
-              not need to re-download it.
-            </>
-          )}
+          {isUpgrade ? t('setupModal.body.update') : t('setupModal.body.setup')}
         </p>
 
         {installing ? (
@@ -140,17 +130,19 @@ export function SetupModal(): React.JSX.Element | null {
               <div className="setup-modal-progress-bar" style={{ width: `${percent}%` }} />
             </div>
             <div className="setup-modal-progress-meta">
-              <span className="setup-modal-progress-stage">{progress?.message ?? 'Working\u2026'}</span>
+              <span className="setup-modal-progress-stage">
+                {progress?.message ?? t('setupModal.progress.working')}
+              </span>
               <span className="setup-modal-progress-percent">{percent}%</span>
             </div>
           </>
         ) : (
           <div className="setup-modal-actions">
             <button type="button" className="setup-modal-secondary" onClick={handleDismiss}>
-              Not now
+              {t('setupModal.actions.notNow')}
             </button>
             <button type="button" className="setup-modal-primary" onClick={handleInstall}>
-              {isUpgrade ? 'Update now' : 'Set up now'}
+              {isUpgrade ? t('setupModal.actions.updateNow') : t('setupModal.actions.setupNow')}
             </button>
           </div>
         )}
@@ -158,13 +150,13 @@ export function SetupModal(): React.JSX.Element | null {
         {error ? (
           <div className="setup-modal-error-block">
             <div className="setup-modal-error-header">
-              <strong>Setup failed</strong>
+              <strong>{t('setupModal.error.title')}</strong>
               <button
                 type="button"
                 className="setup-modal-error-copy"
                 onClick={() => void handleCopyError()}
               >
-                {errorCopied ? 'Copied' : 'Copy error'}
+                {errorCopied ? t('setupModal.error.copied') : t('setupModal.error.copy')}
               </button>
             </div>
             <pre className="setup-modal-error">{error}</pre>

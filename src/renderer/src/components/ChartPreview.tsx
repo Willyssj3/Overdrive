@@ -5,6 +5,8 @@ import type { ReactNode, ErrorInfo } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
+import { useTranslation } from 'react-i18next'
+import i18n from '../i18n'
 import { useProjectStore, useUIStore, getSongStore } from '../stores'
 import { tickToSeconds } from '../services/audioService'
 import type { Instrument, Difficulty, EditingTool, VideoSync, TempoEvent, VenueTrackData } from '../types'
@@ -44,15 +46,15 @@ class PreviewErrorBoundary extends Component<
       return (
         <div className="empty-state">
           <div className="empty-state-icon">⚠️</div>
-          <div className="empty-state-title">Preview Error</div>
+          <div className="empty-state-title">{i18n.t('chartPreview.errorBoundary.title')}</div>
           <div className="empty-state-description">
-            {this.state.error?.message || 'Failed to render 3D preview'}
+            {this.state.error?.message || i18n.t('chartPreview.errorBoundary.defaultMessage')}
           </div>
           <button
             style={{ marginTop: 12, padding: '6px 16px', cursor: 'pointer', background: '#333', color: '#ccc', border: '1px solid #555', borderRadius: 4 }}
             onClick={() => this.setState({ hasError: false, error: null })}
           >
-            Retry
+            {i18n.t('chartPreview.errorBoundary.retry')}
           </button>
         </div>
       )
@@ -405,6 +407,7 @@ function HighwayWrapper({
 
 // -- Main Chart Preview -----------------------------------------------
 export function ChartPreview(): React.JSX.Element {
+  const { t } = useTranslation()
   const { activeSongId } = useProjectStore()
   const editTool = useUIStore((s) => s.editTool)
   const setEditTool = useUIStore((s) => s.setEditTool)
@@ -480,7 +483,7 @@ export function ChartPreview(): React.JSX.Element {
     <div className="chart-preview">
       <div className="panel-header">
         <span className="panel-header-title">
-          <span>Chart Preview</span>
+          <span>{t('chartPreview.header.title')}</span>
         </span>
         <div
           ref={previewActionsRef}
@@ -496,7 +499,7 @@ export function ChartPreview(): React.JSX.Element {
           <ShortcutHelpButton />
           <button
             className="panel-header-btn"
-            title={isPreviewFullscreen ? 'Exit Fullscreen (Esc)' : 'Fullscreen Preview'}
+            title={isPreviewFullscreen ? t('chartPreview.fullscreen.exit') : t('chartPreview.fullscreen.enter')}
             onClick={togglePreviewFullscreen}
             style={{
               background: 'none', border: '1px solid #555', borderRadius: 4,
@@ -521,9 +524,9 @@ export function ChartPreview(): React.JSX.Element {
         ) : (
           <div className="empty-state">
             <div className="empty-state-icon">??</div>
-            <div className="empty-state-title">No Song Selected</div>
+            <div className="empty-state-title">{t('chartPreview.emptyState.title')}</div>
             <div className="empty-state-description">
-              Select a song from the explorer to preview and edit its chart
+              {t('chartPreview.emptyState.description')}
             </div>
           </div>
         )}

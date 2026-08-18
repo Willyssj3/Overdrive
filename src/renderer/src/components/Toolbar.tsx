@@ -1,5 +1,6 @@
 // Top toolbar with playback controls and global actions
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useProjectStore, useSettingsStore, getSongStore, removeSongStore, useUIStore } from '../stores'
 import * as audioService from '../services/audioService'
 import * as playbackController from '../services/playbackController'
@@ -41,6 +42,7 @@ const AUTO_CHART_STAGE_ORDER: Record<string, number> = {
 }
 
 export function Toolbar(): React.JSX.Element {
+  const { t } = useTranslation()
   const { activeSongId, setLoadedFolder, setPendingActiveSong } = useProjectStore()
   const isExportModalOpen = useUIStore((s) => s.isExportModalOpen)
   const setExportModalOpen = useUIStore((s) => s.setExportModalOpen)
@@ -151,7 +153,7 @@ export function Toolbar(): React.JSX.Element {
     setRuntimeSetupErrorCopied(false)
     try {
       const result = await window.api.bootstrapRuntime()
-      if (!result.ok) setRuntimeSetupError(result.message ?? 'Setup failed.')
+      if (!result.ok) setRuntimeSetupError(result.message ?? t('toolbar.autoChart.setupFailed'))
     } catch (err) {
       setRuntimeSetupError(err instanceof Error ? err.message : String(err))
     } finally {
@@ -455,8 +457,8 @@ export function Toolbar(): React.JSX.Element {
           percent: 100,
           stage: 'complete',
           message: event.success
-            ? 'Auto-chart complete.'
-            : 'Auto-chart finished with no successful songs.',
+            ? t('toolbar.autoChart.completeMessage')
+            : t('toolbar.autoChart.completeNoSuccessMessage'),
           warnings: event.errors
         }
       })
@@ -589,7 +591,7 @@ export function Toolbar(): React.JSX.Element {
     if (runtimeStatus && runtimeStatus.managed && !runtimeStatus.ready) {
       setAutoChartProgress((prev) => ({
         ...prev,
-        error: 'Set up the Python runtime before starting Auto-Chart.'
+        error: t('toolbar.autoChart.errors.runtimeNotSetUp')
       }))
       return
     }
@@ -597,7 +599,7 @@ export function Toolbar(): React.JSX.Element {
     if (!outputDir) {
       setAutoChartProgress((prev) => ({
         ...prev,
-        error: 'Choose an output folder before starting.'
+        error: t('toolbar.autoChart.errors.chooseOutputFolder')
       }))
       return
     }
@@ -611,7 +613,7 @@ export function Toolbar(): React.JSX.Element {
     ) {
       setAutoChartProgress((prev) => ({
         ...prev,
-        error: 'Add at least one audio file, folder, URL, or stem song.'
+        error: t('toolbar.autoChart.errors.addAtLeastOneInput')
       }))
       return
     }
@@ -620,7 +622,10 @@ export function Toolbar(): React.JSX.Element {
     // so the pipeline can produce a usable mix.
     for (const song of stemSongs) {
       if (!song.name) {
-        setAutoChartProgress((prev) => ({ ...prev, error: 'Every stem song needs a name.' }))
+        setAutoChartProgress((prev) => ({
+          ...prev,
+          error: t('toolbar.autoChart.errors.everyStemSongNeedsName')
+        }))
         return
       }
       const hasInstrument = [
@@ -636,7 +641,7 @@ export function Toolbar(): React.JSX.Element {
       if (!hasInstrument && song.extras.length === 0) {
         setAutoChartProgress((prev) => ({
           ...prev,
-          error: `Stem song "${song.name}" has no stems selected.`
+          error: t('toolbar.autoChart.errors.stemSongNoStemsSelected', { name: song.name })
         }))
         return
       }
@@ -649,7 +654,7 @@ export function Toolbar(): React.JSX.Element {
       isRunning: true,
       error: null,
       warnings: [],
-      message: 'Launching Overdrive Engine...',
+      message: t('toolbar.autoChart.launchingMessage'),
       percent: 0
     }))
 
@@ -879,10 +884,10 @@ export function Toolbar(): React.JSX.Element {
           <button
             className={`toolbar-button ${showOpenDropdown ? 'active' : ''}`}
             onClick={() => setShowOpenDropdown(!showOpenDropdown)}
-            title="Open Library / Import Package"
+            title={t('toolbar.openLibraryImportPackage')}
           >
             <span className="toolbar-icon">📁</span>
-            <span className="toolbar-label">Open</span>
+            <span className="toolbar-label">{t('common.open')}</span>
           </button>
           {showOpenDropdown && (
             <>
@@ -896,7 +901,7 @@ export function Toolbar(): React.JSX.Element {
                   }}
                 >
                   <span className="dropdown-icon">📂</span>
-                  <span className="dropdown-label">Open Song Library Folder</span>
+                  <span className="dropdown-label">{t('toolbar.openSongLibraryFolder')}</span>
                 </button>
                 <button
                   className="toolbar-dropdown-item"
@@ -906,7 +911,7 @@ export function Toolbar(): React.JSX.Element {
                   }}
                 >
                   <span className="dropdown-icon">📦</span>
-                  <span className="dropdown-label">Import Song Package (.sng / CON)</span>
+                  <span className="dropdown-label">{t('toolbar.importSongPackage')}</span>
                 </button>
               </div>
             </>
@@ -916,19 +921,19 @@ export function Toolbar(): React.JSX.Element {
           className="toolbar-button"
           onClick={handleSave}
           disabled={!activeSongId}
-          title="Save"
+          title={t('common.save')}
         >
           <span className="toolbar-icon">💾</span>
-          <span className="toolbar-label">Save</span>
+          <span className="toolbar-label">{t('common.save')}</span>
         </button>
         <button
           className="toolbar-button"
           onClick={() => setExportModalOpen(true)}
           disabled={!activeSongId}
-          title="Export"
+          title={t('common.export')}
         >
           <span className="toolbar-icon">📤</span>
-          <span className="toolbar-label">Export</span>
+          <span className="toolbar-label">{t('common.export')}</span>
         </button>
       </div>
 
@@ -940,7 +945,7 @@ export function Toolbar(): React.JSX.Element {
           className="toolbar-button"
           onClick={handleUndo}
           disabled={!activeSongId}
-          title="Undo (Ctrl+Z)"
+          title={t('toolbar.undoShortcut')}
         >
           <span className="toolbar-icon">↩</span>
         </button>
@@ -948,7 +953,7 @@ export function Toolbar(): React.JSX.Element {
           className="toolbar-button"
           onClick={handleRedo}
           disabled={!activeSongId}
-          title="Redo (Ctrl+Y)"
+          title={t('toolbar.redoShortcut')}
         >
           <span className="toolbar-icon">↪</span>
         </button>
@@ -962,7 +967,7 @@ export function Toolbar(): React.JSX.Element {
           className="toolbar-button toolbar-button-play"
           onClick={handlePlayPause}
           disabled={!activeSongId}
-          title={isAudioLoaded ? 'Play/Pause (Space)' : 'Play/Pause (no audio)'}
+          title={isAudioLoaded ? t('toolbar.playPauseShortcut') : t('toolbar.playPauseNoAudio')}
         >
           <span className="toolbar-icon">{isPlaying ? '⏸' : '▶'}</span>
         </button>
@@ -970,7 +975,7 @@ export function Toolbar(): React.JSX.Element {
           className="toolbar-button"
           onClick={handleStop}
           disabled={!activeSongId}
-          title="Stop"
+          title={t('toolbar.stop')}
         >
           <span className="toolbar-icon">⏹</span>
         </button>
@@ -987,7 +992,7 @@ export function Toolbar(): React.JSX.Element {
           value={volume}
           onChange={(e) => updateSettings({ volume: parseFloat(e.target.value) })}
           className="toolbar-volume-slider"
-          title={`Volume: ${Math.round(volume * 100)}%`}
+          title={t('toolbar.volumePercent', { percent: Math.round(volume * 100) })}
           style={{ ['--slider-fill' as string]: `${volume * 100}%` }}
         />
         <StemMixerButton activeSongId={activeSongId} />
@@ -997,7 +1002,7 @@ export function Toolbar(): React.JSX.Element {
 
       {/* Highway speed control */}
       <div className="toolbar-group toolbar-speed">
-        <span className="toolbar-label toolbar-speed-label">Speed</span>
+        <span className="toolbar-label toolbar-speed-label">{t('toolbar.speed')}</span>
         <input
           type="range"
           min="0.25"
@@ -1006,7 +1011,7 @@ export function Toolbar(): React.JSX.Element {
           value={highwaySpeed}
           onChange={(e) => updateSettings({ highwaySpeed: parseFloat(e.target.value) })}
           className="toolbar-speed-slider"
-          title={`Highway Speed: ${highwaySpeed}x`}
+          title={t('toolbar.highwaySpeedValue', { speed: highwaySpeed })}
           style={{ ['--slider-fill' as string]: `${((highwaySpeed - 0.25) / (3 - 0.25)) * 100}%` }}
         />
         <span className="toolbar-speed-value">{highwaySpeed}x</span>
@@ -1018,10 +1023,10 @@ export function Toolbar(): React.JSX.Element {
           <>
             <span className="toolbar-song-name">{songName}</span>
             <span className="toolbar-song-artist">{songArtist}</span>
-            {isDirty && <span className="dirty-indicator" title="Unsaved changes" />}
+            {isDirty && <span className="dirty-indicator" title={t('toolbar.unsavedChanges')} />}
           </>
         ) : (
-          <span className="toolbar-no-song">No song loaded</span>
+          <span className="toolbar-no-song">{t('toolbar.noSongLoaded')}</span>
         )}
       </div>
 
@@ -1029,20 +1034,20 @@ export function Toolbar(): React.JSX.Element {
       {updaterStatus.state !== 'idle' && (
         <div className={`toolbar-updater toolbar-updater--${updaterStatus.state}`}>
           {updaterStatus.state === 'checking' && (
-            <span className="toolbar-updater-label">Checking for updates…</span>
+            <span className="toolbar-updater-label">{t('toolbar.updater.checking')}</span>
           )}
           {updaterStatus.state === 'not-available' && (
-            <span className="toolbar-updater-label">Up to date</span>
+            <span className="toolbar-updater-label">{t('toolbar.updater.upToDate')}</span>
           )}
           {updaterStatus.state === 'available' && (
             <span className="toolbar-updater-label">
-              ⬇ Update v{updaterStatus.version} available…
+              ⬇ {t('toolbar.updater.updateAvailable', { version: updaterStatus.version })}
             </span>
           )}
           {updaterStatus.state === 'downloading' && (
             <>
               <span className="toolbar-updater-label">
-                Downloading update {updaterStatus.message ?? ''}
+                {t('toolbar.updater.downloadingUpdate', { message: updaterStatus.message ?? '' })}
               </span>
               <div className="toolbar-updater-bar">
                 <div
@@ -1053,11 +1058,11 @@ export function Toolbar(): React.JSX.Element {
             </>
           )}
           {updaterStatus.state === 'downloaded' && (
-            <span className="toolbar-updater-label">✔ Update ready — see prompt</span>
+            <span className="toolbar-updater-label">✔ {t('toolbar.updater.updateReady')}</span>
           )}
           {updaterStatus.state === 'error' && (
             <span className="toolbar-updater-label" title={updaterStatus.message}>
-              ⚠ Update error
+              ⚠ {t('toolbar.updater.updateError')}
             </span>
           )}
         </div>
@@ -1068,24 +1073,24 @@ export function Toolbar(): React.JSX.Element {
 
       {/* Settings */}
       <div className="toolbar-group">
-        <label className="toolbar-toggle" title="Auto-save">
+        <label className="toolbar-toggle" title={t('toolbar.autoSave')}>
           <input
             type="checkbox"
             checked={autosaveEnabled}
             onChange={(e) => updateSettings({ autosaveEnabled: e.target.checked })}
           />
-          <span className="toolbar-toggle-label">Auto-save</span>
+          <span className="toolbar-toggle-label">{t('toolbar.autoSave')}</span>
         </label>
         <label
           className="toolbar-toggle"
-          title="Lefty Flip: mirror highway for left-handed players"
+          title={t('toolbar.leftyFlipTooltip')}
         >
           <input
             type="checkbox"
             checked={leftyFlip ?? false}
             onChange={(e) => updateSettings({ leftyFlip: e.target.checked })}
           />
-          <span className="toolbar-toggle-label">Lefty Flip</span>
+          <span className="toolbar-toggle-label">{t('toolbar.leftyFlip')}</span>
         </label>
       </div>
 
@@ -1097,18 +1102,18 @@ export function Toolbar(): React.JSX.Element {
           disabled={!enableAutoChart}
           title={
             enableAutoChart
-              ? 'Generate a chart package from audio with Overdrive Engine'
-              : 'Enable Overdrive Engine auto-charting in Settings'
+              ? t('toolbar.autoChart.tooltipEnabled')
+              : t('toolbar.autoChart.tooltipDisabled')
           }
           onClick={openAutoChartModal}
         >
           <span className="toolbar-icon">🤖</span>
-          <span className="toolbar-label">Auto-Chart</span>
+          <span className="toolbar-label">{t('toolbar.autoChart.buttonLabel')}</span>
           <span
             className="toolbar-experimental-tag"
-            title="Auto-charting is experimental — results vary by song."
+            title={t('toolbar.autoChart.experimentalTooltip')}
           >
-            experimental
+            {t('toolbar.autoChart.experimentalTag')}
           </span>
         </button>
       </div>
@@ -1126,7 +1131,7 @@ export function Toolbar(): React.JSX.Element {
         <button
           className="toolbar-button"
           disabled={!activeSongId || isValidating}
-          title="Validate Chart"
+          title={t('toolbar.validateChart')}
           onClick={() => {
             if (!activeSongId || isValidating) return
             setIsValidating(true)
@@ -1162,7 +1167,9 @@ export function Toolbar(): React.JSX.Element {
           ) : (
             <span className="toolbar-icon">✓</span>
           )}
-          <span className="toolbar-label">{isValidating ? 'Validating...' : 'Validate'}</span>
+          <span className="toolbar-label">
+            {isValidating ? t('toolbar.validating') : t('toolbar.validate')}
+          </span>
         </button>
       </div>
 
@@ -1210,7 +1217,7 @@ export function Toolbar(): React.JSX.Element {
                   }}
                 >
                   <h3 style={{ margin: 0, color: '#fff', fontSize: 18, fontWeight: 700 }}>
-                    Chart Validation
+                    {t('toolbar.validation.title')}
                   </h3>
                   {hasOverlaps && (
                     <button
@@ -1239,7 +1246,7 @@ export function Toolbar(): React.JSX.Element {
                         e.currentTarget.style.backgroundColor = '#ff4d4d'
                       }}
                     >
-                      ✨ Clean Up All Duplicates
+                      ✨ {t('toolbar.validation.cleanUpDuplicates')}
                     </button>
                   )}
                   <button
@@ -1261,7 +1268,7 @@ export function Toolbar(): React.JSX.Element {
             <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px' }}>
               {validationIssues.length === 0 ? (
                 <p style={{ color: '#2ecc71', margin: 0, fontWeight: 600, fontSize: 14 }}>
-                  ✓ No issues found!
+                  ✓ {t('toolbar.validation.noIssuesFound')}
                 </p>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -1291,16 +1298,15 @@ export function Toolbar(): React.JSX.Element {
           >
             <div className="settings-modal-header">
               <div>
-                <h2 className="settings-modal-title">Auto-Chart from Audio</h2>
+                <h2 className="settings-modal-title">{t('toolbar.autoChart.modalTitle')}</h2>
                 <p className="settings-modal-subtitle">
-                  Run Overdrive Engine on local audio files, folders, or URLs and load the generated chart
-                  package output.
+                  {t('toolbar.autoChart.modalSubtitle')}
                 </p>
               </div>
               <button
                 className="settings-modal-close"
                 onClick={() => !autoChartProgress.isRunning && setIsAutoChartModalOpen(false)}
-                aria-label="Close auto-chart dialog"
+                aria-label={t('toolbar.autoChart.closeDialogAriaLabel')}
               >
                 X
               </button>
@@ -1309,10 +1315,9 @@ export function Toolbar(): React.JSX.Element {
             <div className="settings-modal-body auto-chart-body">
               {runtimeStatus && runtimeStatus.managed && !runtimeStatus.ready && (
                 <div className="auto-chart-runtime-warning">
-                  <h3>Python runtime not installed</h3>
+                  <h3>{t('toolbar.autoChart.runtimeNotInstalledTitle')}</h3>
                   <p>
-                    Auto-Chart needs the bundled Python runtime (one-time download, ~1.5 GB).
-                    Install it now to enable charting.
+                    {t('toolbar.autoChart.runtimeNotInstalledBody')}
                   </p>
                   <div className="auto-chart-runtime-actions">
                     <button
@@ -1322,20 +1327,20 @@ export function Toolbar(): React.JSX.Element {
                       disabled={isInstallingRuntime || runtimeStatus.installing}
                     >
                       {isInstallingRuntime || runtimeStatus.installing
-                        ? 'Installing\u2026'
-                        : 'Set up Python runtime'}
+                        ? t('toolbar.autoChart.installingRuntime')
+                        : t('toolbar.autoChart.setupPythonRuntime')}
                     </button>
                   </div>
                   {runtimeSetupError && (
                     <div className="auto-chart-error">
                       <div className="auto-chart-error-header">
-                        <strong>Setup Error</strong>
+                        <strong>{t('toolbar.autoChart.setupErrorLabel')}</strong>
                         <button
                           className="auto-chart-error-copy"
                           onClick={() => void handleCopyRuntimeSetupError()}
                           type="button"
                         >
-                          {runtimeSetupErrorCopied ? 'Copied' : 'Copy'}
+                          {runtimeSetupErrorCopied ? t('toolbar.autoChart.copied') : t('toolbar.autoChart.copy')}
                         </button>
                       </div>
                       <pre className="auto-chart-error-text">{runtimeSetupError}</pre>
@@ -1346,7 +1351,7 @@ export function Toolbar(): React.JSX.Element {
               {!autoChartProgress.isRunning && (
                 <>
                   <section className="settings-preferences-group">
-                    <h3 className="settings-hotkey-group-title">Inputs</h3>
+                    <h3 className="settings-hotkey-group-title">{t('toolbar.autoChart.inputsTitle')}</h3>
                     <fieldset
                       disabled={autoChartProgress.isRunning}
                       style={{
@@ -1371,7 +1376,7 @@ export function Toolbar(): React.JSX.Element {
                             [
                               {
                                 id: 'mix',
-                                label: 'Full Mix',
+                                label: t('toolbar.autoChart.fullMixTab'),
                                 count:
                                   autoChartFiles.length +
                                   autoChartFolders.length +
@@ -1379,7 +1384,7 @@ export function Toolbar(): React.JSX.Element {
                               },
                               {
                                 id: 'stems',
-                                label: 'Stems',
+                                label: t('toolbar.autoChart.stemsTab'),
                                 count: autoChartStemSongs.filter(
                                   (s) =>
                                     Object.values(s.stems).some((v) => v.trim()) ||
@@ -1444,17 +1449,17 @@ export function Toolbar(): React.JSX.Element {
                                 [
                                   {
                                     id: 'files',
-                                    label: 'Audio Files',
+                                    label: t('toolbar.autoChart.audioFilesTab'),
                                     count: autoChartFiles.length
                                   },
                                   {
                                     id: 'folders',
-                                    label: 'Audio Folders',
+                                    label: t('toolbar.autoChart.audioFoldersTab'),
                                     count: autoChartFolders.length
                                   },
                                   {
                                     id: 'urls',
-                                    label: 'URLs',
+                                    label: t('toolbar.autoChart.urlsTab'),
                                     count: autoChartUrls.filter((u) => u.trim()).length
                                   }
                                 ] as const
@@ -1513,12 +1518,11 @@ export function Toolbar(): React.JSX.Element {
                                       }
                                     }}
                                   >
-                                    Add Files
+                                    {t('toolbar.autoChart.addFiles')}
                                   </button>
                                 </div>
                                 <p style={{ fontSize: 12, opacity: 0.7, margin: '6px 0 4px' }}>
-                                  Pick one or more individual audio files
-                                  (.wav/.ogg/.opus/.mp3/.flac).
+                                  {t('toolbar.autoChart.addFilesHelp')}
                                 </p>
                                 <div className="auto-chart-chip-list">
                                   {autoChartFiles.map((file) => (
@@ -1552,12 +1556,11 @@ export function Toolbar(): React.JSX.Element {
                                       }
                                     }}
                                   >
-                                    Add Folder
+                                    {t('toolbar.autoChart.addFolder')}
                                   </button>
                                 </div>
                                 <p style={{ fontSize: 12, opacity: 0.7, margin: '6px 0 4px' }}>
-                                  Each folder is scanned for supported audio files; every file is
-                                  processed as its own song.
+                                  {t('toolbar.autoChart.addFolderHelp')}
                                 </p>
                                 <div className="auto-chart-chip-list">
                                   {autoChartFolders.map((folder) => (
@@ -1584,13 +1587,13 @@ export function Toolbar(): React.JSX.Element {
                                     className="settings-field-label"
                                     htmlFor="auto-chart-url-0"
                                   >
-                                    Audio / YouTube URLs
+                                    {t('toolbar.autoChart.audioYoutubeUrlsLabel')}
                                   </label>
                                   <button
                                     className="auto-chart-icon-button"
                                     onClick={handleAddAutoChartUrl}
-                                    title="Add URL row"
-                                    aria-label="Add URL row"
+                                    title={t('toolbar.autoChart.addUrlRow')}
+                                    aria-label={t('toolbar.autoChart.addUrlRow')}
                                   >
                                     +
                                   </button>
@@ -1609,13 +1612,13 @@ export function Toolbar(): React.JSX.Element {
                                         onChange={(event) =>
                                           handleUpdateAutoChartUrl(index, event.target.value)
                                         }
-                                        placeholder="Paste an audio or YouTube URL"
+                                        placeholder={t('toolbar.autoChart.urlPlaceholder')}
                                       />
                                       <button
                                         className="auto-chart-icon-button auto-chart-delete-button"
                                         onClick={() => handleRemoveAutoChartUrl(index)}
-                                        title="Remove URL row"
-                                        aria-label="Remove URL row"
+                                        title={t('toolbar.autoChart.removeUrlRow')}
+                                        aria-label={t('toolbar.autoChart.removeUrlRow')}
                                       >
                                         🗑
                                       </button>
@@ -1630,15 +1633,7 @@ export function Toolbar(): React.JSX.Element {
                         {autoChartInputTab === 'stems' && (
                           <div>
                             <p style={{ fontSize: 12, opacity: 0.75, margin: '0 0 10px' }}>
-                              Provide one file or URL per instrument. Empty slots are skipped — that
-                              instrument will not be charted, and the Demucs separation phase is
-                              skipped entirely (your stems are used as-is). The full mix is always
-                              auto-generated by summing your stems and any extra audio. Lead vocals
-                              are charted strictly as PART VOCALS; backing vocals 1/2 drive
-                              HARM2/HARM3 and play back as vocals_1.ogg/vocals_2.ogg. Anything you
-                              add as “Extra audio” is combined into song.ogg (the backing
-                              track); the optional Crowd slot is exported directly as
-                              crowd.ogg.
+                              {t('toolbar.autoChart.stemsInstructions')}
                             </p>
                             {autoChartStemSongs.map((song, songIdx) => (
                               <div
@@ -1669,7 +1664,7 @@ export function Toolbar(): React.JSX.Element {
                                         prev.map((s, i) => (i === songIdx ? { ...s, name: v } : s))
                                       )
                                     }}
-                                    placeholder="Song name (used for output folder)"
+                                    placeholder={t('toolbar.autoChart.songNamePlaceholder')}
                                     style={{ flex: 1 }}
                                   />
                                   {autoChartStemSongs.length > 1 && (
@@ -1681,8 +1676,8 @@ export function Toolbar(): React.JSX.Element {
                                           prev.filter((_, i) => i !== songIdx)
                                         )
                                       }
-                                      title="Remove this stem song"
-                                      aria-label="Remove stem song"
+                                      title={t('toolbar.autoChart.removeStemSong')}
+                                      aria-label={t('toolbar.autoChart.removeStemSong')}
                                     >
                                       🗑
                                     </button>
@@ -1691,14 +1686,23 @@ export function Toolbar(): React.JSX.Element {
                                 <div style={{ display: 'grid', gap: 6 }}>
                                   {(
                                     [
-                                      { key: 'drums', label: 'Drums' },
-                                      { key: 'bass', label: 'Bass' },
-                                      { key: 'vocals', label: 'Vocals (lead)' },
-                                      { key: 'vocalsHarm2', label: 'Backing Vocals 1' },
-                                      { key: 'vocalsHarm3', label: 'Backing Vocals 2' },
-                                      { key: 'guitar', label: 'Guitar' },
-                                      { key: 'piano', label: 'Piano / Keys' },
-                                      { key: 'crowd', label: 'Crowd (optional)' }
+                                      { key: 'drums', label: t('toolbar.autoChart.stemLabels.drums') },
+                                      { key: 'bass', label: t('toolbar.autoChart.stemLabels.bass') },
+                                      {
+                                        key: 'vocals',
+                                        label: t('toolbar.autoChart.stemLabels.vocals')
+                                      },
+                                      {
+                                        key: 'vocalsHarm2',
+                                        label: t('toolbar.autoChart.stemLabels.vocalsHarm2')
+                                      },
+                                      {
+                                        key: 'vocalsHarm3',
+                                        label: t('toolbar.autoChart.stemLabels.vocalsHarm3')
+                                      },
+                                      { key: 'guitar', label: t('toolbar.autoChart.stemLabels.guitar') },
+                                      { key: 'piano', label: t('toolbar.autoChart.stemLabels.piano') },
+                                      { key: 'crowd', label: t('toolbar.autoChart.stemLabels.crowd') }
                                     ] as const
                                   ).map((row) => (
                                     <div
@@ -1722,7 +1726,7 @@ export function Toolbar(): React.JSX.Element {
                                             )
                                           )
                                         }}
-                                        placeholder="File path or URL — leave blank to skip"
+                                        placeholder={t('toolbar.autoChart.stemPathPlaceholder')}
                                         style={{ flex: 1 }}
                                       />
                                       <button
@@ -1746,7 +1750,7 @@ export function Toolbar(): React.JSX.Element {
                                           }
                                         }}
                                       >
-                                        Browse…
+                                        {t('toolbar.autoChart.browse')}
                                       </button>
                                     </div>
                                   ))}
@@ -1759,10 +1763,9 @@ export function Toolbar(): React.JSX.Element {
                                   }}
                                 >
                                   <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 6 }}>
-                                    Extra audio (uncharted) — anything you add here is summed
-                                    together and merged into{' '}
-                                    <code style={{ fontSize: 11 }}>song.ogg</code> (the backing
-                                    track the games play alongside the stems).
+                                    {t('toolbar.autoChart.extraAudioHelpPre')}{' '}
+                                    <code style={{ fontSize: 11 }}>song.ogg</code>{' '}
+                                    {t('toolbar.autoChart.extraAudioHelpPost')}
                                   </div>
                                   <div style={{ display: 'grid', gap: 6 }}>
                                     {song.extras.map((extra, extraIdx) => (
@@ -1771,7 +1774,7 @@ export function Toolbar(): React.JSX.Element {
                                         style={{ display: 'flex', alignItems: 'center', gap: 6 }}
                                       >
                                         <label style={{ width: 140, fontSize: 12, opacity: 0.85 }}>
-                                          Extra {extraIdx + 1}
+                                          {t('toolbar.autoChart.extraLabel', { index: extraIdx + 1 })}
                                         </label>
                                         <input
                                           type="text"
@@ -1792,7 +1795,7 @@ export function Toolbar(): React.JSX.Element {
                                               )
                                             )
                                           }}
-                                          placeholder="File path or URL"
+                                          placeholder={t('toolbar.autoChart.filePathOrUrlPlaceholder')}
                                           style={{ flex: 1 }}
                                         />
                                         <button
@@ -1818,7 +1821,7 @@ export function Toolbar(): React.JSX.Element {
                                             }
                                           }}
                                         >
-                                          Browse…
+                                          {t('toolbar.autoChart.browse')}
                                         </button>
                                         <button
                                           type="button"
@@ -1837,8 +1840,8 @@ export function Toolbar(): React.JSX.Element {
                                               )
                                             )
                                           }
-                                          title="Remove this extra"
-                                          aria-label="Remove extra"
+                                          title={t('toolbar.autoChart.removeExtra')}
+                                          aria-label={t('toolbar.autoChart.removeExtra')}
                                         >
                                           🗑
                                         </button>
@@ -1860,7 +1863,7 @@ export function Toolbar(): React.JSX.Element {
                                         )
                                       }
                                     >
-                                      + Add extra audio
+                                      + {t('toolbar.autoChart.addExtraAudio')}
                                     </button>
                                   </div>
                                 </div>
@@ -1873,7 +1876,7 @@ export function Toolbar(): React.JSX.Element {
                                 setAutoChartStemSongs((prev) => [...prev, makeEmptyStemSong()])
                               }
                             >
-                              + Add another stem song
+                              + {t('toolbar.autoChart.addAnotherStemSong')}
                             </button>
                           </div>
                         )}
@@ -1883,7 +1886,7 @@ export function Toolbar(): React.JSX.Element {
                           style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid #333' }}
                         >
                           <label className="settings-field-label" htmlFor="auto-chart-output">
-                            Output folder
+                            {t('toolbar.autoChart.outputFolderLabel')}
                           </label>
                           <div style={{ display: 'flex', gap: 6 }}>
                             <input
@@ -1897,7 +1900,7 @@ export function Toolbar(): React.JSX.Element {
                                   outputDir: event.target.value
                                 }))
                               }
-                              placeholder="Generated song folders will be written here"
+                              placeholder={t('toolbar.autoChart.outputFolderPlaceholder')}
                               style={{ flex: 1 }}
                             />
                             <button
@@ -1913,7 +1916,7 @@ export function Toolbar(): React.JSX.Element {
                                 }
                               }}
                             >
-                              Browse…
+                              {t('toolbar.autoChart.browse')}
                             </button>
                           </div>
                         </div>
@@ -1939,7 +1942,7 @@ export function Toolbar(): React.JSX.Element {
                           />
                         </svg>
                       </span>
-                      <span>Advanced</span>
+                      <span>{t('toolbar.autoChart.advanced')}</span>
                     </button>
                     {autoChartAdvancedOpen && (
                       <div className="settings-preferences-body">
@@ -1955,10 +1958,9 @@ export function Toolbar(): React.JSX.Element {
                             disabled={autoChartProgress.isRunning}
                           />
                           <span>
-                            Offline mode (disable online lookups)
+                            {t('toolbar.autoChart.offlineMode')}
                             <small style={{ display: 'block', opacity: 0.7 }}>
-                              Skips MusicBrainz, album art, and lyric searches. Use this for custom
-                              uploads to avoid them being misidentified as other songs.
+                              {t('toolbar.autoChart.offlineModeHelp')}
                             </small>
                           </span>
                         </label>
@@ -1973,10 +1975,9 @@ export function Toolbar(): React.JSX.Element {
                             disabled={autoChartProgress.isRunning}
                           />
                           <span>
-                            Download video for URL inputs
+                            {t('toolbar.autoChart.downloadVideo')}
                             <small style={{ display: 'block', opacity: 0.7 }}>
-                              After charting finishes, pull the source video (e.g. YouTube) into
-                              each song folder so it plays in the timeline and in-game.
+                              {t('toolbar.autoChart.downloadVideoHelp')}
                             </small>
                           </span>
                         </label>
@@ -1991,11 +1992,9 @@ export function Toolbar(): React.JSX.Element {
                             disabled={autoChartProgress.isRunning}
                           />
                           <span>
-                            Keep separated stems
+                            {t('toolbar.autoChart.keepStems')}
                             <small style={{ display: 'block', opacity: 0.7 }}>
-                              Export the separated stems (drums, bass, vocals, etc.) as
-                              per-instrument oggs in each song folder instead of discarding them.
-                              Lets you remix or mute instruments in-game.
+                              {t('toolbar.autoChart.keepStemsHelp')}
                             </small>
                           </span>
                         </label>
@@ -2010,10 +2009,9 @@ export function Toolbar(): React.JSX.Element {
                             disabled={autoChartProgress.isRunning}
                           />
                           <span>
-                            Generate Star Power phrases
+                            {t('toolbar.autoChart.generateStarPower')}
                             <small style={{ display: 'block', opacity: 0.7 }}>
-                              Uncheck to create charts without any Star Power / Overdrive
-                              phrases. You can always add your own later in the editor.
+                              {t('toolbar.autoChart.generateStarPowerHelp')}
                             </small>
                           </span>
                         </label>
@@ -2028,13 +2026,9 @@ export function Toolbar(): React.JSX.Element {
                             disabled={autoChartProgress.isRunning}
                           />
                           <span>
-                            Improve tempo accuracy (recommended)
+                            {t('toolbar.autoChart.improveTempoAccuracy')}
                             <small style={{ display: 'block', opacity: 0.7 }}>
-                              Beat-tracks the audio to align the chart&rsquo;s beat and measure
-                              lines to the real performance, so notes stop drifting off the grid.
-                              Follows tempo changes in live recordings while keeping notes in sync
-                              with the audio. Disabled automatically when you set a manual tempo map
-                              below.
+                              {t('toolbar.autoChart.improveTempoAccuracyHelp')}
                             </small>
                           </span>
                         </label>
@@ -2045,14 +2039,9 @@ export function Toolbar(): React.JSX.Element {
                             style={{ alignItems: 'flex-start' }}
                           >
                             <span style={{ flex: 1 }}>
-                              Manual BPM
+                              {t('toolbar.autoChart.manualBpmLabel')}
                               <small style={{ display: 'block', opacity: 0.7 }}>
-                                Know the song&rsquo;s tempo? Enter it and it&rsquo;s treated as the
-                                truth: the beat grid is locked to this BPM (fixing any wrong-tempo
-                                or octave detection). With &ldquo;Improve tempo accuracy&rdquo; on,
-                                the audio is still beat-tracked to follow drift around this value;
-                                with it off, this exact BPM is applied. Leave blank to detect
-                                automatically.
+                                {t('toolbar.autoChart.manualBpmHelp')}
                               </small>
                             </span>
                             <input
@@ -2060,7 +2049,7 @@ export function Toolbar(): React.JSX.Element {
                               min={1}
                               step={0.001}
                               value={autoChartManualBpm}
-                              placeholder="auto"
+                              placeholder={t('toolbar.autoChart.autoPlaceholder')}
                               disabled={autoChartProgress.isRunning}
                               style={{ width: 84, marginLeft: 12 }}
                               onChange={(event) => setAutoChartManualBpm(event.target.value)}
@@ -2078,11 +2067,9 @@ export function Toolbar(): React.JSX.Element {
                             disabled={autoChartProgress.isRunning}
                           />
                           <span>
-                            Snap drums to grid
+                            {t('toolbar.autoChart.snapDrumsToGrid')}
                             <small style={{ display: 'block', opacity: 0.7 }}>
-                              Nudge drum notes that land just off the beat onto the nearest 1/32
-                              grid line, removing the slight timing jitter from onset detection.
-                              Genuinely off-grid hits (fills, syncopation) are left untouched.
+                              {t('toolbar.autoChart.snapDrumsHelp')}
                             </small>
                           </span>
                         </label>
@@ -2090,9 +2077,7 @@ export function Toolbar(): React.JSX.Element {
                         <div style={{ marginTop: 12 }}>
                           {autoChartInputTab === 'stems' ? (
                             <p style={{ fontSize: 12, opacity: 0.7, margin: 0 }}>
-                              Tracks to chart are determined automatically from the stems you
-                              provide on the Stems tab — only instruments with a stem will be
-                              charted.
+                              {t('toolbar.autoChart.tracksAutoFromStems')}
                             </p>
                           ) : (
                             <>
@@ -2104,7 +2089,9 @@ export function Toolbar(): React.JSX.Element {
                                   marginBottom: 6
                                 }}
                               >
-                                <strong style={{ fontSize: 13 }}>Tracks to chart</strong>
+                                <strong style={{ fontSize: 13 }}>
+                                  {t('toolbar.autoChart.tracksToChart')}
+                                </strong>
                                 <div style={{ display: 'flex', gap: 6 }}>
                                   <button
                                     type="button"
@@ -2125,7 +2112,7 @@ export function Toolbar(): React.JSX.Element {
                                       })
                                     }
                                   >
-                                    All
+                                    {t('toolbar.autoChart.allTracks')}
                                   </button>
                                   <button
                                     type="button"
@@ -2146,13 +2133,12 @@ export function Toolbar(): React.JSX.Element {
                                       })
                                     }
                                   >
-                                    None
+                                    {t('toolbar.autoChart.noneTracks')}
                                   </button>
                                 </div>
                               </div>
                               <p style={{ fontSize: 12, opacity: 0.7, margin: '0 0 8px' }}>
-                                Uncheck any track you do not want Overdrive Engine to generate. All are charted
-                                by default.
+                                {t('toolbar.autoChart.tracksHelp')}
                               </p>
                               <div
                                 style={{
@@ -2163,13 +2149,25 @@ export function Toolbar(): React.JSX.Element {
                               >
                                 {(
                                   [
-                                    { key: 'drums', label: 'Drums' },
-                                    { key: 'guitar', label: 'Guitar' },
-                                    { key: 'bass', label: 'Bass' },
-                                    { key: 'keys', label: 'Keys' },
-                                    { key: 'proKeys', label: 'Pro Keys' },
-                                    { key: 'vocals', label: 'Vocals' },
-                                    { key: 'harmonies', label: 'Vocal Harmonies (HARM2/3)' }
+                                    { key: 'drums', label: t('toolbar.autoChart.trackLabels.drums') },
+                                    {
+                                      key: 'guitar',
+                                      label: t('toolbar.autoChart.trackLabels.guitar')
+                                    },
+                                    { key: 'bass', label: t('toolbar.autoChart.trackLabels.bass') },
+                                    { key: 'keys', label: t('toolbar.autoChart.trackLabels.keys') },
+                                    {
+                                      key: 'proKeys',
+                                      label: t('toolbar.autoChart.trackLabels.proKeys')
+                                    },
+                                    {
+                                      key: 'vocals',
+                                      label: t('toolbar.autoChart.trackLabels.vocals')
+                                    },
+                                    {
+                                      key: 'harmonies',
+                                      label: t('toolbar.autoChart.trackLabels.harmonies')
+                                    }
                                   ] as const
                                 ).map((track) => (
                                   <label
@@ -2210,7 +2208,7 @@ export function Toolbar(): React.JSX.Element {
 
                         <div className="auto-chart-tempo-override">
                           <div className="auto-chart-tempo-header">
-                            <strong>Tempo override</strong>
+                            <strong>{t('toolbar.autoChart.tempoOverrideTitle')}</strong>
                             <button
                               type="button"
                               className="settings-modal-secondary"
@@ -2223,19 +2221,17 @@ export function Toolbar(): React.JSX.Element {
                                 ])
                               }
                             >
-                              + Add tempo
+                              + {t('toolbar.autoChart.addTempo')}
                             </button>
                           </div>
                           <p className="auto-chart-tempo-help">
-                            Leave empty to auto-detect. Add a row with time 0 to override the
-                            initial BPM, plus more rows to declare tempo changes at specific
-                            timestamps (in seconds). Note positions are retimed to keep audio sync.
+                            {t('toolbar.autoChart.tempoOverrideHelp')}
                           </p>
                           {autoChartTempoEvents.length > 0 && (
                             <div className="auto-chart-tempo-list">
                               <div className="auto-chart-tempo-row auto-chart-tempo-row-head">
-                                <span>Time (s)</span>
-                                <span>BPM</span>
+                                <span>{t('toolbar.autoChart.timeSecondsLabel')}</span>
+                                <span>{t('toolbar.autoChart.bpmLabel')}</span>
                                 <span />
                               </div>
                               {autoChartTempoEvents.map((event, index) => (
@@ -2275,7 +2271,7 @@ export function Toolbar(): React.JSX.Element {
                                   <button
                                     type="button"
                                     className="auto-chart-tempo-remove"
-                                    title="Remove"
+                                    title={t('toolbar.autoChart.removeTempoRow')}
                                     disabled={autoChartProgress.isRunning}
                                     onClick={() =>
                                       setAutoChartTempoEvents((prev) =>
@@ -2297,7 +2293,7 @@ export function Toolbar(): React.JSX.Element {
               )}
 
               <section className="settings-preferences-group">
-                <h3 className="settings-hotkey-group-title">Progress</h3>
+                <h3 className="settings-hotkey-group-title">{t('toolbar.autoChart.progressTitle')}</h3>
                 <div className="settings-preferences-body auto-chart-progress-panel">
                   <div className="auto-chart-progress-header">
                     <strong>{autoChartProgress.stage.toUpperCase()}</strong>
@@ -2311,24 +2307,24 @@ export function Toolbar(): React.JSX.Element {
                   </div>
                   <div className="auto-chart-progress-message">
                     {autoChartCloseCountdown !== null
-                      ? `All songs auto-charted. Closing in ${autoChartCloseCountdown}…`
-                      : autoChartProgress.message || 'Idle'}
+                      ? t('toolbar.autoChart.closingCountdown', { count: autoChartCloseCountdown })
+                      : autoChartProgress.message || t('common.idle')}
                   </div>
                   {autoChartProgress.currentItem && (
                     <div className="auto-chart-progress-subtle">
-                      Current: {autoChartProgress.currentItem}
+                      {t('toolbar.autoChart.currentItem', { item: autoChartProgress.currentItem })}
                     </div>
                   )}
                   {autoChartProgress.error && (
                     <div className="auto-chart-error">
                       <div className="auto-chart-error-header">
-                        <strong>Run Error</strong>
+                        <strong>{t('toolbar.autoChart.runErrorLabel')}</strong>
                         <button
                           className="auto-chart-error-copy"
                           onClick={() => void handleCopyAutoChartError()}
                           type="button"
                         >
-                          {autoChartErrorCopied ? 'Copied' : 'Copy'}
+                          {autoChartErrorCopied ? t('toolbar.autoChart.copied') : t('toolbar.autoChart.copy')}
                         </button>
                       </div>
                       <div className="auto-chart-error-text">{autoChartProgress.error}</div>
@@ -2371,7 +2367,7 @@ export function Toolbar(): React.JSX.Element {
                     })
                   }}
                 >
-                  Reset
+                  {t('toolbar.autoChart.reset')}
                 </button>
               )}
               <button
@@ -2382,7 +2378,7 @@ export function Toolbar(): React.JSX.Element {
                     : setIsAutoChartModalOpen(false)
                 }
               >
-                {autoChartProgress.isRunning ? 'Cancel Run' : 'Close'}
+                {autoChartProgress.isRunning ? t('toolbar.autoChart.cancelRun') : t('common.close')}
               </button>
               {!autoChartProgress.isRunning && (
                 <button
@@ -2390,7 +2386,7 @@ export function Toolbar(): React.JSX.Element {
                   onClick={() => void handleStartAutoChart()}
                   disabled={runtimeStatus?.managed === true && !runtimeStatus.ready}
                 >
-                  Start Auto-Chart
+                  {t('toolbar.autoChart.startAutoChart')}
                 </button>
               )}
             </div>
@@ -2411,6 +2407,7 @@ function StemMixerButton({
 }: {
   activeSongId: string | null
 }): React.JSX.Element | null {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [stems, setStems] = useState<audioService.StemControl[]>([])
   const [popoverPos, setPopoverPos] = useState<{ top: number; right: number } | null>(null)
@@ -2456,8 +2453,8 @@ function StemMixerButton({
         ref={buttonRef}
         className="toolbar-icon-button stem-mixer-button"
         onClick={togglePopover}
-        title="Stem mixer (mute / solo individual tracks)"
-        aria-label="Stem mixer"
+        title={t('toolbar.stemMixer.tooltip')}
+        aria-label={t('toolbar.stemMixer.ariaLabel')}
       >
         <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <line
@@ -2498,13 +2495,17 @@ function StemMixerButton({
           style={{ position: 'fixed', top: popoverPos.top, right: popoverPos.right, zIndex: 1000 }}
         >
           <div className="stem-mixer-header">
-            <span>Stem Mixer</span>
-            <button className="stem-mixer-close" onClick={() => setOpen(false)} aria-label="Close">
+            <span>{t('toolbar.stemMixer.title')}</span>
+            <button
+              className="stem-mixer-close"
+              onClick={() => setOpen(false)}
+              aria-label={t('common.close')}
+            >
               ×
             </button>
           </div>
           {stems.length === 0 ? (
-            <div className="stem-mixer-empty">No stems loaded.</div>
+            <div className="stem-mixer-empty">{t('toolbar.stemMixer.noStemsLoaded')}</div>
           ) : (
             <div className="stem-mixer-list">
               {stems.map((s) => (
@@ -2516,14 +2517,14 @@ function StemMixerButton({
                     <button
                       className={`stem-mixer-toggle${s.muted ? ' is-mute-active' : ''}`}
                       onClick={() => audioService.setStemMute(activeSongId, s.filePath, !s.muted)}
-                      title="Mute"
+                      title={t('toolbar.stemMixer.mute')}
                     >
                       M
                     </button>
                     <button
                       className={`stem-mixer-toggle${s.soloed ? ' is-solo-active' : ''}`}
                       onClick={() => audioService.setStemSolo(activeSongId, s.filePath, !s.soloed)}
-                      title="Solo"
+                      title={t('toolbar.stemMixer.solo')}
                     >
                       S
                     </button>
@@ -2543,7 +2544,7 @@ function StemMixerButton({
                         )
                       }
                       className="toolbar-volume-slider stem-mixer-volume-slider"
-                      title={`Volume: ${Math.round(s.volume * 100)}%`}
+                      title={t('toolbar.volumePercent', { percent: Math.round(s.volume * 100) })}
                       style={{ ['--slider-fill' as string]: `${s.volume * 100}%` }}
                     />
                     <span className="stem-mixer-volume-value">{Math.round(s.volume * 100)}%</span>

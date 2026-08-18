@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import type { SongMetadata } from '../types'
 import type { SongMetadataSearchResult } from '../../../shared/songMetadata'
 import { publishAlbumArtUpdate } from '../utils/albumArtEvents'
@@ -15,6 +16,7 @@ export function SongMetadataLookupModal({
   onApply: (metadata: Partial<SongMetadata>, artworkApplied: boolean) => void
   onClose: () => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const initialArtist = /^unknown(?: artist)?$/i.test(metadata.artist.trim()) ? '' : metadata.artist
   const [artist, setArtist] = useState(initialArtist)
   const [title, setTitle] = useState(metadata.name)
@@ -89,7 +91,7 @@ export function SongMetadataLookupModal({
       let artworkApplied = false
       if (artwork) {
         artworkApplied = await window.api.writeAlbumArt(folderPath, artwork)
-        if (!artworkApplied) throw new Error('Overdrive could not save the selected album artwork.')
+        if (!artworkApplied) throw new Error(t('songMetadataModal.artworkSaveError'))
         publishAlbumArtUpdate({ folderPath, dataUrl: artwork })
       }
       onApply(
@@ -129,16 +131,16 @@ export function SongMetadataLookupModal({
               <span className="metadata-lookup-title-icon" aria-hidden="true">
                 ♪
               </span>
-              Find song metadata
+              {t('songMetadataModal.title')}
             </h2>
-            <p>Search multiple music databases, choose the matching release, then apply it.</p>
+            <p>{t('songMetadataModal.subtitle')}</p>
           </div>
           <button
             type="button"
             className="metadata-lookup-close"
             onClick={onClose}
             disabled={isApplying}
-            aria-label="Close"
+            aria-label={t('common.close')}
           >
             ×
           </button>
@@ -152,36 +154,38 @@ export function SongMetadataLookupModal({
           }}
         >
           <label>
-            <span>Title</span>
+            <span>{t('songMetadataModal.fieldTitle')}</span>
             <input
               autoFocus
               value={title}
               onChange={(event) => setTitle(event.target.value)}
-              aria-label="Title"
+              aria-label={t('songMetadataModal.fieldTitle')}
             />
           </label>
           <label>
-            <span>Artist</span>
+            <span>{t('songMetadataModal.fieldArtist')}</span>
             <input
               value={artist}
               onChange={(event) => setArtist(event.target.value)}
-              aria-label="Artist"
-              placeholder="Optional"
+              aria-label={t('songMetadataModal.fieldArtist')}
+              placeholder={t('songMetadataModal.artistPlaceholder')}
             />
           </label>
           <button type="submit" disabled={isSearching || !title.trim()}>
-            {isSearching ? 'Searching…' : 'Search'}
+            {isSearching ? t('songMetadataModal.searching') : t('songMetadataModal.search')}
           </button>
         </form>
 
         {error && <div className="metadata-lookup-error">{error}</div>}
 
         <div className="metadata-lookup-content">
-          <div className="metadata-lookup-results" role="listbox" aria-label="Metadata matches">
+          <div
+            className="metadata-lookup-results"
+            role="listbox"
+            aria-label={t('songMetadataModal.resultsAriaLabel')}
+          >
             {!isSearching && results.length === 0 && (
-              <div className="metadata-lookup-empty">
-                No matches found. Try changing the artist, title, or album.
-              </div>
+              <div className="metadata-lookup-empty">{t('songMetadataModal.noMatches')}</div>
             )}
             {results.map((result) => (
               <button
@@ -196,14 +200,18 @@ export function SongMetadataLookupModal({
                   <strong>{result.title}</strong>
                   <em>
                     {result.sources
-                      .map((source) => (source === 'musicbrainz' ? 'MusicBrainz' : 'TheAudioDB'))
+                      .map((source) =>
+                        source === 'musicbrainz'
+                          ? t('songMetadataModal.sourceMusicbrainz')
+                          : t('songMetadataModal.sourceTheaudiodb')
+                      )
                       .join(' + ')}
                   </em>
                 </div>
                 <span>{result.artist}</span>
                 <small>
                   {[result.album, result.year, result.genre].filter(Boolean).join(' · ') ||
-                    'Recording metadata only'}
+                    t('songMetadataModal.recordingMetadataOnly')}
                 </small>
               </button>
             ))}
@@ -214,37 +222,44 @@ export function SongMetadataLookupModal({
               <>
                 <div className="metadata-lookup-art">
                   {artwork ? (
-                    <img src={artwork} alt={`${selected.album ?? selected.title} cover`} />
+                    <img
+                      src={artwork}
+                      alt={t('songMetadataModal.coverAlt', {
+                        name: selected.album ?? selected.title
+                      })}
+                    />
                   ) : (
-                    <span>{isLoadingArtwork ? 'Loading artwork…' : 'No artwork found'}</span>
+                    <span>
+                      {isLoadingArtwork
+                        ? t('songMetadataModal.loadingArtwork')
+                        : t('songMetadataModal.noArtworkFound')}
+                    </span>
                   )}
                 </div>
                 <dl>
-                  <dt>Title</dt>
+                  <dt>{t('songMetadataModal.fieldTitle')}</dt>
                   <dd>{selected.title}</dd>
-                  <dt>Artist</dt>
+                  <dt>{t('songMetadataModal.fieldArtist')}</dt>
                   <dd>{selected.artist}</dd>
-                  <dt>Album</dt>
+                  <dt>{t('songMetadataModal.fieldAlbum')}</dt>
                   <dd>{selected.album ?? '—'}</dd>
-                  <dt>Year</dt>
+                  <dt>{t('songMetadataModal.fieldYear')}</dt>
                   <dd>{selected.year ?? '—'}</dd>
-                  <dt>Genre</dt>
+                  <dt>{t('songMetadataModal.fieldGenre')}</dt>
                   <dd>{selected.genre ?? '—'}</dd>
                 </dl>
               </>
             ) : (
-              <div className="metadata-lookup-empty">
-                Select a result to preview its metadata and album art.
-              </div>
+              <div className="metadata-lookup-empty">{t('songMetadataModal.selectPrompt')}</div>
             )}
           </div>
         </div>
 
         <div className="metadata-lookup-footer">
-          <span>MusicBrainz + TheAudioDB metadata · Cover Art Archive + TheAudioDB artwork</span>
+          <span>{t('songMetadataModal.footerCredits')}</span>
           <div>
             <button type="button" className="secondary" onClick={onClose} disabled={isApplying}>
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -252,7 +267,7 @@ export function SongMetadataLookupModal({
               onClick={() => void applyResult()}
               disabled={!selected || isApplying || isLoadingArtwork}
             >
-              {isApplying ? 'Applying…' : 'Apply metadata'}
+              {isApplying ? t('songMetadataModal.applying') : t('songMetadataModal.applyMetadata')}
             </button>
           </div>
         </div>

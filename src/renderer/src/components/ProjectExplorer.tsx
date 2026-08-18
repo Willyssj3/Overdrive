@@ -1,5 +1,6 @@
 // Project Explorer - Left panel showing song folder tree
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useProjectStore, useSettingsStore, getSongStore, removeSongStore } from '../stores'
 import * as audioService from '../services/audioService'
 import { parseMidiBase64, parseChartFile } from '../utils/midiParser'
@@ -98,6 +99,7 @@ function SongItem({
   onSelect: () => void
   onDelete: () => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const artUrl = useAlbumArt(song.folderPath)
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -137,16 +139,16 @@ function SongItem({
         <div className="explorer-song-artist">{song.artist}</div>
       </div>
       <div className="explorer-song-instruments">
-        {song.hasDrums && <span className="instrument-badge" title="Drums">🥁</span>}
-        {song.hasGuitar && <span className="instrument-badge" title="Guitar">🎸</span>}
-        {song.hasBass && <span className="instrument-badge" title="Bass">🎸</span>}
-        {song.hasVocals && <span className="instrument-badge" title="Vocals">🎤</span>}
-        {song.hasKeys && <span className="instrument-badge" title="Keys">🎹</span>}
+        {song.hasDrums && <span className="instrument-badge" title={t('projectExplorer.instruments.drums')}>🥁</span>}
+        {song.hasGuitar && <span className="instrument-badge" title={t('projectExplorer.instruments.guitar')}>🎸</span>}
+        {song.hasBass && <span className="instrument-badge" title={t('projectExplorer.instruments.bass')}>🎸</span>}
+        {song.hasVocals && <span className="instrument-badge" title={t('projectExplorer.instruments.vocals')}>🎤</span>}
+        {song.hasKeys && <span className="instrument-badge" title={t('projectExplorer.instruments.keys')}>🎹</span>}
       </div>
       {contextMenu && (
         <div ref={menuRef} className="song-context-menu" style={{ top: contextMenu.y, left: contextMenu.x }}>
           <button className="song-context-menu-item delete" onClick={(e) => { e.stopPropagation(); setContextMenu(null); onDelete() }}>
-            🗑️ Delete Song
+            🗑️ {t('projectExplorer.contextMenu.deleteSong')}
           </button>
         </div>
       )}
@@ -155,6 +157,7 @@ function SongItem({
 }
 
 export function ProjectExplorer(): React.JSX.Element {
+  const { t } = useTranslation()
   const {
     loadedFolderPath,
     songIds,
@@ -333,7 +336,7 @@ export function ProjectExplorer(): React.JSX.Element {
         const defaultPath = await window.api.getDefaultAutoChartOutputDir()
         if (defaultPath !== folderPath) {
           alert(
-            `Could not open this folder: ${message}\n\nOpening the default auto-chart folder instead.`
+            t('projectExplorer.errors.folderFailedFallback', { message })
           )
           updateSettings({ lastOpenedFolder: defaultPath })
           for (const songId of useProjectStore.getState().songIds) {
@@ -341,16 +344,16 @@ export function ProjectExplorer(): React.JSX.Element {
           }
           setLoadedFolder(defaultPath)
         } else {
-          alert(`Could not open the default auto-chart folder: ${message}`)
+          alert(t('projectExplorer.errors.defaultFolderFailed', { message }))
         }
       } catch (fallbackError) {
         console.error('Failed to open the default auto-chart folder:', fallbackError)
-        alert(`Could not open this folder: ${message}`)
+        alert(t('projectExplorer.errors.folderFailed', { message }))
       }
     } finally {
       if (loadGenerationRef.current === generation) setIsLoading(false)
     }
-  }, [addSong, removeSong, setActiveSong, setLoadedFolder, setPendingActiveSong, updateSettings])
+  }, [addSong, removeSong, setActiveSong, setLoadedFolder, setPendingActiveSong, t, updateSettings])
 
   // Auto-load last opened folder on startup
   useEffect(() => {
@@ -769,16 +772,16 @@ export function ProjectExplorer(): React.JSX.Element {
       <div className="panel-header">
         <span className="panel-header-title">
           <span>📁</span>
-          <span>Explorer</span>
+          <span>{t('projectExplorer.header.title')}</span>
         </span>
         <div className="panel-header-actions">
-          <button className="icon-button" onClick={handleImportAudio} title="Import Audio" disabled={!activeSongId}>
+          <button className="icon-button" onClick={handleImportAudio} title={t('projectExplorer.header.importAudio')} disabled={!activeSongId}>
             🔊
           </button>
-          <button className="icon-button" onClick={() => loadedFolderPath ? setShowNewSongDialog(true) : undefined} title="New Song" disabled={!loadedFolderPath}>
+          <button className="icon-button" onClick={() => loadedFolderPath ? setShowNewSongDialog(true) : undefined} title={t('projectExplorer.header.newSong')} disabled={!loadedFolderPath}>
             +
           </button>
-          <button className="icon-button" onClick={handleOpenFolder} title="Open Folder">
+          <button className="icon-button" onClick={handleOpenFolder} title={t('projectExplorer.header.openFolder')}>
             📂
           </button>
         </div>
@@ -798,7 +801,7 @@ export function ProjectExplorer(): React.JSX.Element {
               <button
                 className={`icon-button explorer-refresh-button ${isLoading ? 'spinning' : ''}`}
                 onClick={handleRefresh}
-                title="Refresh Folder"
+                title={t('projectExplorer.folder.refresh')}
                 disabled={isLoading}
                 style={{ marginLeft: 'auto', flexShrink: 0 }}
               >
@@ -822,31 +825,31 @@ export function ProjectExplorer(): React.JSX.Element {
                 type="search"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Filter songs or artists"
-                aria-label="Filter song library"
+                placeholder={t('projectExplorer.search.placeholder')}
+                aria-label={t('projectExplorer.search.ariaLabel')}
               />
               <div className="explorer-library-selects">
                 <select
                   value={librarySort}
                   onChange={(event) => setLibrarySort(event.target.value as LibrarySort)}
-                  aria-label="Sort song library"
+                  aria-label={t('projectExplorer.sort.ariaLabel')}
                 >
-                  <option value="title">Sort: Title</option>
-                  <option value="artist">Sort: Artist</option>
-                  <option value="added-newest">Sort: Added (Newest)</option>
-                  <option value="added-oldest">Sort: Added (Oldest)</option>
-                  <option value="year-newest">Sort: Year (Newest)</option>
-                  <option value="year-oldest">Sort: Year (Oldest)</option>
+                  <option value="title">{t('projectExplorer.sort.title')}</option>
+                  <option value="artist">{t('projectExplorer.sort.artist')}</option>
+                  <option value="added-newest">{t('projectExplorer.sort.addedNewest')}</option>
+                  <option value="added-oldest">{t('projectExplorer.sort.addedOldest')}</option>
+                  <option value="year-newest">{t('projectExplorer.sort.yearNewest')}</option>
+                  <option value="year-oldest">{t('projectExplorer.sort.yearOldest')}</option>
                 </select>
                 <select
                   value={libraryGroup}
                   onChange={(event) => setLibraryGroup(event.target.value as LibraryGroup)}
-                  aria-label="Group song library"
+                  aria-label={t('projectExplorer.group.ariaLabel')}
                 >
-                  <option value="title-initial">Group: Title A–Z</option>
-                  <option value="artist">Group: Artist</option>
-                  <option value="year">Group: Year</option>
-                  <option value="none">Group: None</option>
+                  <option value="title-initial">{t('projectExplorer.group.titleInitial')}</option>
+                  <option value="artist">{t('projectExplorer.group.artist')}</option>
+                  <option value="year">{t('projectExplorer.group.year')}</option>
+                  <option value="none">{t('projectExplorer.group.none')}</option>
                 </select>
               </div>
             </div>
@@ -870,19 +873,19 @@ export function ProjectExplorer(): React.JSX.Element {
                     </div>
                   ))
                 ) : (
-                  <div className="explorer-empty">No songs match “{searchQuery}”</div>
+                  <div className="explorer-empty">{t('projectExplorer.empty.noMatch', { query: searchQuery })}</div>
                 )
               ) : (
                 <div className="explorer-empty">
-                  <span>{isLoading ? 'Loading library…' : 'No songs found'}</span>
+                  <span>{isLoading ? t('projectExplorer.empty.loadingLibrary') : t('projectExplorer.empty.noSongsFound')}</span>
                   <span className="explorer-empty-hint">
-                    {isLoading ? 'Checking the cache and validating song folders' : 'Add folders containing song.ini files'}
+                    {isLoading ? t('projectExplorer.empty.loadingHint') : t('projectExplorer.empty.addFoldersHint')}
                   </span>
                 </div>
               )}
               {isLoading && songEntries.length > 0 && (
                 <div className="explorer-cache-status" role="status">
-                  <span className="explorer-cache-spinner" /> Validating library…
+                  <span className="explorer-cache-spinner" /> {t('projectExplorer.validatingLibrary')}
                 </div>
               )}
             </div>
@@ -890,12 +893,12 @@ export function ProjectExplorer(): React.JSX.Element {
         ) : (
           <div className="empty-state">
             <div className="empty-state-icon">📁</div>
-            <div className="empty-state-title">{isLoading ? 'Loading...' : 'No Folder Open'}</div>
+            <div className="empty-state-title">{isLoading ? t('common.loading') : t('projectExplorer.noFolderOpen.title')}</div>
             <div className="empty-state-description">
-              Open a folder containing songs to get started
+              {t('projectExplorer.noFolderOpen.description')}
             </div>
             <button className="explorer-open-button" onClick={handleOpenFolder}>
-              Open Folder
+              {t('projectExplorer.header.openFolder')}
             </button>
           </div>
         )}
@@ -907,16 +910,16 @@ export function ProjectExplorer(): React.JSX.Element {
           onContextMenu={(e) => e.preventDefault()}
         >
           <div className="delete-confirm-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="delete-confirm-title">Delete song?</div>
+            <div className="delete-confirm-title">{t('projectExplorer.deleteConfirm.title')}</div>
             <div className="delete-confirm-body">
-              “{pendingDelete.name}” will be moved to the trash.
+              {t('projectExplorer.deleteConfirm.body', { name: pendingDelete.name })}
             </div>
             <div className="delete-confirm-actions">
               <button className="delete-confirm-cancel" onClick={() => setPendingDelete(null)}>
-                Cancel
+                {t('common.cancel')}
               </button>
               <button className="delete-confirm-delete" onClick={confirmDelete} autoFocus>
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>
@@ -927,13 +930,13 @@ export function ProjectExplorer(): React.JSX.Element {
       {showNewSongDialog && (
         <div className="new-song-dialog-overlay" onClick={() => { setShowNewSongDialog(false); setNewSongAudioPath(null) }}>
           <div className="new-song-dialog" onClick={(e) => e.stopPropagation()}>
-            <div className="new-song-dialog-title">New Song</div>
-            <label className="new-song-dialog-label">Song Name</label>
+            <div className="new-song-dialog-title">{t('projectExplorer.header.newSong')}</div>
+            <label className="new-song-dialog-label">{t('projectExplorer.newSongDialog.songNameLabel')}</label>
             <input
               autoFocus
               className="new-song-dialog-input"
               type="text"
-              placeholder="Song name..."
+              placeholder={t('projectExplorer.newSongDialog.songNamePlaceholder')}
               value={newSongName}
               onChange={(e) => setNewSongName(e.target.value)}
               onKeyDown={(e) => {
@@ -941,25 +944,25 @@ export function ProjectExplorer(): React.JSX.Element {
                 if (e.key === 'Escape') setShowNewSongDialog(false)
               }}
             />
-            <label className="new-song-dialog-label">Audio File</label>
+            <label className="new-song-dialog-label">{t('projectExplorer.newSongDialog.audioFileLabel')}</label>
             <div className="new-song-audio-picker">
               <span className="new-song-audio-name">
-                {newSongAudioPath ? newSongAudioPath.split(/[\\/]/).pop() : 'No file selected'}
+                {newSongAudioPath ? newSongAudioPath.split(/[\\/]/).pop() : t('projectExplorer.newSongDialog.noFileSelected')}
               </span>
               <button className="new-song-dialog-btn browse" onClick={handlePickAudio}>
-                Browse...
+                {t('projectExplorer.newSongDialog.browse')}
               </button>
             </div>
             <div className="new-song-dialog-actions">
               <button className="new-song-dialog-btn cancel" onClick={() => { setShowNewSongDialog(false); setNewSongAudioPath(null) }}>
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 className="new-song-dialog-btn create"
                 onClick={handleCreateNewSong}
                 disabled={!newSongName.trim()}
               >
-                Create
+                {t('projectExplorer.newSongDialog.create')}
               </button>
             </div>
           </div>

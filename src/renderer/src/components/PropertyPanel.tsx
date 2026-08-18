@@ -1,5 +1,6 @@
 // Property Panel - Right panel showing selected note/song properties
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useProjectStore, useUIStore, getSongStore } from '../stores'
 import { tickToSeconds } from '../services/audioService'
 import type {
@@ -89,13 +90,13 @@ function formatVenueLabel(value: string): string {
     .trim()
 }
 
-function getVenueLaneLabel(lane: SelectedVenueEventRef['lane']): string {
+function getVenueLaneLabel(lane: SelectedVenueEventRef['lane'], t: (key: string) => string): string {
   switch (lane) {
-    case 'lighting': return 'Lighting'
-    case 'postProcessing': return 'Post FX'
-    case 'stage': return 'Stage FX'
-    case 'cameraCuts': return 'Camera Cut'
-    case 'performer': return 'Performer'
+    case 'lighting': return t('propertyPanel.venueEvent.lane.lighting')
+    case 'postProcessing': return t('propertyPanel.venueEvent.lane.postProcessing')
+    case 'stage': return t('propertyPanel.venueEvent.lane.stage')
+    case 'cameraCuts': return t('propertyPanel.venueEvent.lane.cameraCuts')
+    case 'performer': return t('propertyPanel.venueEvent.lane.performer')
     default: return lane
   }
 }
@@ -111,20 +112,21 @@ function VenueEventEditor({
   onUpdate: (updates: Partial<VenueLightingEvent | VenuePostProcessingEvent | VenueStageEvent | VenueCameraCutEvent | VenuePerformerEvent>) => void
   onDelete: () => void
 }): React.JSX.Element {
-  const laneLabel = getVenueLaneLabel(selectedRef.lane)
+  const { t } = useTranslation()
+  const laneLabel = getVenueLaneLabel(selectedRef.lane, t)
 
   return (
     <div className="note-editor">
       <div className="property-section">
-        <div className="property-section-title">Venue Event</div>
+        <div className="property-section-title">{t('propertyPanel.venueEvent.title')}</div>
 
         <div className="property-group">
-          <label className="property-label">Lane</label>
+          <label className="property-label">{t('propertyPanel.venueEvent.laneLabel')}</label>
           <input className="property-input" value={laneLabel} readOnly />
         </div>
 
         <div className="property-group">
-          <label className="property-label">Tick</label>
+          <label className="property-label">{t('propertyPanel.venueEvent.tick')}</label>
           <input
             type="number"
             className="property-input"
@@ -136,7 +138,7 @@ function VenueEventEditor({
 
         {selectedRef.lane === 'lighting' && (
           <div className="property-group">
-            <label className="property-label">Cue</label>
+            <label className="property-label">{t('propertyPanel.venueEvent.cue')}</label>
             <select
               className="property-select"
               value={(eventData as VenueLightingEvent).type}
@@ -151,7 +153,7 @@ function VenueEventEditor({
 
         {selectedRef.lane === 'postProcessing' && (
           <div className="property-group">
-            <label className="property-label">Effect</label>
+            <label className="property-label">{t('propertyPanel.venueEvent.effect')}</label>
             <select
               className="property-select"
               value={(eventData as VenuePostProcessingEvent).type}
@@ -167,7 +169,7 @@ function VenueEventEditor({
         {selectedRef.lane === 'stage' && (
           <>
             <div className="property-group">
-              <label className="property-label">Stage FX</label>
+              <label className="property-label">{t('propertyPanel.venueEvent.stageFx')}</label>
               <select
                 className="property-select"
                 value={(eventData as VenueStageEvent).effect}
@@ -179,7 +181,7 @@ function VenueEventEditor({
               </select>
             </div>
             <div className="property-group">
-              <label className="property-label">Duration</label>
+              <label className="property-label">{t('propertyPanel.venueEvent.duration')}</label>
               <input
                 type="number"
                 className="property-input"
@@ -193,7 +195,7 @@ function VenueEventEditor({
 
         {selectedRef.lane === 'cameraCuts' && (
           <div className="property-group">
-            <label className="property-label">Cut</label>
+            <label className="property-label">{t('propertyPanel.venueEvent.cut')}</label>
             <select
               className="property-select"
               value={(eventData as VenueCameraCutEvent).subject}
@@ -209,7 +211,7 @@ function VenueEventEditor({
         {selectedRef.lane === 'performer' && (
           <>
             <div className="property-group">
-              <label className="property-label">Type</label>
+              <label className="property-label">{t('propertyPanel.venueEvent.type')}</label>
               <select
                 className="property-select"
                 value={(eventData as VenuePerformerEvent).type}
@@ -221,7 +223,7 @@ function VenueEventEditor({
               </select>
             </div>
             <div className="property-group">
-              <label className="property-label">Performer</label>
+              <label className="property-label">{t('propertyPanel.venueEvent.performerLabel')}</label>
               <select
                 className="property-select"
                 value={(eventData as VenuePerformerEvent).performer ?? ''}
@@ -233,7 +235,7 @@ function VenueEventEditor({
               </select>
             </div>
             <div className="property-group">
-              <label className="property-label">Duration</label>
+              <label className="property-label">{t('propertyPanel.venueEvent.duration')}</label>
               <input
                 type="number"
                 className="property-input"
@@ -246,7 +248,7 @@ function VenueEventEditor({
         )}
 
         <div className="property-group">
-          <label className="property-label">Preview</label>
+          <label className="property-label">{t('propertyPanel.venueEvent.preview')}</label>
           <input className="property-input" readOnly value={formatVenueLabel(
             selectedRef.lane === 'lighting'
               ? (eventData as VenueLightingEvent).type
@@ -263,7 +265,7 @@ function VenueEventEditor({
 
       <div className="property-actions">
         <button className="property-button property-button-danger" onClick={onDelete}>
-          Delete {laneLabel}
+          {t('propertyPanel.venueEvent.deleteButton', { lane: laneLabel })}
         </button>
       </div>
     </div>
@@ -278,6 +280,7 @@ function AlbumArt({
   songId: string
   folderPath: string
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const [artUrl, setArtUrl] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -350,11 +353,11 @@ function AlbumArt({
       onClick={handleClick}
     >
       {artUrl ? (
-        <img src={artUrl} alt="Album Art" className="album-art-image" />
+        <img src={artUrl} alt={t('propertyPanel.albumArt.alt')} className="album-art-image" />
       ) : (
         <div className="album-art-placeholder">
           <span className="album-art-icon">🎨</span>
-          <span className="album-art-text">Drop image or click to add album art</span>
+          <span className="album-art-text">{t('propertyPanel.albumArt.dropHint')}</span>
         </div>
       )}
       <input
@@ -365,7 +368,7 @@ function AlbumArt({
         style={{ display: 'none' }}
       />
       <div className="album-art-overlay">
-        <span>Drop to replace</span>
+        <span>{t('propertyPanel.albumArt.dropToReplace')}</span>
       </div>
     </div>
   )
@@ -381,10 +384,11 @@ function NoteEditor({
   onUpdate: (updates: Partial<Note>) => void
   onDelete: () => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   return (
     <div className="note-editor">
       <div className="property-group">
-        <label className="property-label">Position (Tick)</label>
+        <label className="property-label">{t('propertyPanel.noteEditor.positionTick')}</label>
         <input
           type="number"
           className="property-input"
@@ -395,7 +399,7 @@ function NoteEditor({
       </div>
 
       <div className="property-group">
-        <label className="property-label">Duration (Ticks)</label>
+        <label className="property-label">{t('propertyPanel.noteEditor.durationTicks')}</label>
         <input
           type="number"
           className="property-input"
@@ -406,36 +410,36 @@ function NoteEditor({
       </div>
 
       <div className="property-group">
-        <label className="property-label">Instrument</label>
+        <label className="property-label">{t('propertyPanel.noteEditor.instrument')}</label>
         <select
           className="property-select"
           value={note.instrument}
           onChange={(e) => onUpdate({ instrument: e.target.value as Note['instrument'] })}
         >
-          <option value="drums">Drums</option>
-          <option value="guitar">Guitar</option>
-          <option value="bass">Bass</option>
-          <option value="vocals">Vocals</option>
-          <option value="keys">Keys</option>
+          <option value="drums">{t('propertyPanel.noteEditor.instrumentOptions.drums')}</option>
+          <option value="guitar">{t('propertyPanel.noteEditor.instrumentOptions.guitar')}</option>
+          <option value="bass">{t('propertyPanel.noteEditor.instrumentOptions.bass')}</option>
+          <option value="vocals">{t('propertyPanel.noteEditor.instrumentOptions.vocals')}</option>
+          <option value="keys">{t('propertyPanel.noteEditor.instrumentOptions.keys')}</option>
         </select>
       </div>
 
       <div className="property-group">
-        <label className="property-label">Difficulty</label>
+        <label className="property-label">{t('propertyPanel.noteEditor.difficulty')}</label>
         <select
           className="property-select"
           value={note.difficulty}
           onChange={(e) => onUpdate({ difficulty: e.target.value as Note['difficulty'] })}
         >
-          <option value="expert">Expert</option>
-          <option value="hard">Hard</option>
-          <option value="medium">Medium</option>
-          <option value="easy">Easy</option>
+          <option value="expert">{t('propertyPanel.noteEditor.difficultyOptions.expert')}</option>
+          <option value="hard">{t('propertyPanel.noteEditor.difficultyOptions.hard')}</option>
+          <option value="medium">{t('propertyPanel.noteEditor.difficultyOptions.medium')}</option>
+          <option value="easy">{t('propertyPanel.noteEditor.difficultyOptions.easy')}</option>
         </select>
       </div>
 
       <div className="property-group">
-        <label className="property-label">Lane</label>
+        <label className="property-label">{t('propertyPanel.noteEditor.lane')}</label>
         <input
           type="text"
           className="property-input"
@@ -445,7 +449,7 @@ function NoteEditor({
       </div>
 
       <div className="property-group">
-        <label className="property-label">Velocity</label>
+        <label className="property-label">{t('propertyPanel.noteEditor.velocity')}</label>
         <input
           type="number"
           className="property-input"
@@ -460,7 +464,7 @@ function NoteEditor({
 
       {/* Note flags */}
       <div className="property-group">
-        <label className="property-label">Flags</label>
+        <label className="property-label">{t('propertyPanel.noteEditor.flags')}</label>
         <div className="property-flags">
           {(note.instrument === 'guitar' || note.instrument === 'bass') && (
             <>
@@ -472,7 +476,7 @@ function NoteEditor({
                     onUpdate({ flags: { ...note.flags, isHOPO: e.target.checked } })
                   }
                 />
-                <span>HOPO</span>
+                <span>{t('propertyPanel.flags.hopo')}</span>
               </label>
               <label className="property-checkbox">
                 <input
@@ -482,7 +486,7 @@ function NoteEditor({
                     onUpdate({ flags: { ...note.flags, isTap: e.target.checked } })
                   }
                 />
-                <span>Tap</span>
+                <span>{t('propertyPanel.flags.tap')}</span>
               </label>
               <label className="property-checkbox">
                 <input
@@ -492,7 +496,7 @@ function NoteEditor({
                     onUpdate({ flags: { ...note.flags, isAccent: e.target.checked } })
                   }
                 />
-                <span>Accent</span>
+                <span>{t('propertyPanel.flags.accent')}</span>
               </label>
             </>
           )}
@@ -507,7 +511,7 @@ function NoteEditor({
                       onUpdate({ flags: { ...note.flags, isDoubleKick: e.target.checked } })
                     }
                   />
-                  <span>Double Bass (2x)</span>
+                  <span>{t('propertyPanel.flags.doubleBass')}</span>
                 </label>
               )}
               <label className="property-checkbox">
@@ -518,7 +522,7 @@ function NoteEditor({
                     onUpdate({ flags: { ...note.flags, isCymbal: e.target.checked } })
                   }
                 />
-                <span>Cymbal</span>
+                <span>{t('propertyPanel.flags.cymbal')}</span>
               </label>
               <label className="property-checkbox">
                 <input
@@ -528,7 +532,7 @@ function NoteEditor({
                     onUpdate({ flags: { ...note.flags, isAccent: e.target.checked } })
                   }
                 />
-                <span>Accent</span>
+                <span>{t('propertyPanel.flags.accent')}</span>
               </label>
               <label className="property-checkbox">
                 <input
@@ -538,7 +542,7 @@ function NoteEditor({
                     onUpdate({ flags: { ...note.flags, isGhost: e.target.checked } })
                   }
                 />
-                <span>Ghost</span>
+                <span>{t('propertyPanel.flags.ghost')}</span>
               </label>
             </>
           )}
@@ -547,7 +551,7 @@ function NoteEditor({
 
       <div className="property-actions">
         <button className="property-button property-button-danger" onClick={onDelete}>
-          Delete Note
+          {t('propertyPanel.noteEditor.deleteButton')}
         </button>
       </div>
     </div>
@@ -564,6 +568,7 @@ function MultiNoteEditor({
   onUpdateAll: (updates: Partial<Note>) => void
   onDeleteAll: () => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   // Determine which instruments are in the selection
   const hasDrums = notes.some((n) => n.instrument === 'drums')
   const hasGuitarBass = notes.some((n) => n.instrument === 'guitar' || n.instrument === 'bass')
@@ -600,11 +605,11 @@ function MultiNoteEditor({
     <div className="multi-note-editor">
       <div className="multi-note-info">
         <span className="multi-note-count">{notes.length}</span>
-        <span className="multi-note-label">notes selected</span>
+        <span className="multi-note-label">{t('propertyPanel.multiNoteEditor.notesSelected')}</span>
       </div>
 
       <div className="property-section">
-        <div className="property-section-title">Flags</div>
+        <div className="property-section-title">{t('propertyPanel.noteEditor.flags')}</div>
         <div className="property-flags">
           {hasDrums && (
             <label className="property-checkbox">
@@ -614,7 +619,7 @@ function MultiNoteEditor({
                 ref={(el) => { if (el) el.indeterminate = doubleBassState === null }}
                 onChange={(e) => onUpdateAll({ flags: { isDoubleKick: e.target.checked } })}
               />
-              <span>Double Bass (2x)</span>
+              <span>{t('propertyPanel.flags.doubleBass')}</span>
             </label>
           )}
           {hasDrums && (
@@ -625,7 +630,7 @@ function MultiNoteEditor({
                 ref={(el) => { if (el) el.indeterminate = cymbalState === null }}
                 onChange={(e) => onUpdateAll({ flags: { isCymbal: e.target.checked } })}
               />
-              <span>Cymbal</span>
+              <span>{t('propertyPanel.flags.cymbal')}</span>
             </label>
           )}
           {hasGuitarBass && (
@@ -637,7 +642,7 @@ function MultiNoteEditor({
                   ref={(el) => { if (el) el.indeterminate = hopoState === null }}
                   onChange={(e) => onUpdateAll({ flags: { isHOPO: e.target.checked } })}
                 />
-                <span>HOPO</span>
+                <span>{t('propertyPanel.flags.hopo')}</span>
               </label>
               <label className="property-checkbox">
                 <input
@@ -646,7 +651,7 @@ function MultiNoteEditor({
                   ref={(el) => { if (el) el.indeterminate = tapState === null }}
                   onChange={(e) => onUpdateAll({ flags: { isTap: e.target.checked } })}
                 />
-                <span>Tap</span>
+                <span>{t('propertyPanel.flags.tap')}</span>
               </label>
             </>
           )}
@@ -657,7 +662,7 @@ function MultiNoteEditor({
               ref={(el) => { if (el) el.indeterminate = accentState === null }}
               onChange={(e) => onUpdateAll({ flags: { isAccent: e.target.checked } })}
             />
-            <span>Accent</span>
+            <span>{t('propertyPanel.flags.accent')}</span>
           </label>
           {hasDrums && (
             <label className="property-checkbox">
@@ -667,7 +672,7 @@ function MultiNoteEditor({
                 ref={(el) => { if (el) el.indeterminate = ghostState === null }}
                 onChange={(e) => onUpdateAll({ flags: { isGhost: e.target.checked } })}
               />
-              <span>Ghost</span>
+              <span>{t('propertyPanel.flags.ghost')}</span>
             </label>
           )}
         </div>
@@ -675,7 +680,7 @@ function MultiNoteEditor({
 
       <div className="property-actions">
         <button className="property-button property-button-danger" onClick={onDeleteAll}>
-          Delete All Selected
+          {t('propertyPanel.multiNoteEditor.deleteAllButton')}
         </button>
       </div>
     </div>
@@ -692,25 +697,26 @@ function VocalNoteEditor({
   onUpdate: (updates: Partial<VocalNote>) => void
   onDelete: () => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   return (
     <div className="note-editor">
       <div className="property-section">
-        <div className="property-section-title">Vocal Note</div>
+        <div className="property-section-title">{t('propertyPanel.vocalNoteEditor.title')}</div>
 
         <div className="property-group">
-          <label className="property-label">Lyric</label>
+          <label className="property-label">{t('propertyPanel.vocalNoteEditor.lyric')}</label>
           <input
             type="text"
             className="property-input"
             value={note.lyric || ''}
             onChange={(e) => onUpdate({ lyric: e.target.value })}
-            placeholder="Enter lyric syllable..."
+            placeholder={t('propertyPanel.vocalNoteEditor.lyricPlaceholder')}
           />
         </div>
 
         <div className="property-row">
           <div className="property-group property-group-half">
-            <label className="property-label">Position (Tick)</label>
+            <label className="property-label">{t('propertyPanel.noteEditor.positionTick')}</label>
             <input
               type="number"
               className="property-input"
@@ -720,7 +726,7 @@ function VocalNoteEditor({
             />
           </div>
           <div className="property-group property-group-half">
-            <label className="property-label">Duration</label>
+            <label className="property-label">{t('propertyPanel.vocalNoteEditor.duration')}</label>
             <input
               type="number"
               className="property-input"
@@ -732,7 +738,7 @@ function VocalNoteEditor({
         </div>
 
         <div className="property-group">
-          <label className="property-label">Pitch (MIDI)</label>
+          <label className="property-label">{t('propertyPanel.vocalNoteEditor.pitchMidi')}</label>
           <input
             type="number"
             className="property-input"
@@ -758,22 +764,22 @@ function VocalNoteEditor({
         </div>
 
         <div className="property-group">
-          <label className="property-label">Harmony Part</label>
+          <label className="property-label">{t('propertyPanel.vocalNoteEditor.harmonyPart')}</label>
           <select
             className="property-select"
             value={note.harmonyPart}
             onChange={(e) => onUpdate({ harmonyPart: parseInt(e.target.value) as VocalNote['harmonyPart'] })}
           >
-            <option value={0}>Main Vocals</option>
-            <option value={1}>Harmony 1</option>
-            <option value={2}>Harmony 2</option>
-            <option value={3}>Harmony 3</option>
+            <option value={0}>{t('propertyPanel.vocalNoteEditor.harmonyOptions.main')}</option>
+            <option value={1}>{t('propertyPanel.vocalNoteEditor.harmonyOptions.harmony1')}</option>
+            <option value={2}>{t('propertyPanel.vocalNoteEditor.harmonyOptions.harmony2')}</option>
+            <option value={3}>{t('propertyPanel.vocalNoteEditor.harmonyOptions.harmony3')}</option>
           </select>
         </div>
       </div>
 
       <div className="property-group">
-        <label className="property-label">Flags</label>
+        <label className="property-label">{t('propertyPanel.noteEditor.flags')}</label>
         <div className="property-flags">
           <label className="property-checkbox">
             <input
@@ -781,7 +787,7 @@ function VocalNoteEditor({
               checked={note.isSlide || false}
               onChange={(e) => onUpdate({ isSlide: e.target.checked })}
             />
-            <span>Slide</span>
+            <span>{t('propertyPanel.flags.slide')}</span>
           </label>
           <label className="property-checkbox">
             <input
@@ -789,7 +795,7 @@ function VocalNoteEditor({
               checked={note.isPercussion || false}
               onChange={(e) => onUpdate({ isPercussion: e.target.checked })}
             />
-            <span>Percussion</span>
+            <span>{t('propertyPanel.flags.percussion')}</span>
           </label>
           <label className="property-checkbox">
             <input
@@ -797,14 +803,14 @@ function VocalNoteEditor({
               checked={note.isPitchless || false}
               onChange={(e) => onUpdate({ isPitchless: e.target.checked })}
             />
-            <span>Pitchless</span>
+            <span>{t('propertyPanel.flags.pitchless')}</span>
           </label>
         </div>
       </div>
 
       <div className="property-actions">
         <button className="property-button property-button-danger" onClick={onDelete}>
-          Delete Note
+          {t('propertyPanel.noteEditor.deleteButton')}
         </button>
       </div>
     </div>
@@ -825,6 +831,7 @@ function TempoChangeRow({
   onMove: (oldTick: number, newTick: number, bpm: number) => void
   onDelete: (tick: number) => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const [draftTick, setDraftTick] = useState<string>(String(event.tick))
 
   // Keep draft in sync if external change moves this event
@@ -861,7 +868,7 @@ function TempoChangeRow({
           color: '#FF8C00', padding: '2px 4px', fontSize: 11,
           fontFamily: 'monospace', fontWeight: 600, width: '100%', minWidth: 0
         }}
-        title="Tick position — edit to move this tempo change"
+        title={t('propertyPanel.tempoRow.tickTitle')}
         value={draftTick}
         min={1}
         onChange={(e) => setDraftTick(e.target.value)}
@@ -870,7 +877,7 @@ function TempoChangeRow({
       />
       {/* Time display */}
       <span style={{ color: '#999', fontSize: 10, fontFamily: 'monospace', textAlign: 'right' }}
-        title={`Measure ${measure}, Beat ${beat}`}>
+        title={t('propertyPanel.tempoRow.measureBeatTitle', { measure, beat })}>
         {timeStr}
       </span>
       {/* BPM input */}
@@ -887,15 +894,15 @@ function TempoChangeRow({
         }}
         min={1} max={999} step={0.01}
       />
-      <span style={{ color: '#888', fontSize: 11 }}>BPM</span>
+      <span style={{ color: '#888', fontSize: 11 }}>{t('propertyPanel.tempoRow.bpmLabel')}</span>
       {/* ± BPM nudge buttons — click = ±1, Ctrl+click = ±0.1 */}
       <button
-        title="Decrease BPM (Ctrl: -0.1)"
+        title={t('propertyPanel.tempoRow.decreaseTitle')}
         style={{ background: '#2a2a3e', border: '1px solid #444', borderRadius: 3, color: '#ccc', cursor: 'pointer', fontSize: 12, padding: '0 5px', lineHeight: '18px' }}
         onClick={(e) => { const delta = e.ctrlKey || e.metaKey ? 0.1 : 1; const v = Math.max(1, Math.round((event.bpm - delta) * 100) / 100); onUpdateBpm(event.tick, v) }}
       >-</button>
       <button
-        title="Increase BPM (Ctrl: +0.1)"
+        title={t('propertyPanel.tempoRow.increaseTitle')}
         style={{ background: '#2a2a3e', border: '1px solid #444', borderRadius: 3, color: '#ccc', cursor: 'pointer', fontSize: 12, padding: '0 5px', lineHeight: '18px' }}
         onClick={(e) => { const delta = e.ctrlKey || e.metaKey ? 0.1 : 1; const v = Math.min(999, Math.round((event.bpm + delta) * 100) / 100); onUpdateBpm(event.tick, v) }}
       >+</button>
@@ -904,7 +911,7 @@ function TempoChangeRow({
           background: 'none', border: 'none', color: '#f66', cursor: 'pointer',
           fontSize: 14, padding: '0 2px', lineHeight: 1
         }}
-        title="Delete tempo change"
+        title={t('propertyPanel.tempoRow.deleteTitle')}
         onClick={() => onDelete(event.tick)}
       >✕</button>
     </div>
@@ -925,6 +932,7 @@ function TimeSignatureRow({
   onMove: (oldTick: number, newTick: number, event: TimeSignature) => void
   onDelete: (tick: number) => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const [draftTick, setDraftTick] = useState<string>(String(event.tick))
 
   useEffect(() => { setDraftTick(String(event.tick)) }, [event.tick])
@@ -962,7 +970,7 @@ function TimeSignatureRow({
           color: '#8dd0ff', padding: '2px 4px', fontSize: 11,
           fontFamily: 'monospace', fontWeight: 600, width: '100%', minWidth: 0
         }}
-        title="Tick position — edit to move this time signature change"
+        title={t('propertyPanel.timeSigRow.tickTitle')}
         value={draftTick}
         min={0}
         onChange={(e) => setDraftTick(e.target.value)}
@@ -973,7 +981,7 @@ function TimeSignatureRow({
         }}
       />
       <span style={{ color: '#999', fontSize: 10, fontFamily: 'monospace', textAlign: 'right' }}
-        title={`Measure ${measure}, Beat ${beat}`}>
+        title={t('propertyPanel.tempoRow.measureBeatTitle', { measure, beat })}>
         {timeStr}
       </span>
       <input
@@ -1011,7 +1019,7 @@ function TimeSignatureRow({
           background: 'none', border: 'none', color: '#f66', cursor: 'pointer',
           fontSize: 14, padding: '0 2px', lineHeight: 1
         }}
-        title="Delete time signature change"
+        title={t('propertyPanel.timeSigRow.deleteTitle')}
         onClick={() => onDelete(event.tick)}
       >✕</button>
     </div>
@@ -1066,6 +1074,7 @@ function MetadataEditor({
   onDeleteSongSection: (id: string) => void
   currentTick: number
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const [newTempoBpm, setNewTempoBpm] = useState('')
   const [newTimeSigNum, setNewTimeSigNum] = useState('4')
   const [newTimeSigDen, setNewTimeSigDen] = useState('4')
@@ -1086,23 +1095,23 @@ function MetadataEditor({
       )}
       {/* Album Art at top */}
       <div className="property-section">
-        <div className="property-section-title">Album Art</div>
+        <div className="property-section-title">{t('propertyPanel.metadataEditor.albumArtSection')}</div>
         <AlbumArt songId={`${songId}-${albumArtVersion}`} folderPath={folderPath} />
       </div>
 
       <div className="property-section">
-        <div className="property-section-title">Song Info</div>
+        <div className="property-section-title">{t('propertyPanel.metadataEditor.songInfoSection')}</div>
 
         <button
           type="button"
           className="property-button property-button-metadata"
           onClick={() => setIsMetadataLookupOpen(true)}
         >
-          Find metadata online…
+          {t('propertyPanel.metadataEditor.findMetadataButton')}
         </button>
 
         <div className="property-group">
-          <label className="property-label">Title</label>
+          <label className="property-label">{t('propertyPanel.metadataEditor.titleLabel')}</label>
           <input
             type="text"
             className="property-input"
@@ -1112,7 +1121,7 @@ function MetadataEditor({
         </div>
 
         <div className="property-group">
-          <label className="property-label">Artist</label>
+          <label className="property-label">{t('propertyPanel.metadataEditor.artistLabel')}</label>
           <input
             type="text"
             className="property-input"
@@ -1122,7 +1131,7 @@ function MetadataEditor({
         </div>
 
         <div className="property-group">
-          <label className="property-label">Album</label>
+          <label className="property-label">{t('propertyPanel.metadataEditor.albumLabel')}</label>
           <input
             type="text"
             className="property-input"
@@ -1133,7 +1142,7 @@ function MetadataEditor({
 
         <div className="property-row">
           <div className="property-group property-group-half">
-            <label className="property-label">Year</label>
+            <label className="property-label">{t('propertyPanel.metadataEditor.yearLabel')}</label>
             <input
               type="text"
               className="property-input"
@@ -1143,7 +1152,7 @@ function MetadataEditor({
           </div>
 
           <div className="property-group property-group-half">
-            <label className="property-label">Genre</label>
+            <label className="property-label">{t('propertyPanel.metadataEditor.genreLabel')}</label>
             <input
               type="text"
               className="property-input"
@@ -1154,7 +1163,7 @@ function MetadataEditor({
         </div>
 
         <div className="property-group">
-          <label className="property-label">Charter</label>
+          <label className="property-label">{t('propertyPanel.metadataEditor.charterLabel')}</label>
           <input
             type="text"
             className="property-input"
@@ -1165,10 +1174,10 @@ function MetadataEditor({
       </div>
 
       <div className="property-section">
-        <div className="property-section-title">Tempo</div>
-        
+        <div className="property-section-title">{t('propertyPanel.metadataEditor.tempoSection')}</div>
+
         <div className="property-group">
-          <label className="property-label">Initial BPM</label>
+          <label className="property-label">{t('propertyPanel.metadataEditor.initialBpmLabel')}</label>
           <input
             type="number"
             className="property-input"
@@ -1188,7 +1197,7 @@ function MetadataEditor({
         {/* Tempo changes list */}
         {tempoEvents.length > 1 && (
           <div style={{ marginTop: 8, marginBottom: 8 }}>
-            <label className="property-label" style={{ marginBottom: 4, display: 'block' }}>Tempo Changes</label>
+            <label className="property-label" style={{ marginBottom: 4, display: 'block' }}>{t('propertyPanel.metadataEditor.tempoChangesLabel')}</label>
             <div style={{ maxHeight: 160, overflowY: 'auto', border: '1px solid #333', borderRadius: 4 }}>
               {tempoEvents.slice(1).map((te) => (
                 <TempoChangeRow
@@ -1208,7 +1217,7 @@ function MetadataEditor({
         <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginTop: 4 }}>
           <input
             type="number"
-            placeholder="BPM"
+            placeholder={t('propertyPanel.metadataEditor.bpmPlaceholder')}
             style={{
               flex: 1, background: '#1a1a2e', border: '1px solid #444', borderRadius: 4,
               color: '#eee', padding: '4px 6px', fontSize: 12
@@ -1222,7 +1231,7 @@ function MetadataEditor({
               background: '#FF8C00', border: 'none', borderRadius: 4, color: '#000',
               padding: '4px 8px', cursor: 'pointer', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap'
             }}
-            title={`Add tempo change at current playhead position (tick ${currentTick})`}
+            title={t('propertyPanel.metadataEditor.addTempoAtPlayheadTitle', { tick: currentTick })}
             onClick={() => {
               const v = parseFloat(newTempoBpm)
               if (v > 0 && v <= 999 && currentTick > 0) {
@@ -1230,16 +1239,16 @@ function MetadataEditor({
                 setNewTempoBpm('')
               }
             }}
-          >+ At Playhead</button>
+          >{t('propertyPanel.metadataEditor.addAtPlayheadButton')}</button>
         </div>
-        <div className="difficulty-hint">Add tempo changes at the current playhead position</div>
+        <div className="difficulty-hint">{t('propertyPanel.metadataEditor.tempoHint')}</div>
       </div>
 
       <div className="property-section">
-        <div className="property-section-title">Time Signature</div>
+        <div className="property-section-title">{t('propertyPanel.metadataEditor.timeSignatureSection')}</div>
 
         <div className="property-group">
-          <label className="property-label">Initial Time Signature</label>
+          <label className="property-label">{t('propertyPanel.metadataEditor.initialTimeSignatureLabel')}</label>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             <input
               type="number"
@@ -1271,7 +1280,7 @@ function MetadataEditor({
 
         {timeSignatures.length > 1 && (
           <div style={{ marginTop: 8, marginBottom: 8 }}>
-            <label className="property-label" style={{ marginBottom: 4, display: 'block' }}>Signature Changes</label>
+            <label className="property-label" style={{ marginBottom: 4, display: 'block' }}>{t('propertyPanel.metadataEditor.signatureChangesLabel')}</label>
             <div style={{ maxHeight: 160, overflowY: 'auto', border: '1px solid #333', borderRadius: 4 }}>
               {timeSignatures.slice(1).map((ts) => (
                 <TimeSignatureRow
@@ -1290,7 +1299,7 @@ function MetadataEditor({
         <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginTop: 4 }}>
           <input
             type="number"
-            placeholder="Num"
+            placeholder={t('propertyPanel.metadataEditor.numeratorPlaceholder')}
             style={{
               width: 70, background: '#1a1a2e', border: '1px solid #444', borderRadius: 4,
               color: '#eee', padding: '4px 6px', fontSize: 12
@@ -1303,7 +1312,7 @@ function MetadataEditor({
           <span style={{ color: '#888' }}>/</span>
           <input
             type="number"
-            placeholder="Den"
+            placeholder={t('propertyPanel.metadataEditor.denominatorPlaceholder')}
             style={{
               width: 70, background: '#1a1a2e', border: '1px solid #444', borderRadius: 4,
               color: '#eee', padding: '4px 6px', fontSize: 12
@@ -1318,7 +1327,7 @@ function MetadataEditor({
               background: '#8dd0ff', border: 'none', borderRadius: 4, color: '#081018',
               padding: '4px 8px', cursor: 'pointer', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap'
             }}
-            title={`Add time signature change at current playhead position (tick ${currentTick})`}
+            title={t('propertyPanel.metadataEditor.addTimeSigAtPlayheadTitle', { tick: currentTick })}
             onClick={() => {
               const num = parseInt(newTimeSigNum)
               const den = parseInt(newTimeSigDen)
@@ -1326,13 +1335,13 @@ function MetadataEditor({
                 onAddTimeSignature({ tick: currentTick, numerator: num, denominator: den })
               }
             }}
-          >+ At Playhead</button>
+          >{t('propertyPanel.metadataEditor.addAtPlayheadButton')}</button>
         </div>
-        <div className="difficulty-hint">Add time signature changes at the current playhead position</div>
+        <div className="difficulty-hint">{t('propertyPanel.metadataEditor.timeSigHint')}</div>
       </div>
 
       <div className="property-section">
-        <div className="property-section-title">Song Sections</div>
+        <div className="property-section-title">{t('propertyPanel.metadataEditor.songSectionsSection')}</div>
 
         {songSections.length > 0 ? (
           <div style={{ maxHeight: 180, overflowY: 'auto', border: '1px solid #333', borderRadius: 4 }}>
@@ -1368,21 +1377,21 @@ function MetadataEditor({
                   className="property-input"
                   style={{ padding: '4px 6px', fontSize: 12 }}
                   onChange={(e) => onUpdateSongSection(section.id, { name: e.target.value })}
-                  placeholder="Section name"
+                  placeholder={t('propertyPanel.metadataEditor.sectionNamePlaceholder')}
                 />
                 <button
                   style={{
                     background: 'none', border: 'none', color: '#f66', cursor: 'pointer',
                     fontSize: 14, padding: '0 2px', lineHeight: 1
                   }}
-                  title="Delete section"
+                  title={t('propertyPanel.metadataEditor.deleteSectionTitle')}
                   onClick={() => onDeleteSongSection(section.id)}
                 >x</button>
               </div>
             ))}
           </div>
         ) : (
-          <div className="difficulty-hint">No sections yet</div>
+          <div className="difficulty-hint">{t('propertyPanel.metadataEditor.noSectionsHint')}</div>
         )}
 
         <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginTop: 8 }}>
@@ -1391,19 +1400,19 @@ function MetadataEditor({
               background: '#9cd89a', border: 'none', borderRadius: 4, color: '#071008',
               padding: '4px 8px', cursor: 'pointer', fontSize: 11, fontWeight: 600
             }}
-            title={`Add section at current playhead position (tick ${currentTick})`}
+            title={t('propertyPanel.metadataEditor.addSectionAtPlayheadTitle', { tick: currentTick })}
             onClick={() => onAddSongSection({ tick: currentTick, name: 'section' })}
-          >+ At Playhead</button>
+          >{t('propertyPanel.metadataEditor.addAtPlayheadButton')}</button>
         </div>
-        <div className="difficulty-hint">Use labels like intro, verse, chorus, solo, outro</div>
+        <div className="difficulty-hint">{t('propertyPanel.metadataEditor.sectionLabelsHint')}</div>
       </div>
 
       <div className="property-section">
-        <div className="property-section-title">Difficulty Ratings</div>
+        <div className="property-section-title">{t('propertyPanel.metadataEditor.difficultyRatingsSection')}</div>
 
         <div className="property-row">
           <div className="property-group property-group-half">
-            <label className="property-label">Drums</label>
+            <label className="property-label">{t('propertyPanel.metadataEditor.difficultyLabels.drums')}</label>
             <input
               type="number"
               className="property-input"
@@ -1415,7 +1424,7 @@ function MetadataEditor({
           </div>
 
           <div className="property-group property-group-half">
-            <label className="property-label">Guitar</label>
+            <label className="property-label">{t('propertyPanel.metadataEditor.difficultyLabels.guitar')}</label>
             <input
               type="number"
               className="property-input"
@@ -1429,7 +1438,7 @@ function MetadataEditor({
 
         <div className="property-row">
           <div className="property-group property-group-half">
-            <label className="property-label">Bass</label>
+            <label className="property-label">{t('propertyPanel.metadataEditor.difficultyLabels.bass')}</label>
             <input
               type="number"
               className="property-input"
@@ -1441,7 +1450,7 @@ function MetadataEditor({
           </div>
 
           <div className="property-group property-group-half">
-            <label className="property-label">Vocals</label>
+            <label className="property-label">{t('propertyPanel.metadataEditor.difficultyLabels.vocals')}</label>
             <input
               type="number"
               className="property-input"
@@ -1453,14 +1462,14 @@ function MetadataEditor({
           </div>
         </div>
 
-        <div className="difficulty-hint">-1 = disabled, 0-6 = difficulty tier</div>
+        <div className="difficulty-hint">{t('propertyPanel.metadataEditor.difficultyHint')}</div>
       </div>
 
       <div className="property-section">
-        <div className="property-section-title">Preview</div>
+        <div className="property-section-title">{t('propertyPanel.metadataEditor.previewSection')}</div>
 
         <div className="property-group">
-          <label className="property-label">Preview Start (ms)</label>
+          <label className="property-label">{t('propertyPanel.metadataEditor.previewStartLabel')}</label>
           <input
             type="number"
             className="property-input"
@@ -1471,13 +1480,13 @@ function MetadataEditor({
         </div>
 
         <div className="property-group">
-          <label className="property-label">Loading Phrase</label>
+          <label className="property-label">{t('propertyPanel.metadataEditor.loadingPhraseLabel')}</label>
           <input
             type="text"
             className="property-input"
             value={metadata.loading_phrase || ''}
             onChange={(e) => onUpdate({ loading_phrase: e.target.value })}
-            placeholder="Tips or messages..."
+            placeholder={t('propertyPanel.metadataEditor.loadingPhrasePlaceholder')}
           />
         </div>
       </div>
@@ -1487,6 +1496,7 @@ function MetadataEditor({
 
 // Main Property Panel component
 export function PropertyPanel(): React.JSX.Element {
+  const { t } = useTranslation()
   const { activeSongId } = useProjectStore()
   const bottomPanelTab = useUIStore((state) => state.bottomPanelTab)
   const selectedVenueEvent = useUIStore((state) => state.selectedVenueEvent)
@@ -1570,14 +1580,14 @@ export function PropertyPanel(): React.JSX.Element {
         <div className="panel-header">
           <span className="panel-header-title">
             <span>ℹ️</span>
-            <span>Properties</span>
+            <span>{t('propertyPanel.header.title')}</span>
           </span>
         </div>
         <div className="empty-state">
           <div className="empty-state-icon">📝</div>
-          <div className="empty-state-title">No Song Selected</div>
+          <div className="empty-state-title">{t('propertyPanel.emptyState.title')}</div>
           <div className="empty-state-description">
-            Select a song to view and edit its properties
+            {t('propertyPanel.emptyState.description')}
           </div>
         </div>
       </div>
@@ -1659,7 +1669,7 @@ export function PropertyPanel(): React.JSX.Element {
       <div className="panel-header">
         <span className="panel-header-title">
           <span>ℹ️</span>
-          <span>Properties</span>
+          <span>{t('propertyPanel.header.title')}</span>
         </span>
       </div>
 
@@ -1667,7 +1677,7 @@ export function PropertyPanel(): React.JSX.Element {
         {!metadata ? (
           // Still loading store data
           <div className="empty-state">
-            <div className="empty-state-description">Loading...</div>
+            <div className="empty-state-description">{t('common.loading')}</div>
           </div>
         ) : bottomPanelTab === 'video' && selectedVenueEvent && selectedVenueEventData ? (
           <VenueEventEditor
@@ -1688,11 +1698,11 @@ export function PropertyPanel(): React.JSX.Element {
           <div className="multi-note-editor">
             <div className="multi-note-info">
               <span className="multi-note-count">{selectedVocalNotes.length}</span>
-              <span className="multi-note-label">vocal notes selected</span>
+              <span className="multi-note-label">{t('propertyPanel.multiVocalNotes.selectedLabel')}</span>
             </div>
             <div className="property-actions">
               <button className="property-button property-button-danger" onClick={() => songStore.getState().deleteSelectedVocalNotes()}>
-                Delete All Selected
+                {t('propertyPanel.multiNoteEditor.deleteAllButton')}
               </button>
             </div>
           </div>

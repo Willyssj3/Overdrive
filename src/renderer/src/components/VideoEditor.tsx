@@ -1,5 +1,7 @@
 // Timeline editor for background media and venue authoring
 import { useRef, useState, useEffect, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import { useProjectStore, useUIStore, getSongStore } from '../stores'
 import { tickToSeconds, secondsToTick, getAudioDuration, getAudioSources, getAudioBufferForPath, onAudioLoaded } from '../services/audioService'
 import * as audioService from '../services/audioService'
@@ -150,18 +152,18 @@ function formatVenueLabel(value: string): string {
     .trim()
 }
 
-function getVenueLaneLabel(lane: VenueLaneKey): string {
+function getVenueLaneLabel(lane: VenueLaneKey, t: TFunction): string {
   switch (lane) {
     case 'lighting':
-      return 'Lighting'
+      return t('videoEditor.laneLabels.lighting')
     case 'postProcessing':
-      return 'Post FX'
+      return t('videoEditor.laneLabels.postProcessing')
     case 'stage':
-      return 'Stage FX'
+      return t('videoEditor.laneLabels.stage')
     case 'cameraCuts':
-      return 'Camera Cut'
+      return t('videoEditor.laneLabels.cameraCuts')
     case 'performer':
-      return 'Performer'
+      return t('videoEditor.laneLabels.performer')
     default:
       return lane
   }
@@ -293,6 +295,7 @@ function AudioTrack({
   onSelectClip: (id: string | null) => void
   onMoveClip: (clipId: string, newStartMs: number) => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const [sources, setSources] = useState(() => getAudioSources(songId))
   const [dragInfo, setDragInfo] = useState<{ clipId: string; startX: number; origStartMs: number } | null>(null)
   const pps = VIDEO_EDITOR_CONFIG.pixelsPerSecond * zoom
@@ -354,7 +357,7 @@ function AudioTrack({
 
   return (
     <div className="audio-track" style={{ minHeight: trackHeight }}>
-      <div className="audio-track-label"><span>Audio</span></div>
+      <div className="audio-track-label"><span>{t('videoEditor.tracks.audio')}</span></div>
       <div className="audio-track-timeline" style={{ width, minHeight: trackHeight }}>
         {laidOutClips.length > 0 && laidOutClips.map(({ clip, durationMs, row }) => {
           const left = clip.startMs * ppm - scrollX
@@ -370,7 +373,7 @@ function AudioTrack({
                 e.stopPropagation()
                 onSelectClip(clip.id)
               }}
-              title={`${clip.filename} at ${(clip.startMs / 1000).toFixed(2)}s`}
+              title={t('videoEditor.audioClip.tooltip', { filename: clip.filename, time: (clip.startMs / 1000).toFixed(2) })}
             >
               {buffer && (
                 <WaveformCanvas
@@ -387,7 +390,7 @@ function AudioTrack({
           )
         })}
         {laidOutClips.length === 0 && (
-          <div className="audio-track-empty"><span>No audio clips on timeline</span></div>
+          <div className="audio-track-empty"><span>{t('videoEditor.tracks.audioEmpty')}</span></div>
         )}
       </div>
     </div>
@@ -402,6 +405,7 @@ function VideoTrack({
   selectedClipId: string | null; onSelectClip: (id: string | null) => void
   onMoveClip: (id: string, newStartMs: number) => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const [dragInfo, setDragInfo] = useState<{ clipId: string; startX: number; origMs: number } | null>(null)
   const pps = VIDEO_EDITOR_CONFIG.pixelsPerSecond * zoom
   const ppm = pps / 1000
@@ -429,7 +433,7 @@ function VideoTrack({
 
   return (
     <div className="video-track">
-      <div className="video-track-label"><span>Video</span></div>
+      <div className="video-track-label"><span>{t('videoEditor.tracks.video')}</span></div>
       <div className="video-track-timeline" style={{ width }} onClick={() => onSelectClip(null)}>
         {videoPath && clips.length > 0 ? clips.map((clip) => {
           const clipX = clip.startMs * ppm - scrollX
@@ -450,7 +454,7 @@ function VideoTrack({
             </div>
           )
         }) : (
-          <div className="video-track-empty"><span>No video loaded. Use Import File or Import URL.</span></div>
+          <div className="video-track-empty"><span>{t('videoEditor.tracks.videoEmpty')}</span></div>
         )}
       </div>
     </div>
@@ -490,6 +494,7 @@ function VenueTrack({
   getEventLabel,
   getEventDuration
 }: VenueTrackProps): React.JSX.Element {
+  const { t } = useTranslation()
   const [dragInfo, setDragInfo] = useState<{ eventId: string; startX: number; originSeconds: number } | null>(null)
   const [resizeInfo, setResizeInfo] = useState<{ eventId: string; startX: number; originTick: number; originDuration: number } | null>(null)
   const [selectionBox, setSelectionBox] = useState<{ startX: number; currentX: number } | null>(null)
@@ -669,13 +674,13 @@ function VenueTrack({
               onMouseDown={(e) => handleMouseDown(e, event)}
               onClick={(e) => { e.stopPropagation(); onSelectEvent(event.id) }}
               onDragStart={(e) => e.preventDefault()}
-              title={`${label}: ${getEventLabel(event)} @ tick ${event.tick}`}
+              title={t('videoEditor.venueEvent.tooltip', { label, eventLabel: getEventLabel(event), tick: event.tick })}
             >
               <span className="venue-event-name">{getEventLabel(event)}</span>
               {onResizeEvent && selectedEventId === event.id && (
                 <div
                   className="venue-event-resize-handle"
-                  title="Drag to change duration (hold Shift for fine adjustment)"
+                  title={t('videoEditor.venueEvent.resizeHint')}
                   onMouseDown={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
@@ -692,12 +697,12 @@ function VenueTrack({
                 className="venue-event-delete"
                 onMouseDown={(e) => e.stopPropagation()}
                 onClick={(e) => { e.stopPropagation(); onDeleteEvent(event.id) }}
-                title="Delete event"
+                title={t('videoEditor.venueEvent.deleteTooltip')}
               >✕</button>
             </div>
           )
         }) : (
-          <div className="venue-track-empty"><span>No authored events</span></div>
+          <div className="venue-track-empty"><span>{t('videoEditor.venueTrack.empty')}</span></div>
         )}
 
         {/* Dense-tick stack picker popover */}
@@ -707,7 +712,7 @@ function VenueTrack({
             style={{ left: stackPicker.x, top: stackPicker.y }}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            <div className="venue-stack-picker-header">Select event ({stackPicker.events.length} stacked)</div>
+            <div className="venue-stack-picker-header">{t('videoEditor.venueTrack.stackPickerHeader', { count: stackPicker.events.length })}</div>
             {stackPicker.events.map((ev) => (
               <button
                 key={ev.id}
@@ -787,17 +792,18 @@ function URLImportModal({
   onSubmit: (url: string) => void; onCancel: () => void
   isDownloading: boolean; downloadProgress: number
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const [url, setUrl] = useState('')
   return (
     <div className="video-url-modal-overlay" onClick={isDownloading ? undefined : onCancel}>
       <div className="video-url-modal" onClick={(e) => e.stopPropagation()}>
-        <h3>Import Video from URL</h3>
+        <h3>{t('videoEditor.urlModal.title')}</h3>
         <p style={{ fontSize: 12, color: '#888', margin: '0 0 8px' }}>
-          Supports YouTube, Vimeo, and direct video URLs. Requires yt-dlp installed.
+          {t('videoEditor.urlModal.description')}
         </p>
         <input
           type="text"
-          placeholder="https://www.youtube.com/watch?v=... or direct .mp4 URL"
+          placeholder={t('videoEditor.urlModal.placeholder')}
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           autoFocus
@@ -811,13 +817,13 @@ function URLImportModal({
             <div style={{ height: 4, background: '#333', borderRadius: 2, overflow: 'hidden' }}>
               <div style={{ height: '100%', width: `${downloadProgress}%`, background: '#4488FF', transition: 'width 0.3s' }} />
             </div>
-            <span style={{ fontSize: 11, color: '#888' }}>Downloading... {Math.round(downloadProgress)}%</span>
+            <span style={{ fontSize: 11, color: '#888' }}>{t('videoEditor.urlModal.downloadingProgress', { percent: Math.round(downloadProgress) })}</span>
           </div>
         )}
         <div className="video-url-modal-actions">
-          <button onClick={onCancel} disabled={isDownloading}>Cancel</button>
+          <button onClick={onCancel} disabled={isDownloading}>{t('common.cancel')}</button>
           <button disabled={!url.trim() || isDownloading} onClick={() => onSubmit(url.trim())}>
-            {isDownloading ? 'Downloading...' : 'Import'}
+            {isDownloading ? t('videoEditor.urlModal.downloadingButton') : t('videoEditor.urlModal.importButton')}
           </button>
         </div>
       </div>
@@ -826,6 +832,7 @@ function URLImportModal({
 }
 
 export function VideoEditor(): React.JSX.Element {
+  const { t } = useTranslation()
   const { activeSongId } = useProjectStore()
   const selectedVenueEvent = useUIStore((state) => state.selectedVenueEvent)
   const setSelectedVenueEvent = useUIStore((state) => state.setSelectedVenueEvent)
@@ -1020,14 +1027,14 @@ export function VideoEditor(): React.JSX.Element {
         store.getState().updateVideoSync({ videoPath: result.filePath, clips: [] })
         setShowUrlModal(false)
       } else {
-        alert(`Download failed: ${result.error || 'Unknown error'}\n\nMake sure yt-dlp is installed and the URL is valid.`)
+        alert(t('videoEditor.alerts.downloadFailed', { error: result.error || t('videoEditor.alerts.unknownError') }))
       }
     } catch (error) {
       unsubscribe()
       setIsDownloading(false)
-      alert(`Download error: ${error}`)
+      alert(t('videoEditor.alerts.downloadError', { error: String(error) }))
     }
-  }, [activeSongId])
+  }, [activeSongId, t])
 
   const handleRemoveVideo = useCallback(() => {
     withSongStore((store) => {
@@ -1271,27 +1278,34 @@ export function VideoEditor(): React.JSX.Element {
 
   const selectedVenueHelpText = useMemo(() => {
     if (!selectedVenueEvent || !selectedVenueEventData) {
-      return 'Venue events control visuals only (lights, post effects, stage FX, camera cuts, performer spotlights). Drag to place. Stage/Performer events can be resized from the right edge. Hold Shift while dragging for fine adjustment.'
+      return t('videoEditor.help.defaultText')
     }
 
     if (selectedLightingEvent) {
-      return `Lighting cue "${formatVenueLabel(selectedLightingEvent.type)}" changes the stage lighting look at this tick.`
+      return t('videoEditor.help.lightingText', { name: formatVenueLabel(selectedLightingEvent.type) })
     }
     if (selectedPostProcessingEvent) {
-      return `Post FX "${formatVenueLabel(selectedPostProcessingEvent.type)}" applies a screen-space effect at this tick.`
+      return t('videoEditor.help.postProcessingText', { name: formatVenueLabel(selectedPostProcessingEvent.type) })
     }
     if (selectedStageEvent) {
       const durationTicks = selectedStageEvent.duration ?? 0
-      return `Stage FX "${formatVenueLabel(selectedStageEvent.effect)}" triggers venue stage behavior${durationTicks > 0 ? ` for ${durationTicks} ticks` : ''}.`
+      const name = formatVenueLabel(selectedStageEvent.effect)
+      return durationTicks > 0
+        ? t('videoEditor.help.stageTextWithDuration', { name, duration: durationTicks })
+        : t('videoEditor.help.stageText', { name })
     }
     if (selectedCameraCutEvent) {
-      return `Camera cut "${formatVenueLabel(selectedCameraCutEvent.subject)}" chooses the shot used by the venue camera at this tick.`
+      return t('videoEditor.help.cameraText', { name: formatVenueLabel(selectedCameraCutEvent.subject) })
     }
     if (selectedPerformerEvent) {
-      return `Performer event "${formatVenueLabel(selectedPerformerEvent.type)}" targets ${formatVenueLabel(selectedPerformerEvent.performer ?? 'performer')} for ${selectedPerformerEvent.duration} ticks.`
+      return t('videoEditor.help.performerText', {
+        name: formatVenueLabel(selectedPerformerEvent.type),
+        target: formatVenueLabel(selectedPerformerEvent.performer ?? 'performer'),
+        duration: selectedPerformerEvent.duration
+      })
     }
 
-    return `Selected ${getVenueLaneLabel(selectedVenueEvent.lane)} event at tick ${selectedVenueEventData.tick}.`
+    return t('videoEditor.help.selectedGenericText', { lane: getVenueLaneLabel(selectedVenueEvent.lane, t), tick: selectedVenueEventData.tick })
   }, [
     selectedVenueEvent,
     selectedVenueEventData,
@@ -1299,7 +1313,8 @@ export function VideoEditor(): React.JSX.Element {
     selectedPostProcessingEvent,
     selectedStageEvent,
     selectedCameraCutEvent,
-    selectedPerformerEvent
+    selectedPerformerEvent,
+    t
   ])
 
   const selectedVenueEventName = useMemo(() => {
@@ -1310,8 +1325,8 @@ export function VideoEditor(): React.JSX.Element {
     if (selectedPerformerEvent) {
       return `${formatVenueLabel(selectedPerformerEvent.type)} ${formatVenueLabel(selectedPerformerEvent.performer ?? '')}`.trim()
     }
-    return 'Event'
-  }, [selectedLightingEvent, selectedPostProcessingEvent, selectedStageEvent, selectedCameraCutEvent, selectedPerformerEvent])
+    return t('videoEditor.event.fallbackName')
+  }, [selectedLightingEvent, selectedPostProcessingEvent, selectedStageEvent, selectedCameraCutEvent, selectedPerformerEvent, t])
 
   const updateSelectedVenueEvent = useCallback((updates: Partial<VenueEvent>) => {
     if (!selectedVenueEvent) return
@@ -1356,7 +1371,7 @@ export function VideoEditor(): React.JSX.Element {
     const store = getSongStore(activeSongId)
     const state = store.getState()
     if (!state.song.audioPath) {
-      alert('No audio loaded to export with video')
+      alert(t('videoEditor.alerts.noAudioToExport'))
       return
     }
 
@@ -1377,11 +1392,11 @@ export function VideoEditor(): React.JSX.Element {
     setExportProgress(null)
 
     if (result.success) {
-      alert('Export complete!')
+      alert(t('videoEditor.alerts.exportComplete'))
     } else {
-      alert(`Export failed: ${result.error}`)
+      alert(t('videoEditor.alerts.exportFailed', { error: result.error }))
     }
-  }, [activeSongId, videoSync])
+  }, [activeSongId, videoSync, t])
 
   const handleSeek = useCallback((seconds: number) => {
     if (!activeSongId) return
@@ -1466,8 +1481,8 @@ export function VideoEditor(): React.JSX.Element {
       <div className="video-editor">
         <div className="empty-state">
           <div className="empty-state-icon">🎬</div>
-          <div className="empty-state-title">No Song Selected</div>
-          <div className="empty-state-description">Select a song to edit media sync and venue events.</div>
+          <div className="empty-state-title">{t('videoEditor.emptyState.title')}</div>
+          <div className="empty-state-description">{t('videoEditor.emptyState.description')}</div>
         </div>
       </div>
     )
@@ -1476,40 +1491,40 @@ export function VideoEditor(): React.JSX.Element {
   return (
     <div className="video-editor" ref={containerRef}>
       <div className="video-toolbar">
-        <button className="video-toolbar-button" onClick={handleImportFile} title="Import video from file">Import File</button>
-        <button className="video-toolbar-button" onClick={handleImportAudio} title="Import an additional audio source onto the timeline">Add Audio</button>
-        <button className="video-toolbar-button" onClick={() => setShowUrlModal(true)} title="Import video from URL (YouTube, etc.)">Import URL</button>
-        <button className="video-toolbar-button" onClick={addLightingEvent} title="Add a lighting cue at the playhead">💡 Lighting</button>
-        <button className="video-toolbar-button" onClick={addPostProcessingEvent} title="Add a post-processing effect at the playhead">✨ Post FX</button>
-        <button className="video-toolbar-button" onClick={addStageEvent} title="Add a stage effect at the playhead">🎭 Stage FX</button>
-        <button className="video-toolbar-button" onClick={addCameraCutEvent} title="Add a venue camera cut at the playhead">🎥 Camera Cut</button>
-        <button className="video-toolbar-button" onClick={addPerformerEvent} title="Add a performer spotlight/singalong event at the playhead">🎤 Performer</button>
+        <button className="video-toolbar-button" onClick={handleImportFile} title={t('videoEditor.toolbar.importFileTooltip')}>{t('videoEditor.toolbar.importFile')}</button>
+        <button className="video-toolbar-button" onClick={handleImportAudio} title={t('videoEditor.toolbar.addAudioTooltip')}>{t('videoEditor.toolbar.addAudio')}</button>
+        <button className="video-toolbar-button" onClick={() => setShowUrlModal(true)} title={t('videoEditor.toolbar.importUrlTooltip')}>{t('videoEditor.toolbar.importUrl')}</button>
+        <button className="video-toolbar-button" onClick={addLightingEvent} title={t('videoEditor.toolbar.lightingTooltip')}>💡 {t('videoEditor.toolbar.lighting')}</button>
+        <button className="video-toolbar-button" onClick={addPostProcessingEvent} title={t('videoEditor.toolbar.postFxTooltip')}>✨ {t('videoEditor.toolbar.postFx')}</button>
+        <button className="video-toolbar-button" onClick={addStageEvent} title={t('videoEditor.toolbar.stageFxTooltip')}>🎭 {t('videoEditor.toolbar.stageFx')}</button>
+        <button className="video-toolbar-button" onClick={addCameraCutEvent} title={t('videoEditor.toolbar.cameraCutTooltip')}>🎥 {t('videoEditor.toolbar.cameraCut')}</button>
+        <button className="video-toolbar-button" onClick={addPerformerEvent} title={t('videoEditor.toolbar.performerTooltip')}>🎤 {t('videoEditor.toolbar.performer')}</button>
         {videoSync.videoPath && (
           <>
-            <button className="video-toolbar-button video-toolbar-button-danger" onClick={handleRemoveVideo} title="Remove the imported video">Remove Video</button>
+            <button className="video-toolbar-button video-toolbar-button-danger" onClick={handleRemoveVideo} title={t('videoEditor.toolbar.removeVideoTooltip')}>{t('videoEditor.toolbar.removeVideo')}</button>
             <div className="video-toolbar-divider" />
-            <button className="video-toolbar-button" onClick={handleSplitAtPlayhead} title="Split the selected video clip at the playhead">Split</button>
+            <button className="video-toolbar-button" onClick={handleSplitAtPlayhead} title={t('videoEditor.toolbar.splitTooltip')}>{t('videoEditor.toolbar.split')}</button>
           </>
         )}
-        {selectedAudioClipId && <button className="video-toolbar-button video-toolbar-button-danger" onClick={handleDeleteAudioClip} title="Delete selected audio clip">Delete Audio</button>}
-        {selectedClipId && <button className="video-toolbar-button video-toolbar-button-danger" onClick={handleDeleteClip} title="Delete selected video clip">Delete Clip</button>}
+        {selectedAudioClipId && <button className="video-toolbar-button video-toolbar-button-danger" onClick={handleDeleteAudioClip} title={t('videoEditor.toolbar.deleteAudioTooltip')}>{t('videoEditor.toolbar.deleteAudio')}</button>}
+        {selectedClipId && <button className="video-toolbar-button video-toolbar-button-danger" onClick={handleDeleteClip} title={t('videoEditor.toolbar.deleteClipTooltip')}>{t('videoEditor.toolbar.deleteClip')}</button>}
         {selectedVenueEvent && (
           <button
             className="video-toolbar-button video-toolbar-button-danger"
             onClick={handleDeleteVenueEvent}
-            title={`Delete selected ${getVenueLaneLabel(selectedVenueEvent.lane)} event`}
+            title={t('videoEditor.toolbar.deleteVenueTooltip', { lane: getVenueLaneLabel(selectedVenueEvent.lane, t) })}
           >
-            Delete {getVenueLaneLabel(selectedVenueEvent.lane)}
+            {t('videoEditor.toolbar.deleteVenue', { lane: getVenueLaneLabel(selectedVenueEvent.lane, t) })}
           </button>
         )}
         <div className="video-toolbar-spacer" />
         {videoSync.videoPath && (
-          <button className="video-toolbar-button" onClick={handleExport} disabled={exportProgress !== null} title="Export video with chart audio">
-            {exportProgress !== null ? `Exporting ${exportProgress}%` : 'Export'}
+          <button className="video-toolbar-button" onClick={handleExport} disabled={exportProgress !== null} title={t('videoEditor.toolbar.exportTooltip')}>
+            {exportProgress !== null ? t('videoEditor.toolbar.exporting', { percent: exportProgress }) : t('common.export')}
           </button>
         )}
         <div className="video-zoom-controls">
-          <label>Zoom:</label>
+          <label>{t('videoEditor.toolbar.zoomLabel')}</label>
           <button onClick={() => setZoom((value) => Math.max(0.1, value * 0.8))}>-</button>
           <span>{Math.round(zoom * 100)}%</span>
           <button onClick={() => setZoom((value) => Math.min(10, value * 1.25))}>+</button>
@@ -1517,22 +1532,22 @@ export function VideoEditor(): React.JSX.Element {
       </div>
 
       <div className="video-toolbar video-toolbar-help" role="status" aria-live="polite">
-        <span className="video-help-label">Venue Help</span>
+        <span className="video-help-label">{t('videoEditor.help.label')}</span>
         <span className="video-help-text">{selectedVenueHelpText}</span>
       </div>
 
       {selectedVenueEvent && selectedVenueEventData && (
         <div className="video-toolbar video-toolbar-secondary">
           <div className="video-toolbar-info">
-            <span className="video-info-label">Lane</span>
-            <span>{getVenueLaneLabel(selectedVenueEvent.lane)}</span>
+            <span className="video-info-label">{t('videoEditor.fields.lane')}</span>
+            <span>{getVenueLaneLabel(selectedVenueEvent.lane, t)}</span>
           </div>
           <div className="video-toolbar-info video-toolbar-field-wide">
-            <span className="video-info-label">Event</span>
+            <span className="video-info-label">{t('videoEditor.fields.event')}</span>
             <span>{selectedVenueEventName}</span>
           </div>
           <div className="video-toolbar-info">
-            <span className="video-info-label">Tick</span>
+            <span className="video-info-label">{t('videoEditor.fields.tick')}</span>
             <input
               className="video-info-input"
               type="number"
@@ -1543,7 +1558,7 @@ export function VideoEditor(): React.JSX.Element {
           </div>
           {selectedLightingEvent && (
             <div className="video-toolbar-info video-toolbar-field-wide">
-              <span className="video-info-label">Cue</span>
+              <span className="video-info-label">{t('videoEditor.fields.cue')}</span>
               <select
                 className="video-toolbar-select"
                 value={selectedLightingEvent.type}
@@ -1557,7 +1572,7 @@ export function VideoEditor(): React.JSX.Element {
           )}
           {selectedPostProcessingEvent && (
             <div className="video-toolbar-info video-toolbar-field-wide">
-              <span className="video-info-label">Effect</span>
+              <span className="video-info-label">{t('videoEditor.fields.effect')}</span>
               <select
                 className="video-toolbar-select"
                 value={selectedPostProcessingEvent.type}
@@ -1571,7 +1586,7 @@ export function VideoEditor(): React.JSX.Element {
           )}
           {selectedStageEvent && (
             <div className="video-toolbar-info video-toolbar-field-wide">
-              <span className="video-info-label">Stage</span>
+              <span className="video-info-label">{t('videoEditor.fields.stage')}</span>
               <select
                 className="video-toolbar-select"
                 value={selectedStageEvent.effect}
@@ -1585,7 +1600,7 @@ export function VideoEditor(): React.JSX.Element {
           )}
           {selectedCameraCutEvent && (
             <div className="video-toolbar-info video-toolbar-field-wide">
-              <span className="video-info-label">Cut</span>
+              <span className="video-info-label">{t('videoEditor.fields.cut')}</span>
               <select
                 className="video-toolbar-select"
                 value={selectedCameraCutEvent.subject}
@@ -1600,7 +1615,7 @@ export function VideoEditor(): React.JSX.Element {
           {selectedPerformerEvent && (
             <>
               <div className="video-toolbar-info video-toolbar-field-wide">
-                <span className="video-info-label">Type</span>
+                <span className="video-info-label">{t('videoEditor.fields.type')}</span>
                 <select
                   className="video-toolbar-select"
                   value={selectedPerformerEvent.type}
@@ -1612,7 +1627,7 @@ export function VideoEditor(): React.JSX.Element {
                 </select>
               </div>
               <div className="video-toolbar-info video-toolbar-field-wide">
-                <span className="video-info-label">Performer</span>
+                <span className="video-info-label">{t('videoEditor.fields.performer')}</span>
                 <select
                   className="video-toolbar-select"
                   value={selectedPerformerEvent.performer ?? 'vocals'}
@@ -1624,7 +1639,7 @@ export function VideoEditor(): React.JSX.Element {
                 </select>
               </div>
               <div className="video-toolbar-info">
-                <span className="video-info-label">Duration</span>
+                <span className="video-info-label">{t('videoEditor.fields.duration')}</span>
                 <input
                   className="video-info-input"
                   type="number"
@@ -1667,7 +1682,7 @@ export function VideoEditor(): React.JSX.Element {
           />
           <VenueTrack
             laneKey="lighting"
-            label="Lighting"
+            label={t('videoEditor.laneLabels.lighting')}
             icon="💡"
             tone="lighting"
             events={venueTrack.lighting}
@@ -1686,7 +1701,7 @@ export function VideoEditor(): React.JSX.Element {
           />
           <VenueTrack
             laneKey="postProcessing"
-            label="Post FX"
+            label={t('videoEditor.laneLabels.postProcessing')}
             icon="✨"
             tone="post"
             events={venueTrack.postProcessing}
@@ -1705,7 +1720,7 @@ export function VideoEditor(): React.JSX.Element {
           />
           <VenueTrack
             laneKey="stage"
-            label="Stage"
+            label={t('videoEditor.trackLabels.stage')}
             icon="🎭"
             tone="stage"
             events={venueTrack.stage}
@@ -1726,7 +1741,7 @@ export function VideoEditor(): React.JSX.Element {
           />
           <VenueTrack
             laneKey="cameraCuts"
-            label="Camera"
+            label={t('videoEditor.trackLabels.camera')}
             icon="🎥"
             tone="camera"
             events={venueTrack.cameraCuts}
@@ -1745,7 +1760,7 @@ export function VideoEditor(): React.JSX.Element {
           />
           <VenueTrack
             laneKey="performer"
-            label="Performer"
+            label={t('videoEditor.laneLabels.performer')}
             icon="🎤"
             tone="performer"
             events={venueTrack.performer}

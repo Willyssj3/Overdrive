@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useStore } from 'zustand'
+import { useTranslation } from 'react-i18next'
 import { useSettingsStore, useUIStore, useProjectStore, getSongStore } from '../stores'
 import './ExportModal.css'
 
@@ -12,6 +13,7 @@ function sanitizeFilename(name: string): string {
 }
 
 export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX.Element | null {
+  const { t } = useTranslation()
   const isOpen = useUIStore((s) => s.isExportModalOpen)
   const setExportModalOpen = useUIStore((s) => s.setExportModalOpen)
 
@@ -151,7 +153,7 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
 
   const handleExport = async (): Promise<void> => {
     if (!outputFolder.trim()) {
-      setErrorMessage('Please select a destination output folder.')
+      setErrorMessage(t('exportModal.errors.noOutputFolder'))
       setStatus('error')
       return
     }
@@ -218,7 +220,7 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
         setStatus('success')
         setShowOverwriteWarning(false)
       } else {
-        setErrorMessage(result.error || 'Failed to export the song package.')
+        setErrorMessage(result.error || t('exportModal.errors.exportFailed'))
         setStatus('error')
       }
     } catch (err) {
@@ -236,8 +238,8 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
       <div className="export-modal" onClick={(e) => e.stopPropagation()}>
         <div className="export-modal-header">
           <div>
-            <h2 className="export-modal-title">Export Song Package</h2>
-            <p className="export-modal-subtitle">Package and build your song for rhythm games.</p>
+            <h2 className="export-modal-title">{t('exportModal.title')}</h2>
+            <p className="export-modal-subtitle">{t('exportModal.subtitle')}</p>
           </div>
           <button
             className="export-modal-close"
@@ -252,22 +254,22 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
           {status === 'success' ? (
             <div className="export-status-container success">
               <span className="export-status-icon">✅</span>
-              <h3>Export Successful!</h3>
+              <h3>{t('exportModal.success.title')}</h3>
               <p className="export-success-message">
                 {exportFormat === 'rb3con'
-                  ? 'Your song has been successfully packaged into a Rock Band 3 STFS CON file.'
-                  : 'Your song has been successfully packaged into a single Clone Hero .sng file.'}
+                  ? t('exportModal.success.messageRb3con')
+                  : t('exportModal.success.messageSng')}
               </p>
               <div className="export-path-preview">
                 <div className="export-path-code-container">
-                  <strong>Destination:</strong>
+                  <strong>{t('exportModal.success.destinationLabel')}</strong>
                   <code>{exportedPath}</code>
                 </div>
                 <button
                   className="export-modal-secondary reveal-folder-button"
                   onClick={() => window.api.showItemInFolder(exportedPath)}
                 >
-                  📁 Show in Folder
+                  📁 {t('exportModal.success.showInFolder')}
                 </button>
               </div>
             </div>
@@ -277,7 +279,7 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
                 <div className="export-error-banner">
                   <span className="error-icon">⚠️</span>
                   <div className="error-text">
-                    <strong>Export Failed</strong>
+                    <strong>{t('exportModal.errors.exportFailedTitle')}</strong>
                     <p>{errorMessage}</p>
                   </div>
                 </div>
@@ -285,26 +287,23 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
 
               {/* Formats Section */}
               <div className="export-section">
-                <h3 className="export-section-title">Format Option</h3>
+                <h3 className="export-section-title">{t('exportModal.format.sectionTitle')}</h3>
                 <div className="export-formats-grid">
                   {exportFormat === 'sng' ? (
                     <>
                       <div className="export-format-card active">
                         <div className="export-format-card-header">
-                          <span className="export-format-badge">Active</span>
+                          <span className="export-format-badge">{t('exportModal.format.active')}</span>
                           <span className="export-format-icon">🎸</span>
                         </div>
-                        <h4>Clone Hero (.sng)</h4>
-                        <p>
-                          Standard encrypted archive packaging notes, audio stems, and art into a
-                          single file container.
-                        </p>
+                        <h4>{t('exportModal.format.cloneHeroName')}</h4>
+                        <p>{t('exportModal.format.cloneHeroDescription')}</p>
                       </div>
                       <div
                         className="export-format-card inactive"
                         onClick={() => handleFormatChange('rb3con')}
                       >
-                        <h4>Rockband 3 RB3con</h4>
+                        <h4>{t('exportModal.format.rb3conName')}</h4>
                       </div>
                     </>
                   ) : (
@@ -313,18 +312,15 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
                         className="export-format-card inactive"
                         onClick={() => handleFormatChange('sng')}
                       >
-                        <h4>Clone Hero (.sng)</h4>
+                        <h4>{t('exportModal.format.cloneHeroName')}</h4>
                       </div>
                       <div className="export-format-card active">
                         <div className="export-format-card-header">
-                          <span className="export-format-badge">Active</span>
+                          <span className="export-format-badge">{t('exportModal.format.active')}</span>
                           <span className="export-format-icon">💿</span>
                         </div>
-                        <h4>Rockband 3 RB3con</h4>
-                        <p>
-                          Xbox 360 Rock Band 3 STFS container package containing MIDI charts, MOGG
-                          audio stems, and catalog metadata.
-                        </p>
+                        <h4>{t('exportModal.format.rb3conName')}</h4>
+                        <p>{t('exportModal.format.rb3conDescription')}</p>
                       </div>
                     </>
                   )}
@@ -333,13 +329,15 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
 
               {/* Destination Section */}
               <div className="export-section">
-                <h3 className="export-section-title">Destination & Naming</h3>
+                <h3 className="export-section-title">{t('exportModal.destination.sectionTitle')}</h3>
 
                 <div className="export-preferences-body" style={{ padding: 0 }}>
                   {/* Output Folder Picker */}
                   <div className="export-field-stack">
                     <div className="export-folder-label-row">
-                      <label className="export-field-label">Output Folder</label>
+                      <label className="export-field-label">
+                        {t('exportModal.destination.outputFolderLabel')}
+                      </label>
                       {showReset && (
                         <button
                           className="export-reset-button"
@@ -350,7 +348,7 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
                           }}
                           disabled={status === 'saving' || status === 'exporting'}
                         >
-                          Reset to Default
+                          {t('exportModal.destination.resetToDefault')}
                         </button>
                       )}
                     </div>
@@ -359,7 +357,7 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
                         className="export-folder-input"
                         type="text"
                         value={outputFolder}
-                        placeholder="Click browse to choose an export directory..."
+                        placeholder={t('exportModal.destination.outputFolderPlaceholder')}
                         onChange={(e) => setOutputFolder(e.target.value)}
                         onBlur={() => checkOverwrite(outputFolder, filename)}
                         disabled={status === 'saving' || status === 'exporting'}
@@ -369,20 +367,22 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
                         onClick={handleBrowse}
                         disabled={status === 'saving' || status === 'exporting'}
                       >
-                        Browse
+                        {t('exportModal.destination.browse')}
                       </button>
                     </div>
                   </div>
 
                   {/* Filename Input */}
                   <div className="export-field-stack" style={{ marginTop: '12px' }}>
-                    <label className="export-field-label">File Name</label>
+                    <label className="export-field-label">
+                      {t('exportModal.destination.fileNameLabel')}
+                    </label>
                     <input
                       className="export-folder-input"
                       style={{ width: '100%' }}
                       type="text"
                       value={filename}
-                      placeholder="e.g. My_Song.sng"
+                      placeholder={t('exportModal.destination.fileNamePlaceholder')}
                       onChange={(e) => setFilename(e.target.value)}
                       onBlur={() => checkOverwrite(outputFolder, filename)}
                       disabled={status === 'saving' || status === 'exporting'}
@@ -393,8 +393,8 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
                     <div className="export-warning-banner">
                       <span className="warning-icon">⚠️</span>
                       <div className="warning-text">
-                        <strong>File Already Exists</strong>
-                        <p>Exporting will overwrite the existing file at this location.</p>
+                        <strong>{t('exportModal.destination.overwriteWarningTitle')}</strong>
+                        <p>{t('exportModal.destination.overwriteWarningMessage')}</p>
                       </div>
                     </div>
                   )}
@@ -407,7 +407,7 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
                       onChange={(e) => setSaveBeforeExport(e.target.checked)}
                       disabled={status === 'saving' || status === 'exporting'}
                     />
-                    <span>Save song edits to source directory before exporting</span>
+                    <span>{t('exportModal.destination.saveBeforeExportLabel')}</span>
                   </label>
                 </div>
               </div>
@@ -418,10 +418,10 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
                   <div className="export-loading-spinner"></div>
                   <p>
                     {status === 'saving'
-                      ? 'Saving song edits...'
+                      ? t('exportModal.progress.savingSongEdits')
                       : exportFormat === 'rb3con'
-                        ? 'Building .con package...'
-                        : 'Building .sng package...'}
+                        ? t('exportModal.progress.buildingCon')
+                        : t('exportModal.progress.buildingSng')}
                   </p>
                 </div>
               )}
@@ -432,7 +432,7 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
         <div className="export-modal-footer">
           {status === 'success' ? (
             <button className="export-modal-primary" onClick={() => setExportModalOpen(false)}>
-              Done
+              {t('exportModal.actions.done')}
             </button>
           ) : (
             <>
@@ -441,14 +441,14 @@ export function ExportModal({ onSaveBeforeExport }: ExportModalProps): React.JSX
                 onClick={() => setExportModalOpen(false)}
                 disabled={status === 'saving' || status === 'exporting'}
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 className="export-modal-primary"
                 onClick={handleExport}
                 disabled={status === 'saving' || status === 'exporting' || !outputFolder.trim()}
               >
-                Export
+                {t('common.export')}
               </button>
             </>
           )}

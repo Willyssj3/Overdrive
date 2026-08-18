@@ -1,10 +1,12 @@
 // Bottom Panel - Tabbed panel with MIDI editor and timeline
+import { useTranslation } from 'react-i18next'
 import { useUIStore } from '../stores'
 import { MidiEditor } from './MidiEditor'
 import { VideoEditor } from './VideoEditor'
 import './BottomPanel.css'
 
 export function BottomPanel({ showMidi = true, showVideo = true }: { showMidi?: boolean; showVideo?: boolean }): React.JSX.Element {
+  const { t } = useTranslation()
   const { bottomPanelTab, setBottomPanelTab, setFocusedPanel } = useUIStore()
   const effectiveTab = showMidi
     ? (showVideo ? bottomPanelTab : 'midi')
@@ -15,8 +17,8 @@ export function BottomPanel({ showMidi = true, showVideo = true }: { showMidi?: 
       <div className="bottom-panel">
         <div className="empty-state" style={{ height: '100%' }}>
           <div className="empty-state-icon">🧰</div>
-          <div className="empty-state-title">Bottom Panels Hidden</div>
-          <div className="empty-state-description">Use View menu to re-enable Piano Roll or Timeline.</div>
+          <div className="empty-state-title">{t('bottomPanel.hiddenTitle')}</div>
+          <div className="empty-state-description">{t('bottomPanel.hiddenDescription')}</div>
         </div>
       </div>
     )
@@ -31,7 +33,7 @@ export function BottomPanel({ showMidi = true, showVideo = true }: { showMidi?: 
             className={`panel-tab ${effectiveTab === 'midi' ? 'active' : ''}`}
             onClick={() => setBottomPanelTab('midi')}
           >
-            🎹 Piano Roll
+            🎹 {t('bottomPanel.pianoRoll')}
           </button>
         )}
         {showVideo && (
@@ -39,7 +41,7 @@ export function BottomPanel({ showMidi = true, showVideo = true }: { showMidi?: 
             className={`panel-tab ${effectiveTab === 'video' ? 'active' : ''}`}
             onClick={() => setBottomPanelTab('video')}
           >
-            🎬 Timeline
+            🎬 {t('bottomPanel.timeline')}
           </button>
         )}
       </div>

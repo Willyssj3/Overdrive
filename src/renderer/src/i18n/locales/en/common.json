@@ -34,5 +34,680 @@
     "language": "Language",
     "languageEnglish": "English",
     "languageSpanish": "Español"
+  },
+  "chartPreview": {
+    "header": {
+      "title": "Chart Preview"
+    },
+    "fullscreen": {
+      "exit": "Exit Fullscreen (Esc)",
+      "enter": "Fullscreen Preview"
+    },
+    "emptyState": {
+      "title": "No Song Selected",
+      "description": "Select a song from the explorer to preview and edit its chart"
+    },
+    "errorBoundary": {
+      "title": "Preview Error",
+      "defaultMessage": "Failed to render 3D preview",
+      "retry": "Retry"
+    }
+  },
+  "exportModal": {
+    "title": "Export Song Package",
+    "subtitle": "Package and build your song for rhythm games.",
+    "success": {
+      "title": "Export Successful!",
+      "messageRb3con": "Your song has been successfully packaged into a Rock Band 3 STFS CON file.",
+      "messageSng": "Your song has been successfully packaged into a single Clone Hero .sng file.",
+      "destinationLabel": "Destination:",
+      "showInFolder": "Show in Folder"
+    },
+    "errors": {
+      "noOutputFolder": "Please select a destination output folder.",
+      "exportFailed": "Failed to export the song package.",
+      "exportFailedTitle": "Export Failed"
+    },
+    "format": {
+      "sectionTitle": "Format Option",
+      "active": "Active",
+      "cloneHeroName": "Clone Hero (.sng)",
+      "cloneHeroDescription": "Standard encrypted archive packaging notes, audio stems, and art into a single file container.",
+      "rb3conName": "Rockband 3 RB3con",
+      "rb3conDescription": "Xbox 360 Rock Band 3 STFS container package containing MIDI charts, MOGG audio stems, and catalog metadata."
+    },
+    "destination": {
+      "sectionTitle": "Destination & Naming",
+      "outputFolderLabel": "Output Folder",
+      "resetToDefault": "Reset to Default",
+      "outputFolderPlaceholder": "Click browse to choose an export directory...",
+      "browse": "Browse",
+      "fileNameLabel": "File Name",
+      "fileNamePlaceholder": "e.g. My_Song.sng",
+      "overwriteWarningTitle": "File Already Exists",
+      "overwriteWarningMessage": "Exporting will overwrite the existing file at this location.",
+      "saveBeforeExportLabel": "Save song edits to source directory before exporting"
+    },
+    "progress": {
+      "savingSongEdits": "Saving song edits...",
+      "buildingCon": "Building .con package...",
+      "buildingSng": "Building .sng package..."
+    },
+    "actions": {
+      "done": "Done"
+    }
+  },
+  "projectExplorer": {
+    "header": {
+      "title": "Explorer",
+      "importAudio": "Import Audio",
+      "newSong": "New Song",
+      "openFolder": "Open Folder"
+    },
+    "folder": {
+      "refresh": "Refresh Folder"
+    },
+    "search": {
+      "placeholder": "Filter songs or artists",
+      "ariaLabel": "Filter song library"
+    },
+    "sort": {
+      "ariaLabel": "Sort song library",
+      "title": "Sort: Title",
+      "artist": "Sort: Artist",
+      "addedNewest": "Sort: Added (Newest)",
+      "addedOldest": "Sort: Added (Oldest)",
+      "yearNewest": "Sort: Year (Newest)",
+      "yearOldest": "Sort: Year (Oldest)"
+    },
+    "group": {
+      "ariaLabel": "Group song library",
+      "titleInitial": "Group: Title A–Z",
+      "artist": "Group: Artist",
+      "year": "Group: Year",
+      "none": "Group: None"
+    },
+    "empty": {
+      "noMatch": "No songs match “{{query}}”",
+      "loadingLibrary": "Loading library…",
+      "noSongsFound": "No songs found",
+      "loadingHint": "Checking the cache and validating song folders",
+      "addFoldersHint": "Add folders containing song.ini files"
+    },
+    "validatingLibrary": "Validating library…",
+    "noFolderOpen": {
+      "title": "No Folder Open",
+      "description": "Open a folder containing songs to get started"
+    },
+    "deleteConfirm": {
+      "title": "Delete song?",
+      "body": "“{{name}}” will be moved to the trash."
+    },
+    "contextMenu": {
+      "deleteSong": "Delete Song"
+    },
+    "instruments": {
+      "drums": "Drums",
+      "guitar": "Guitar",
+      "bass": "Bass",
+      "vocals": "Vocals",
+      "keys": "Keys"
+    },
+    "newSongDialog": {
+      "songNameLabel": "Song Name",
+      "songNamePlaceholder": "Song name...",
+      "audioFileLabel": "Audio File",
+      "noFileSelected": "No file selected",
+      "browse": "Browse...",
+      "create": "Create"
+    },
+    "errors": {
+      "folderFailedFallback": "Could not open this folder: {{message}}\n\nOpening the default auto-chart folder instead.",
+      "defaultFolderFailed": "Could not open the default auto-chart folder: {{message}}",
+      "folderFailed": "Could not open this folder: {{message}}"
+    }
+  },
+  "uiOverlays": {
+    "venuePreview": {
+      "title": "Venue Preview",
+      "lighting": "Lighting",
+      "postFx": "Post FX",
+      "camera": "Camera",
+      "stage": "Stage",
+      "performer": "Performer",
+      "nextEvent": "Next Event",
+      "none": "None",
+      "end": "End"
+    },
+    "instruments": {
+      "drums": "Drums",
+      "guitar": "Guitar",
+      "bass": "Bass",
+      "vocals": "Vocals",
+      "keys": "Keys",
+      "proKeys": "Pro Keys",
+      "proGuitar": "Pro Guitar",
+      "proBass": "Pro Bass",
+      "waveformTitle": "Show the song's audio waveform on the note highway",
+      "waveform": "Waveform",
+      "waveformSourceTitle": "Choose which audio source drives waveform rendering",
+      "waveformMix": "Waveform: Mix",
+      "waveformSource": "Waveform: {{filename}}"
+    },
+    "difficulty": {
+      "expert": "Expert",
+      "hard": "Hard",
+      "medium": "Medium",
+      "easy": "Easy"
+    },
+    "snap": {
+      "label": "Snap:",
+      "division": "1/{{div}}"
+    },
+    "vocalTrack": {
+      "label": "VOCALS",
+      "parts": {
+        "main": "Main"
+      }
+    },
+    "shortcutHelp": {
+      "title": "Keyboard Shortcuts",
+      "sections": {
+        "tools": "Tools",
+        "noteModifiers": "Note Modifiers (toggle)",
+        "editing": "Editing",
+        "playbackView": "Playback & View",
+        "clickModifiers": "Click Modifiers",
+        "proGuitarBass": "Pro Guitar/Bass"
+      },
+      "desc": {
+        "selectTool": "Select tool",
+        "placeTool": "Place tool",
+        "eraseTool": "Erase tool",
+        "cymbalTap": "Cymbal (drums) / Tap (guitar)",
+        "ghostHopo": "Ghost (drums) / HOPO (guitar)",
+        "accent": "Accent",
+        "openKick": "Open strum (guitar) / Kick (drums)",
+        "starPowerMode": "Star Power mode",
+        "soloMode": "Solo section mode",
+        "copy": "Copy selected notes",
+        "paste": "Paste at playhead",
+        "undo": "Undo",
+        "redo": "Redo",
+        "selectAll": "Select all",
+        "deleteSelected": "Delete selected",
+        "starPowerFromSelection": "Star Power from selection",
+        "soloFromSelection": "Solo from selection",
+        "clearSelection": "Clear selection",
+        "playPause": "Play / Pause",
+        "zoomIn": "Zoom in",
+        "zoomOut": "Zoom out",
+        "resetZoom": "Reset zoom",
+        "multiSelect": "Multi-select / add to selection",
+        "boxSelect": "Box select (select) / Sustain (place)",
+        "editFretInline": "Edit fret number inline",
+        "fretAdjust": "Fret +1 / −1 (selected)"
+      }
+    }
+  },
+  "videoEditor": {
+    "emptyState": {
+      "title": "No Song Selected",
+      "description": "Select a song to edit media sync and venue events."
+    },
+    "tracks": {
+      "audio": "Audio",
+      "audioEmpty": "No audio clips on timeline",
+      "video": "Video",
+      "videoEmpty": "No video loaded. Use Import File or Import URL."
+    },
+    "audioClip": {
+      "tooltip": "{{filename}} at {{time}}s"
+    },
+    "toolbar": {
+      "importFile": "Import File",
+      "importFileTooltip": "Import video from file",
+      "addAudio": "Add Audio",
+      "addAudioTooltip": "Import an additional audio source onto the timeline",
+      "importUrl": "Import URL",
+      "importUrlTooltip": "Import video from URL (YouTube, etc.)",
+      "lighting": "Lighting",
+      "lightingTooltip": "Add a lighting cue at the playhead",
+      "postFx": "Post FX",
+      "postFxTooltip": "Add a post-processing effect at the playhead",
+      "stageFx": "Stage FX",
+      "stageFxTooltip": "Add a stage effect at the playhead",
+      "cameraCut": "Camera Cut",
+      "cameraCutTooltip": "Add a venue camera cut at the playhead",
+      "performer": "Performer",
+      "performerTooltip": "Add a performer spotlight/singalong event at the playhead",
+      "removeVideo": "Remove Video",
+      "removeVideoTooltip": "Remove the imported video",
+      "split": "Split",
+      "splitTooltip": "Split the selected video clip at the playhead",
+      "deleteAudio": "Delete Audio",
+      "deleteAudioTooltip": "Delete selected audio clip",
+      "deleteClip": "Delete Clip",
+      "deleteClipTooltip": "Delete selected video clip",
+      "deleteVenue": "Delete {{lane}}",
+      "deleteVenueTooltip": "Delete selected {{lane}} event",
+      "exportTooltip": "Export video with chart audio",
+      "exporting": "Exporting {{percent}}%",
+      "zoomLabel": "Zoom:"
+    },
+    "help": {
+      "label": "Venue Help",
+      "defaultText": "Venue events control visuals only (lights, post effects, stage FX, camera cuts, performer spotlights). Drag to place. Stage/Performer events can be resized from the right edge. Hold Shift while dragging for fine adjustment.",
+      "lightingText": "Lighting cue \"{{name}}\" changes the stage lighting look at this tick.",
+      "postProcessingText": "Post FX \"{{name}}\" applies a screen-space effect at this tick.",
+      "stageText": "Stage FX \"{{name}}\" triggers venue stage behavior.",
+      "stageTextWithDuration": "Stage FX \"{{name}}\" triggers venue stage behavior for {{duration}} ticks.",
+      "cameraText": "Camera cut \"{{name}}\" chooses the shot used by the venue camera at this tick.",
+      "performerText": "Performer event \"{{name}}\" targets {{target}} for {{duration}} ticks.",
+      "selectedGenericText": "Selected {{lane}} event at tick {{tick}}."
+    },
+    "fields": {
+      "lane": "Lane",
+      "event": "Event",
+      "tick": "Tick",
+      "cue": "Cue",
+      "effect": "Effect",
+      "stage": "Stage",
+      "cut": "Cut",
+      "type": "Type",
+      "performer": "Performer",
+      "duration": "Duration"
+    },
+    "laneLabels": {
+      "lighting": "Lighting",
+      "postProcessing": "Post FX",
+      "stage": "Stage FX",
+      "cameraCuts": "Camera Cut",
+      "performer": "Performer"
+    },
+    "trackLabels": {
+      "stage": "Stage",
+      "camera": "Camera"
+    },
+    "venueEvent": {
+      "tooltip": "{{label}}: {{eventLabel}} @ tick {{tick}}",
+      "resizeHint": "Drag to change duration (hold Shift for fine adjustment)",
+      "deleteTooltip": "Delete event"
+    },
+    "venueTrack": {
+      "empty": "No authored events",
+      "stackPickerHeader": "Select event ({{count}} stacked)"
+    },
+    "event": {
+      "fallbackName": "Event"
+    },
+    "urlModal": {
+      "title": "Import Video from URL",
+      "description": "Supports YouTube, Vimeo, and direct video URLs. Requires yt-dlp installed.",
+      "placeholder": "https://www.youtube.com/watch?v=... or direct .mp4 URL",
+      "downloadingProgress": "Downloading... {{percent}}%",
+      "importButton": "Import",
+      "downloadingButton": "Downloading..."
+    },
+    "alerts": {
+      "downloadFailed": "Download failed: {{error}}\n\nMake sure yt-dlp is installed and the URL is valid.",
+      "unknownError": "Unknown error",
+      "downloadError": "Download error: {{error}}",
+      "noAudioToExport": "No audio loaded to export with video",
+      "exportComplete": "Export complete!",
+      "exportFailed": "Export failed: {{error}}"
+    }
+  },
+  "toolbar": {
+    "openLibraryImportPackage": "Open Library / Import Package",
+    "openSongLibraryFolder": "Open Song Library Folder",
+    "importSongPackage": "Import Song Package (.sng / CON)",
+    "undoShortcut": "Undo (Ctrl+Z)",
+    "redoShortcut": "Redo (Ctrl+Y)",
+    "playPauseShortcut": "Play/Pause (Space)",
+    "playPauseNoAudio": "Play/Pause (no audio)",
+    "stop": "Stop",
+    "volumePercent": "Volume: {{percent}}%",
+    "speed": "Speed",
+    "highwaySpeedValue": "Highway Speed: {{speed}}x",
+    "unsavedChanges": "Unsaved changes",
+    "noSongLoaded": "No song loaded",
+    "updater": {
+      "checking": "Checking for updates…",
+      "upToDate": "Up to date",
+      "updateAvailable": "Update v{{version}} available…",
+      "downloadingUpdate": "Downloading update {{message}}",
+      "updateReady": "Update ready — see prompt",
+      "updateError": "Update error"
+    },
+    "autoSave": "Auto-save",
+    "leftyFlipTooltip": "Lefty Flip: mirror highway for left-handed players",
+    "leftyFlip": "Lefty Flip",
+    "autoChart": {
+      "tooltipEnabled": "Generate a chart package from audio with Overdrive Engine",
+      "tooltipDisabled": "Enable Overdrive Engine auto-charting in Settings",
+      "buttonLabel": "Auto-Chart",
+      "experimentalTooltip": "Auto-charting is experimental — results vary by song.",
+      "experimentalTag": "experimental",
+      "modalTitle": "Auto-Chart from Audio",
+      "modalSubtitle": "Run Overdrive Engine on local audio files, folders, or URLs and load the generated chart package output.",
+      "closeDialogAriaLabel": "Close auto-chart dialog",
+      "runtimeNotInstalledTitle": "Python runtime not installed",
+      "runtimeNotInstalledBody": "Auto-Chart needs the bundled Python runtime (one-time download, ~1.5 GB). Install it now to enable charting.",
+      "installingRuntime": "Installing…",
+      "setupPythonRuntime": "Set up Python runtime",
+      "setupErrorLabel": "Setup Error",
+      "copied": "Copied",
+      "copy": "Copy",
+      "setupFailed": "Setup failed.",
+      "completeMessage": "Auto-chart complete.",
+      "completeNoSuccessMessage": "Auto-chart finished with no successful songs.",
+      "errors": {
+        "runtimeNotSetUp": "Set up the Python runtime before starting Auto-Chart.",
+        "chooseOutputFolder": "Choose an output folder before starting.",
+        "addAtLeastOneInput": "Add at least one audio file, folder, URL, or stem song.",
+        "everyStemSongNeedsName": "Every stem song needs a name.",
+        "stemSongNoStemsSelected": "Stem song \"{{name}}\" has no stems selected."
+      },
+      "launchingMessage": "Launching Overdrive Engine...",
+      "inputsTitle": "Inputs",
+      "fullMixTab": "Full Mix",
+      "stemsTab": "Stems",
+      "audioFilesTab": "Audio Files",
+      "audioFoldersTab": "Audio Folders",
+      "urlsTab": "URLs",
+      "addFiles": "Add Files",
+      "addFilesHelp": "Pick one or more individual audio files (.wav/.ogg/.opus/.mp3/.flac).",
+      "addFolder": "Add Folder",
+      "addFolderHelp": "Each folder is scanned for supported audio files; every file is processed as its own song.",
+      "audioYoutubeUrlsLabel": "Audio / YouTube URLs",
+      "addUrlRow": "Add URL row",
+      "urlPlaceholder": "Paste an audio or YouTube URL",
+      "removeUrlRow": "Remove URL row",
+      "stemsInstructions": "Provide one file or URL per instrument. Empty slots are skipped — that instrument will not be charted, and the Demucs separation phase is skipped entirely (your stems are used as-is). The full mix is always auto-generated by summing your stems and any extra audio. Lead vocals are charted strictly as PART VOCALS; backing vocals 1/2 drive HARM2/HARM3 and play back as vocals_1.ogg/vocals_2.ogg. Anything you add as “Extra audio” is combined into song.ogg (the backing track); the optional Crowd slot is exported directly as crowd.ogg.",
+      "songNamePlaceholder": "Song name (used for output folder)",
+      "removeStemSong": "Remove this stem song",
+      "stemLabels": {
+        "drums": "Drums",
+        "bass": "Bass",
+        "vocals": "Vocals (lead)",
+        "vocalsHarm2": "Backing Vocals 1",
+        "vocalsHarm3": "Backing Vocals 2",
+        "guitar": "Guitar",
+        "piano": "Piano / Keys",
+        "crowd": "Crowd (optional)"
+      },
+      "stemPathPlaceholder": "File path or URL — leave blank to skip",
+      "browse": "Browse…",
+      "extraAudioHelpPre": "Extra audio (uncharted) — anything you add here is summed together and merged into",
+      "extraAudioHelpPost": "(the backing track the games play alongside the stems).",
+      "extraLabel": "Extra {{index}}",
+      "filePathOrUrlPlaceholder": "File path or URL",
+      "removeExtra": "Remove this extra",
+      "addExtraAudio": "Add extra audio",
+      "addAnotherStemSong": "Add another stem song",
+      "outputFolderLabel": "Output folder",
+      "outputFolderPlaceholder": "Generated song folders will be written here",
+      "advanced": "Advanced",
+      "offlineMode": "Offline mode (disable online lookups)",
+      "offlineModeHelp": "Skips MusicBrainz, album art, and lyric searches. Use this for custom uploads to avoid them being misidentified as other songs.",
+      "downloadVideo": "Download video for URL inputs",
+      "downloadVideoHelp": "After charting finishes, pull the source video (e.g. YouTube) into each song folder so it plays in the timeline and in-game.",
+      "keepStems": "Keep separated stems",
+      "keepStemsHelp": "Export the separated stems (drums, bass, vocals, etc.) as per-instrument oggs in each song folder instead of discarding them. Lets you remix or mute instruments in-game.",
+      "generateStarPower": "Generate Star Power phrases",
+      "generateStarPowerHelp": "Uncheck to create charts without any Star Power / Overdrive phrases. You can always add your own later in the editor.",
+      "improveTempoAccuracy": "Improve tempo accuracy (recommended)",
+      "improveTempoAccuracyHelp": "Beat-tracks the audio to align the chart's beat and measure lines to the real performance, so notes stop drifting off the grid. Follows tempo changes in live recordings while keeping notes in sync with the audio. Disabled automatically when you set a manual tempo map below.",
+      "manualBpmLabel": "Manual BPM",
+      "manualBpmHelp": "Know the song's tempo? Enter it and it's treated as the truth: the beat grid is locked to this BPM (fixing any wrong-tempo or octave detection). With \"Improve tempo accuracy\" on, the audio is still beat-tracked to follow drift around this value; with it off, this exact BPM is applied. Leave blank to detect automatically.",
+      "autoPlaceholder": "auto",
+      "snapDrumsToGrid": "Snap drums to grid",
+      "snapDrumsHelp": "Nudge drum notes that land just off the beat onto the nearest 1/32 grid line, removing the slight timing jitter from onset detection. Genuinely off-grid hits (fills, syncopation) are left untouched.",
+      "tracksAutoFromStems": "Tracks to chart are determined automatically from the stems you provide on the Stems tab — only instruments with a stem will be charted.",
+      "tracksToChart": "Tracks to chart",
+      "allTracks": "All",
+      "noneTracks": "None",
+      "tracksHelp": "Uncheck any track you do not want Overdrive Engine to generate. All are charted by default.",
+      "trackLabels": {
+        "drums": "Drums",
+        "guitar": "Guitar",
+        "bass": "Bass",
+        "keys": "Keys",
+        "proKeys": "Pro Keys",
+        "vocals": "Vocals",
+        "harmonies": "Vocal Harmonies (HARM2/3)"
+      },
+      "tempoOverrideTitle": "Tempo override",
+      "addTempo": "Add tempo",
+      "tempoOverrideHelp": "Leave empty to auto-detect. Add a row with time 0 to override the initial BPM, plus more rows to declare tempo changes at specific timestamps (in seconds). Note positions are retimed to keep audio sync.",
+      "timeSecondsLabel": "Time (s)",
+      "bpmLabel": "BPM",
+      "removeTempoRow": "Remove",
+      "progressTitle": "Progress",
+      "closingCountdown": "All songs auto-charted. Closing in {{count}}…",
+      "currentItem": "Current: {{item}}",
+      "runErrorLabel": "Run Error",
+      "reset": "Reset",
+      "cancelRun": "Cancel Run",
+      "startAutoChart": "Start Auto-Chart"
+    },
+    "validateChart": "Validate Chart",
+    "validate": "Validate",
+    "validating": "Validating...",
+    "validation": {
+      "title": "Chart Validation",
+      "cleanUpDuplicates": "Clean Up All Duplicates",
+      "noIssuesFound": "No issues found!"
+    },
+    "stemMixer": {
+      "tooltip": "Stem mixer (mute / solo individual tracks)",
+      "ariaLabel": "Stem mixer",
+      "title": "Stem Mixer",
+      "noStemsLoaded": "No stems loaded.",
+      "mute": "Mute",
+      "solo": "Solo"
+    }
+  },
+  "setupModal": {
+    "title": {
+      "setup": "Set up AI features",
+      "update": "Update AI runtime"
+    },
+    "body": {
+      "setup": "Overdrive uses a self-contained Python runtime to power Auto-Chart, stem separation, and lyric transcription. This is a one-time download (~1.5 GB) installed in your user data folder. Updates to Overdrive will not need to re-download it.",
+      "update": "Overdrive was updated and the bundled AI runtime needs to be refreshed to match (new dependency versions, GPU support, or a Python upgrade). Your existing runtime will be replaced. This may take several minutes on first launch; future updates only re-run when something changes."
+    },
+    "progress": {
+      "starting": "Starting setup…",
+      "working": "Working…"
+    },
+    "actions": {
+      "notNow": "Not now",
+      "setupNow": "Set up now",
+      "updateNow": "Update now"
+    },
+    "error": {
+      "title": "Setup failed",
+      "copy": "Copy error",
+      "copied": "Copied",
+      "fallback": "Setup failed."
+    }
+  },
+  "songMetadataModal": {
+    "title": "Find song metadata",
+    "subtitle": "Search multiple music databases, choose the matching release, then apply it.",
+    "fieldTitle": "Title",
+    "fieldArtist": "Artist",
+    "artistPlaceholder": "Optional",
+    "search": "Search",
+    "searching": "Searching…",
+    "resultsAriaLabel": "Metadata matches",
+    "noMatches": "No matches found. Try changing the artist, title, or album.",
+    "sourceMusicbrainz": "MusicBrainz",
+    "sourceTheaudiodb": "TheAudioDB",
+    "recordingMetadataOnly": "Recording metadata only",
+    "coverAlt": "{{name}} cover",
+    "loadingArtwork": "Loading artwork…",
+    "noArtworkFound": "No artwork found",
+    "fieldAlbum": "Album",
+    "fieldYear": "Year",
+    "fieldGenre": "Genre",
+    "selectPrompt": "Select a result to preview its metadata and album art.",
+    "footerCredits": "MusicBrainz + TheAudioDB metadata · Cover Art Archive + TheAudioDB artwork",
+    "applying": "Applying…",
+    "applyMetadata": "Apply metadata",
+    "artworkSaveError": "Overdrive could not save the selected album artwork."
+  },
+  "propertyPanel": {
+    "venueEvent": {
+      "lane": {
+        "lighting": "Lighting",
+        "postProcessing": "Post FX",
+        "stage": "Stage FX",
+        "cameraCuts": "Camera Cut",
+        "performer": "Performer"
+      },
+      "title": "Venue Event",
+      "laneLabel": "Lane",
+      "tick": "Tick",
+      "cue": "Cue",
+      "effect": "Effect",
+      "stageFx": "Stage FX",
+      "duration": "Duration",
+      "cut": "Cut",
+      "type": "Type",
+      "performerLabel": "Performer",
+      "preview": "Preview",
+      "deleteButton": "Delete {{lane}}"
+    },
+    "albumArt": {
+      "alt": "Album Art",
+      "dropHint": "Drop image or click to add album art",
+      "dropToReplace": "Drop to replace"
+    },
+    "noteEditor": {
+      "positionTick": "Position (Tick)",
+      "durationTicks": "Duration (Ticks)",
+      "instrument": "Instrument",
+      "instrumentOptions": {
+        "drums": "Drums",
+        "guitar": "Guitar",
+        "bass": "Bass",
+        "vocals": "Vocals",
+        "keys": "Keys"
+      },
+      "difficulty": "Difficulty",
+      "difficultyOptions": {
+        "expert": "Expert",
+        "hard": "Hard",
+        "medium": "Medium",
+        "easy": "Easy"
+      },
+      "lane": "Lane",
+      "velocity": "Velocity",
+      "flags": "Flags",
+      "deleteButton": "Delete Note"
+    },
+    "flags": {
+      "hopo": "HOPO",
+      "tap": "Tap",
+      "accent": "Accent",
+      "doubleBass": "Double Bass (2x)",
+      "cymbal": "Cymbal",
+      "ghost": "Ghost",
+      "slide": "Slide",
+      "percussion": "Percussion",
+      "pitchless": "Pitchless"
+    },
+    "multiNoteEditor": {
+      "notesSelected": "notes selected",
+      "deleteAllButton": "Delete All Selected"
+    },
+    "vocalNoteEditor": {
+      "title": "Vocal Note",
+      "lyric": "Lyric",
+      "lyricPlaceholder": "Enter lyric syllable...",
+      "duration": "Duration",
+      "pitchMidi": "Pitch (MIDI)",
+      "harmonyPart": "Harmony Part",
+      "harmonyOptions": {
+        "main": "Main Vocals",
+        "harmony1": "Harmony 1",
+        "harmony2": "Harmony 2",
+        "harmony3": "Harmony 3"
+      }
+    },
+    "tempoRow": {
+      "tickTitle": "Tick position — edit to move this tempo change",
+      "measureBeatTitle": "Measure {{measure}}, Beat {{beat}}",
+      "bpmLabel": "BPM",
+      "decreaseTitle": "Decrease BPM (Ctrl: -0.1)",
+      "increaseTitle": "Increase BPM (Ctrl: +0.1)",
+      "deleteTitle": "Delete tempo change"
+    },
+    "timeSigRow": {
+      "tickTitle": "Tick position — edit to move this time signature change",
+      "deleteTitle": "Delete time signature change"
+    },
+    "metadataEditor": {
+      "albumArtSection": "Album Art",
+      "songInfoSection": "Song Info",
+      "findMetadataButton": "Find metadata online…",
+      "titleLabel": "Title",
+      "artistLabel": "Artist",
+      "albumLabel": "Album",
+      "yearLabel": "Year",
+      "genreLabel": "Genre",
+      "charterLabel": "Charter",
+      "tempoSection": "Tempo",
+      "initialBpmLabel": "Initial BPM",
+      "tempoChangesLabel": "Tempo Changes",
+      "bpmPlaceholder": "BPM",
+      "addAtPlayheadButton": "+ At Playhead",
+      "addTempoAtPlayheadTitle": "Add tempo change at current playhead position (tick {{tick}})",
+      "tempoHint": "Add tempo changes at the current playhead position",
+      "timeSignatureSection": "Time Signature",
+      "initialTimeSignatureLabel": "Initial Time Signature",
+      "signatureChangesLabel": "Signature Changes",
+      "numeratorPlaceholder": "Num",
+      "denominatorPlaceholder": "Den",
+      "addTimeSigAtPlayheadTitle": "Add time signature change at current playhead position (tick {{tick}})",
+      "timeSigHint": "Add time signature changes at the current playhead position",
+      "songSectionsSection": "Song Sections",
+      "sectionNamePlaceholder": "Section name",
+      "deleteSectionTitle": "Delete section",
+      "noSectionsHint": "No sections yet",
+      "addSectionAtPlayheadTitle": "Add section at current playhead position (tick {{tick}})",
+      "sectionLabelsHint": "Use labels like intro, verse, chorus, solo, outro",
+      "difficultyRatingsSection": "Difficulty Ratings",
+      "difficultyLabels": {
+        "drums": "Drums",
+        "guitar": "Guitar",
+        "bass": "Bass",
+        "vocals": "Vocals"
+      },
+      "difficultyHint": "-1 = disabled, 0-6 = difficulty tier",
+      "previewSection": "Preview",
+      "previewStartLabel": "Preview Start (ms)",
+      "loadingPhraseLabel": "Loading Phrase",
+      "loadingPhrasePlaceholder": "Tips or messages..."
+    },
+    "header": {
+      "title": "Properties"
+    },
+    "emptyState": {
+      "title": "No Song Selected",
+      "description": "Select a song to view and edit its properties"
+    },
+    "multiVocalNotes": {
+      "selectedLabel": "vocal notes selected"
+    }
+  },
+  "bottomPanel": {
+    "hiddenTitle": "Bottom Panels Hidden",
+    "hiddenDescription": "Use View menu to re-enable Piano Roll or Timeline.",
+    "pianoRoll": "Piano Roll",
+    "timeline": "Timeline"
   }
 }

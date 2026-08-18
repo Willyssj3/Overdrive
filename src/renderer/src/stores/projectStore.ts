@@ -71,10 +71,18 @@ interface SettingsStore extends AppSettings {
   resetSettings: () => void
 }
 
+// Detect a supported language from the OS locale on first run only --
+// once a value is persisted, this is never consulted again.
+function detectDefaultLanguage(): AppSettings['language'] {
+  const nav = typeof navigator !== 'undefined' ? navigator.language : 'en'
+  return nav.toLowerCase().startsWith('es') ? 'es' : 'en'
+}
+
 const defaultSettings: AppSettings = {
   autosaveEnabled: true,
   autosaveIntervalMs: 2000,
   theme: 'dark',
+  language: detectDefaultLanguage(),
   highwaySpeed: 1.0,
   audioLatencyMs: 0,
   volume: 0.8,

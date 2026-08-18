@@ -1,5 +1,6 @@
 // Main application layout with resizable panels (Unity/Unreal style)
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Allotment } from 'allotment'
 import 'allotment/dist/style.css'
 import { useUIStore } from '../stores'
@@ -11,6 +12,7 @@ import { Toolbar } from './Toolbar'
 import './Layout.css'
 
 export function Layout(): React.JSX.Element {
+  const { t } = useTranslation()
   const { setFocusedPanel, setSettingsModalOpen } = useUIStore()
   const isPreviewFullscreen = useUIStore((s) => s.isPreviewFullscreen)
   type PanelName = 'explorer' | 'preview' | 'properties' | 'midi' | 'video'
@@ -59,8 +61,8 @@ export function Layout(): React.JSX.Element {
     <div className="panel panel-center" style={{ width: '100%', height: '100%' }}>
       <div className="empty-state">
         <div className="empty-state-icon">🪟</div>
-        <div className="empty-state-title">All Top Panels Hidden</div>
-        <div className="empty-state-description">Use View menu to re-enable Explorer, Preview, or Properties.</div>
+        <div className="empty-state-title">{t('layout.allTopPanelsHiddenTitle')}</div>
+        <div className="empty-state-description">{t('layout.allTopPanelsHiddenDescription')}</div>
       </div>
     </div>
   ) : (

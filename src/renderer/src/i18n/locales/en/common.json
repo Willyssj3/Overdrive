@@ -1,0 +1,37 @@
+{
+  "common": {
+    "select": "Select",
+    "place": "Place",
+    "erase": "Erase",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "open": "Open",
+    "export": "Export",
+    "loading": "Loading…",
+    "idle": "Idle"
+  },
+  "editTools": {
+    "select": "Select",
+    "place": "Place",
+    "erase": "Erase"
+  },
+  "noteModifiers": {
+    "cymbalTap": "Cymbal/Tap",
+    "ghostHopo": "Ghost/HOPO",
+    "accent": "Accent",
+    "openKick": "Open/Kick",
+    "starPower": "Star Power",
+    "solo": "Solo"
+  },
+  "layout": {
+    "allTopPanelsHiddenTitle": "All Top Panels Hidden",
+    "allTopPanelsHiddenDescription": "Use View menu to re-enable Explorer, Preview, or Properties."
+  },
+  "settings": {
+    "language": "Language",
+    "languageEnglish": "English",
+    "languageSpanish": "Español"
+  }
+}

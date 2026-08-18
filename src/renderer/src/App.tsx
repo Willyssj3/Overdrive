@@ -1,9 +1,11 @@
 import { useEffect, Component } from 'react'
 import type { ReactNode, ErrorInfo } from 'react'
+import i18n from './i18n'
 import { Layout } from './components'
 import { SetupModal } from './components/SetupModal'
 import { AutosaveProvider, useKeyboardShortcuts } from './hooks'
 import { init as initAudio } from './services/audioService'
+import { useSettingsStore } from './stores'
 
 // Error boundary to prevent white-screen crashes
 class ErrorBoundary extends Component<
@@ -46,6 +48,13 @@ class ErrorBoundary extends Component<
 
 function AppContent(): React.JSX.Element {
   useKeyboardShortcuts()
+
+  // Keep i18next's active language in sync with the persisted setting
+  // whenever it changes (e.g. from the language selector in Settings).
+  const language = useSettingsStore((s) => s.language)
+  useEffect(() => {
+    if (i18n.language !== language) void i18n.changeLanguage(language)
+  }, [language])
 
   // Resume AudioContext on first user interaction (click/keydown)
   // Required by browser autoplay policy before any audio can play

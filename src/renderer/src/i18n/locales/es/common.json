@@ -1,0 +1,37 @@
+{
+  "common": {
+    "select": "Seleccionar",
+    "place": "Colocar",
+    "erase": "Borrar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "open": "Abrir",
+    "export": "Exportar",
+    "loading": "Cargando…",
+    "idle": "En espera"
+  },
+  "editTools": {
+    "select": "Seleccionar",
+    "place": "Colocar",
+    "erase": "Borrar"
+  },
+  "noteModifiers": {
+    "cymbalTap": "Platillo/Tap",
+    "ghostHopo": "Ghost/HOPO",
+    "accent": "Acento",
+    "openKick": "Abierta/Bombo",
+    "starPower": "Star Power",
+    "solo": "Solo"
+  },
+  "layout": {
+    "allTopPanelsHiddenTitle": "Todos los paneles superiores están ocultos",
+    "allTopPanelsHiddenDescription": "Usá el menú Ver para reactivar Explorador, Vista previa o Propiedades."
+  },
+  "settings": {
+    "language": "Idioma",
+    "languageEnglish": "English",
+    "languageSpanish": "Español"
+  }
+}

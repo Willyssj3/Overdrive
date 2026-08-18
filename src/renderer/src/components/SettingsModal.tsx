@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useSettingsStore, useUIStore } from '../stores'
 import type { AppHotkeys, HotkeyAction } from '../types'
 import {
@@ -13,9 +14,11 @@ import './SettingsModal.css'
 const MODIFIER_KEYS = new Set(['Control', 'Shift', 'Alt', 'Meta'])
 
 export function SettingsModal(): React.JSX.Element | null {
+  const { t } = useTranslation()
   const isOpen = useUIStore((s) => s.isSettingsModalOpen)
   const setSettingsModalOpen = useUIStore((s) => s.setSettingsModalOpen)
   const hotkeys = useSettingsStore((s) => s.hotkeys)
+  const language = useSettingsStore((s) => s.language)
   const enableAutoChart = useSettingsStore((s) => s.enableAutoChart)
   const autoChartOutputDir = useSettingsStore((s) => s.autoChartOutputDir)
   const betaUpdates = useSettingsStore((s) => s.betaUpdates)
@@ -34,6 +37,7 @@ export function SettingsModal(): React.JSX.Element | null {
 
   const [recordingAction, setRecordingAction] = useState<HotkeyAction | null>(null)
   const [draftHotkeys, setDraftHotkeys] = useState<AppHotkeys>(hotkeys)
+  const [draftLanguage, setDraftLanguage] = useState(language)
   const [draftEnableAutoChart, setDraftEnableAutoChart] = useState(enableAutoChart)
   const [draftAutoChartOutputDir, setDraftAutoChartOutputDir] = useState(autoChartOutputDir ?? '')
   const [draftBetaUpdates, setDraftBetaUpdates] = useState(betaUpdates)
@@ -157,6 +161,22 @@ export function SettingsModal(): React.JSX.Element | null {
         </div>
 
         <div className="settings-modal-body">
+          <section className="settings-preferences-group">
+            <h3 className="settings-hotkey-group-title">General</h3>
+            <div className="settings-preferences-body">
+              <div className="settings-field-stack">
+                <label className="settings-field-label" htmlFor="settings-language">{t('settings.language')}</label>
+                <select
+                  id="settings-language"
+                  value={draftLanguage}
+                  onChange={(event) => setDraftLanguage(event.target.value as 'en' | 'es')}
+                >
+                  <option value="en">{t('settings.languageEnglish')}</option>
+                  <option value="es">{t('settings.languageSpanish')}</option>
+                </select>
+              </div>
+            </div>
+          </section>
           <section className="settings-preferences-group">
             <h3 className="settings-hotkey-group-title">Auto-Chart</h3>
             <div className="settings-preferences-body">
@@ -377,6 +397,7 @@ export function SettingsModal(): React.JSX.Element | null {
             onClick={() => {
               updateSettings({
                 hotkeys: draftHotkeys,
+                language: draftLanguage,
                 enableAutoChart: draftEnableAutoChart,
                 autoChartOutputDir: draftAutoChartOutputDir.trim() || undefined,
                 betaUpdates: draftBetaUpdates,

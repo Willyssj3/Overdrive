@@ -285,6 +285,7 @@ export interface AppSettings {
   autosaveEnabled: boolean
   autosaveIntervalMs: number
   theme: 'dark' | 'light'
+  language: 'en' | 'es'
   highwaySpeed: number // 1.0 = normal
   audioLatencyMs: number
   volume: number // 0.0 - 1.0

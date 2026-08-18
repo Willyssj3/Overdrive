@@ -1,5 +1,6 @@
 // UI Overlays - Instrument toggles, difficulty selector, timeline scrubber, vocal overlay
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useProjectStore, getSongStore, useUIStore, useSettingsStore } from '../../stores'
 import type { Instrument, Difficulty, NoteModifiers, VocalNote, VocalPhrase, HarmonyPart, VenueTrackData } from '../../types'
 import type { EditingTool } from './types'
@@ -1022,11 +1023,12 @@ export function EditToolSelector({
   editTool: EditingTool
   setEditTool: (tool: EditingTool) => void
 }): React.JSX.Element {
+  const { t } = useTranslation()
   const hotkeys = useSettingsStore((s) => s.hotkeys)
   const tools: { id: EditingTool; label: string; icon: string; shortcut: string }[] = [
-    { id: 'select', label: 'Select', icon: '🖱️', shortcut: hotkeys.toolSelect },
-    { id: 'place', label: 'Place', icon: '✏️', shortcut: hotkeys.toolPlace },
-    { id: 'erase', label: 'Erase', icon: '🗑️', shortcut: hotkeys.toolErase }
+    { id: 'select', label: t('editTools.select'), icon: '🖱️', shortcut: hotkeys.toolSelect },
+    { id: 'place', label: t('editTools.place'), icon: '✏️', shortcut: hotkeys.toolPlace },
+    { id: 'erase', label: t('editTools.erase'), icon: '🗑️', shortcut: hotkeys.toolErase }
   ]
 
   return (
@@ -1048,17 +1050,18 @@ export function EditToolSelector({
 
 // Note modifier toggle buttons (shared between 3D preview and piano roll)
 export function NoteModifierToggles(): React.JSX.Element {
+  const { t } = useTranslation()
   const mods = useUIStore((s) => s.noteModifiers)
   const toggle = useUIStore((s) => s.toggleModifier)
   const hotkeys = useSettingsStore((s) => s.hotkeys)
 
   const buttons: { key: keyof NoteModifiers; label: string; shortcut: string; activeColor: string }[] = [
-    { key: 'cymbalOrTap', label: 'Cymbal/Tap', shortcut: hotkeys.toggleCymbalOrTap, activeColor: '#FFD700' },
-    { key: 'ghostOrHopo', label: 'Ghost/HOPO', shortcut: hotkeys.toggleGhostOrHopo, activeColor: '#88BBFF' },
-    { key: 'accent', label: 'Accent', shortcut: hotkeys.toggleAccent, activeColor: '#FF6666' },
-    { key: 'openOrKick', label: 'Open/Kick', shortcut: hotkeys.toggleOpenOrKick, activeColor: '#CC44FF' },
-    { key: 'starPower', label: 'Star Power', shortcut: hotkeys.toggleStarPower, activeColor: '#00CED1' },
-    { key: 'solo', label: 'Solo', shortcut: hotkeys.toggleSolo, activeColor: '#FFD700' }
+    { key: 'cymbalOrTap', label: t('noteModifiers.cymbalTap'), shortcut: hotkeys.toggleCymbalOrTap, activeColor: '#FFD700' },
+    { key: 'ghostOrHopo', label: t('noteModifiers.ghostHopo'), shortcut: hotkeys.toggleGhostOrHopo, activeColor: '#88BBFF' },
+    { key: 'accent', label: t('noteModifiers.accent'), shortcut: hotkeys.toggleAccent, activeColor: '#FF6666' },
+    { key: 'openOrKick', label: t('noteModifiers.openKick'), shortcut: hotkeys.toggleOpenOrKick, activeColor: '#CC44FF' },
+    { key: 'starPower', label: t('noteModifiers.starPower'), shortcut: hotkeys.toggleStarPower, activeColor: '#00CED1' },
+    { key: 'solo', label: t('noteModifiers.solo'), shortcut: hotkeys.toggleSolo, activeColor: '#FFD700' }
   ]
 
   return (

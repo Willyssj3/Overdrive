@@ -10,7 +10,9 @@
     "open": "Abrir",
     "export": "Exportar",
     "loading": "Cargando…",
-    "idle": "En espera"
+    "idle": "En espera",
+    "somethingWentWrong": "Algo salió mal",
+    "tryAgain": "Reintentar"
   },
   "editTools": {
     "select": "Seleccionar",
@@ -33,7 +35,56 @@
   "settings": {
     "language": "Idioma",
     "languageEnglish": "English",
-    "languageSpanish": "Español"
+    "languageSpanish": "Español",
+    "title": "Configuración",
+    "subtitle": "Cambiá los atajos del editor. Hacé clic en una combinación y después presioná la nueva combinación de teclas.",
+    "closeAriaLabel": "Cerrar configuración",
+    "closeButton": "X",
+    "sections": {
+      "general": "General",
+      "autoChart": "Auto-Chart",
+      "updates": "Actualizaciones",
+      "midiEditor": "Editor MIDI",
+      "validationPreferences": "Preferencias de validación"
+    },
+    "autoChart": {
+      "enableLabel": "Habilitá el autocharteo de Overdrive Engine",
+      "outputFolderLabel": "Carpeta de salida predeterminada",
+      "outputFolderPlaceholder": "Carpeta de salida predeterminada para los paquetes de chart generados",
+      "browseButton": "Explorar"
+    },
+    "updates": {
+      "betaLabel": "Recibí actualizaciones beta (pre-lanzamiento)",
+      "betaHint": "Las compilaciones beta incluyen correcciones que todavía se están probando. Pueden ser menos estables que las versiones normales. Desactivá esto para volver al canal estable."
+    },
+    "midiEditor": {
+      "invertScrollLabel": "Invertí el desplazamiento vertical de la rueda del mouse en el piano roll"
+    },
+    "validation": {
+      "enableOverlapsCheck": "Habilitá la verificación de notas superpuestas",
+      "enableStarPowerCheck": "Habilitá la verificación de Star Power faltante",
+      "enableDrumPhysicalChecks": "Habilitá las verificaciones físicas de batería",
+      "minSustainGuitar": "Sostenido mínimo de guitarra (ticks)",
+      "minSustainBass": "Sostenido mínimo de bajo (ticks)",
+      "minSustainKeys": "Sostenido mínimo de teclado (ticks)",
+      "minSustainDrums": "Sostenido mínimo de batería (ticks)",
+      "drumSeparationLimitTitle": "Límite de velocidad entre golpes en distintos pads/cymbals de batería",
+      "drumSeparationLimitLabel": "Límite de separación de batería (ms)",
+      "crossoverLimitTitle": "Límite de velocidad para golpes cruzados (ej. Redoblante a Verde)",
+      "crossoverLimitLabel": "Límite de cruce (ms)"
+    },
+    "hotkeys": {
+      "conflictsBanner": "Resolvé las combinaciones duplicadas antes de guardar. Los atajos en conflicto están resaltados abajo.",
+      "conflictsWith": "Entra en conflicto con otra acción en {{action}}",
+      "pressKeys": "Presioná las teclas...",
+      "unassigned": "Sin asignar",
+      "resetTitle": "Restablecer {{action}} al valor predeterminado ({{default}})",
+      "resetButton": "Restablecer"
+    },
+    "footer": {
+      "resetAll": "Restablecer todo a los valores predeterminados",
+      "done": "Listo"
+    }
   },
   "chartPreview": {
     "header": {

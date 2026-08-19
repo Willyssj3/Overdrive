@@ -10,7 +10,9 @@
     "open": "Open",
     "export": "Export",
     "loading": "Loading…",
-    "idle": "Idle"
+    "idle": "Idle",
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Try Again"
   },
   "editTools": {
     "select": "Select",
@@ -33,7 +35,56 @@
   "settings": {
     "language": "Language",
     "languageEnglish": "English",
-    "languageSpanish": "Español"
+    "languageSpanish": "Español",
+    "title": "Settings",
+    "subtitle": "Change editor hotkeys. Click a binding, then press the new key combination.",
+    "closeAriaLabel": "Close settings",
+    "closeButton": "X",
+    "sections": {
+      "general": "General",
+      "autoChart": "Auto-Chart",
+      "updates": "Updates",
+      "midiEditor": "MIDI Editor",
+      "validationPreferences": "Validation Preferences"
+    },
+    "autoChart": {
+      "enableLabel": "Enable Overdrive Engine auto-charting",
+      "outputFolderLabel": "Default output folder",
+      "outputFolderPlaceholder": "Default output folder for generated chart packages",
+      "browseButton": "Browse"
+    },
+    "updates": {
+      "betaLabel": "Receive beta (pre-release) updates",
+      "betaHint": "Beta builds include fixes still being tested. They may be less stable than regular releases. Turn this off to return to the stable channel."
+    },
+    "midiEditor": {
+      "invertScrollLabel": "Invert piano-roll vertical mouse wheel scroll"
+    },
+    "validation": {
+      "enableOverlapsCheck": "Enable overlapping notes check",
+      "enableStarPowerCheck": "Enable missing star power check",
+      "enableDrumPhysicalChecks": "Enable drum physical checks",
+      "minSustainGuitar": "Guitar min sustain (ticks)",
+      "minSustainBass": "Bass min sustain (ticks)",
+      "minSustainKeys": "Keys min sustain (ticks)",
+      "minSustainDrums": "Drums min sustain (ticks)",
+      "drumSeparationLimitTitle": "Speed limit between hits on different drum pads/cymbals",
+      "drumSeparationLimitLabel": "Drum separation limit (ms)",
+      "crossoverLimitTitle": "Speed limit for crossover hits (e.g. Snare to Green)",
+      "crossoverLimitLabel": "Crossover limit (ms)"
+    },
+    "hotkeys": {
+      "conflictsBanner": "Resolve duplicate bindings before saving. Conflicting shortcuts are highlighted below.",
+      "conflictsWith": "Conflicts with another action on {{action}}",
+      "pressKeys": "Press keys...",
+      "unassigned": "Unassigned",
+      "resetTitle": "Reset {{action}} to default ({{default}})",
+      "resetButton": "Reset"
+    },
+    "footer": {
+      "resetAll": "Reset All to Defaults",
+      "done": "Done"
+    }
   },
   "chartPreview": {
     "header": {

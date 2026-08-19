@@ -152,17 +152,17 @@ export function SettingsModal(): React.JSX.Element | null {
       <div className="settings-modal" onClick={(event) => event.stopPropagation()}>
         <div className="settings-modal-header">
           <div>
-            <h2 className="settings-modal-title">Settings</h2>
-            <p className="settings-modal-subtitle">Change editor hotkeys. Click a binding, then press the new key combination.</p>
+            <h2 className="settings-modal-title">{t('settings.title')}</h2>
+            <p className="settings-modal-subtitle">{t('settings.subtitle')}</p>
           </div>
-          <button className="settings-modal-close" onClick={() => setSettingsModalOpen(false)} aria-label="Close settings">
-            X
+          <button className="settings-modal-close" onClick={() => setSettingsModalOpen(false)} aria-label={t('settings.closeAriaLabel')}>
+            {t('settings.closeButton')}
           </button>
         </div>
 
         <div className="settings-modal-body">
           <section className="settings-preferences-group">
-            <h3 className="settings-hotkey-group-title">General</h3>
+            <h3 className="settings-hotkey-group-title">{t('settings.sections.general')}</h3>
             <div className="settings-preferences-body">
               <div className="settings-field-stack">
                 <label className="settings-field-label" htmlFor="settings-language">{t('settings.language')}</label>
@@ -178,7 +178,7 @@ export function SettingsModal(): React.JSX.Element | null {
             </div>
           </section>
           <section className="settings-preferences-group">
-            <h3 className="settings-hotkey-group-title">Auto-Chart</h3>
+            <h3 className="settings-hotkey-group-title">{t('settings.sections.autoChart')}</h3>
             <div className="settings-preferences-body">
               <label className="settings-checkbox-row">
                 <input
@@ -186,17 +186,17 @@ export function SettingsModal(): React.JSX.Element | null {
                   checked={draftEnableAutoChart}
                   onChange={(event) => setDraftEnableAutoChart(event.target.checked)}
                 />
-                <span>Enable Overdrive Engine auto-charting</span>
+                <span>{t('settings.autoChart.enableLabel')}</span>
               </label>
               <div className="settings-field-stack">
-                <label className="settings-field-label" htmlFor="auto-chart-output-dir">Default output folder</label>
+                <label className="settings-field-label" htmlFor="auto-chart-output-dir">{t('settings.autoChart.outputFolderLabel')}</label>
                 <div className="settings-folder-picker">
                   <input
                     id="auto-chart-output-dir"
                     className="settings-folder-input"
                     type="text"
                     value={draftAutoChartOutputDir}
-                    placeholder="Default output folder for generated chart packages"
+                    placeholder={t('settings.autoChart.outputFolderPlaceholder')}
                     onChange={(event) => setDraftAutoChartOutputDir(event.target.value)}
                   />
                   <button
@@ -206,14 +206,14 @@ export function SettingsModal(): React.JSX.Element | null {
                       if (path) setDraftAutoChartOutputDir(path)
                     }}
                   >
-                    Browse
+                    {t('settings.autoChart.browseButton')}
                   </button>
                 </div>
               </div>
             </div>
           </section>
           <section className="settings-preferences-group">
-            <h3 className="settings-hotkey-group-title">Updates</h3>
+            <h3 className="settings-hotkey-group-title">{t('settings.sections.updates')}</h3>
             <div className="settings-preferences-body">
               <label className="settings-checkbox-row">
                 <input
@@ -221,16 +221,15 @@ export function SettingsModal(): React.JSX.Element | null {
                   checked={draftBetaUpdates}
                   onChange={(event) => setDraftBetaUpdates(event.target.checked)}
                 />
-                <span>Receive beta (pre-release) updates</span>
+                <span>{t('settings.updates.betaLabel')}</span>
               </label>
               <p className="settings-field-hint">
-                Beta builds include fixes still being tested. They may be less stable than
-                regular releases. Turn this off to return to the stable channel.
+                {t('settings.updates.betaHint')}
               </p>
             </div>
           </section>
           <section className="settings-preferences-group">
-            <h3 className="settings-hotkey-group-title">MIDI Editor</h3>
+            <h3 className="settings-hotkey-group-title">{t('settings.sections.midiEditor')}</h3>
             <div className="settings-preferences-body">
               <label className="settings-checkbox-row">
                 <input
@@ -238,12 +237,12 @@ export function SettingsModal(): React.JSX.Element | null {
                   checked={draftInvertPianoRollVerticalScroll}
                   onChange={(event) => setDraftInvertPianoRollVerticalScroll(event.target.checked)}
                 />
-                <span>Invert piano-roll vertical mouse wheel scroll</span>
+                <span>{t('settings.midiEditor.invertScrollLabel')}</span>
               </label>
             </div>
           </section>
           <section className="settings-preferences-group">
-            <h3 className="settings-hotkey-group-title">Validation Preferences</h3>
+            <h3 className="settings-hotkey-group-title">{t('settings.sections.validationPreferences')}</h3>
             <div className="settings-preferences-body">
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -253,7 +252,7 @@ export function SettingsModal(): React.JSX.Element | null {
                       checked={draftValidationEnableOverlapsCheck}
                       onChange={(event) => setDraftValidationEnableOverlapsCheck(event.target.checked)}
                     />
-                    <span>Enable overlapping notes check</span>
+                    <span>{t('settings.validation.enableOverlapsCheck')}</span>
                   </label>
                   <label className="settings-checkbox-row">
                     <input
@@ -261,7 +260,7 @@ export function SettingsModal(): React.JSX.Element | null {
                       checked={draftValidationEnableStarPowerCheck}
                       onChange={(event) => setDraftValidationEnableStarPowerCheck(event.target.checked)}
                     />
-                    <span>Enable missing star power check</span>
+                    <span>{t('settings.validation.enableStarPowerCheck')}</span>
                   </label>
                   <label className="settings-checkbox-row">
                     <input
@@ -269,12 +268,12 @@ export function SettingsModal(): React.JSX.Element | null {
                       checked={draftValidationEnableDrumImpossibilityCheck}
                       onChange={(event) => setDraftValidationEnableDrumImpossibilityCheck(event.target.checked)}
                     />
-                    <span>Enable drum physical checks</span>
+                    <span>{t('settings.validation.enableDrumPhysicalChecks')}</span>
                   </label>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '13px', color: '#ccc' }}>Guitar min sustain (ticks)</span>
+                    <span style={{ fontSize: '13px', color: '#ccc' }}>{t('settings.validation.minSustainGuitar')}</span>
                     <input
                       type="number"
                       style={{ width: '70px', padding: '4px', background: '#2e2e3e', border: '1px solid #444', color: '#fff', borderRadius: '4px' }}
@@ -283,7 +282,7 @@ export function SettingsModal(): React.JSX.Element | null {
                     />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '13px', color: '#ccc' }}>Bass min sustain (ticks)</span>
+                    <span style={{ fontSize: '13px', color: '#ccc' }}>{t('settings.validation.minSustainBass')}</span>
                     <input
                       type="number"
                       style={{ width: '70px', padding: '4px', background: '#2e2e3e', border: '1px solid #444', color: '#fff', borderRadius: '4px' }}
@@ -292,7 +291,7 @@ export function SettingsModal(): React.JSX.Element | null {
                     />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '13px', color: '#ccc' }}>Keys min sustain (ticks)</span>
+                    <span style={{ fontSize: '13px', color: '#ccc' }}>{t('settings.validation.minSustainKeys')}</span>
                     <input
                       type="number"
                       style={{ width: '70px', padding: '4px', background: '#2e2e3e', border: '1px solid #444', color: '#fff', borderRadius: '4px' }}
@@ -301,7 +300,7 @@ export function SettingsModal(): React.JSX.Element | null {
                     />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '13px', color: '#ccc' }}>Drums min sustain (ticks)</span>
+                    <span style={{ fontSize: '13px', color: '#ccc' }}>{t('settings.validation.minSustainDrums')}</span>
                     <input
                       type="number"
                       style={{ width: '70px', padding: '4px', background: '#2e2e3e', border: '1px solid #444', color: '#fff', borderRadius: '4px' }}
@@ -314,7 +313,7 @@ export function SettingsModal(): React.JSX.Element | null {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', borderTop: '1px solid #333', marginTop: '12px', paddingTop: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '13px', color: '#ccc' }} title="Speed limit between hits on different drum pads/cymbals">Drum separation limit (ms)</span>
+                  <span style={{ fontSize: '13px', color: '#ccc' }} title={t('settings.validation.drumSeparationLimitTitle')}>{t('settings.validation.drumSeparationLimitLabel')}</span>
                   <input
                     type="number"
                     style={{ width: '70px', padding: '4px', background: '#2e2e3e', border: '1px solid #444', color: '#fff', borderRadius: '4px' }}
@@ -323,7 +322,7 @@ export function SettingsModal(): React.JSX.Element | null {
                   />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '13px', color: '#ccc' }} title="Speed limit for crossover hits (e.g. Snare to Green)">Crossover limit (ms)</span>
+                  <span style={{ fontSize: '13px', color: '#ccc' }} title={t('settings.validation.crossoverLimitTitle')}>{t('settings.validation.crossoverLimitLabel')}</span>
                   <input
                     type="number"
                     style={{ width: '70px', padding: '4px', background: '#2e2e3e', border: '1px solid #444', color: '#fff', borderRadius: '4px' }}
@@ -336,7 +335,7 @@ export function SettingsModal(): React.JSX.Element | null {
           </section>
           {hasConflicts && (
             <div className="settings-hotkey-conflicts-banner">
-              Resolve duplicate bindings before saving. Conflicting shortcuts are highlighted below.
+              {t('settings.hotkeys.conflictsBanner')}
             </div>
           )}
           {HOTKEY_GROUPS.map((group) => (
@@ -354,7 +353,7 @@ export function SettingsModal(): React.JSX.Element | null {
                         <span className="settings-hotkey-label">{HOTKEY_ACTION_LABELS[action]}</span>
                         {hasConflict && (
                           <span className="settings-hotkey-conflict-text">
-                            Conflicts with another action on {conflictMap.get(action)}
+                            {t('settings.hotkeys.conflictsWith', { action: conflictMap.get(action) })}
                           </span>
                         )}
                       </div>
@@ -362,15 +361,15 @@ export function SettingsModal(): React.JSX.Element | null {
                         className={`settings-hotkey-button${isRecording ? ' is-recording' : ''}${hasConflict ? ' has-conflict' : ''}`}
                         onClick={() => setRecordingAction(isRecording ? null : action)}
                       >
-                        {isRecording ? 'Press keys...' : currentHotkey || 'Unassigned'}
+                        {isRecording ? t('settings.hotkeys.pressKeys') : currentHotkey || t('settings.hotkeys.unassigned')}
                       </button>
                       <div className="settings-hotkey-actions">
                         <button
                           className="settings-hotkey-clear"
                           onClick={() => setDraftHotkeys((prev) => ({ ...prev, [action]: defaultHotkey }))}
-                          title={`Reset ${HOTKEY_ACTION_LABELS[action]} to default (${defaultHotkey})`}
+                          title={t('settings.hotkeys.resetTitle', { action: HOTKEY_ACTION_LABELS[action], default: defaultHotkey })}
                         >
-                          Reset
+                          {t('settings.hotkeys.resetButton')}
                         </button>
                       </div>
                     </div>
@@ -386,10 +385,10 @@ export function SettingsModal(): React.JSX.Element | null {
             className="settings-modal-secondary"
             onClick={() => setDraftHotkeys(cloneDefaultHotkeys())}
           >
-            Reset All to Defaults
+            {t('settings.footer.resetAll')}
           </button>
           <button className="settings-modal-secondary" onClick={() => setSettingsModalOpen(false)}>
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             className="settings-modal-primary"
@@ -418,7 +417,7 @@ export function SettingsModal(): React.JSX.Element | null {
               setSettingsModalOpen(false)
             }}
           >
-            Done
+            {t('settings.footer.done')}
           </button>
         </div>
       </div>

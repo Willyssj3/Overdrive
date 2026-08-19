@@ -161,9 +161,3 @@ export function useAutosave(): void {
     }
   }, [])
 }
-
-// Provider component to initialize autosave
-export function AutosaveProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
-  useAutosave()
-  return <>{children}</>
-}

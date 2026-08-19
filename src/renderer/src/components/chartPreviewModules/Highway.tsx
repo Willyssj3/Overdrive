@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { TRACK_WIDTH, STRIKE_LINE_POS, HIGHWAY_LENGTH, COLORS, getLaneConfig, isBlackKey, PRO_KEYS_MIN, PRO_KEYS_VISIBLE } from './constants'
 import type { InstrumentRenderType } from './constants'
-import { HighwayAssetsContext } from './AssetProvider'
+import { HighwayAssetsContext } from './AssetContext'
 
 // Reusable static geometries at module level to prevent GPU garbage/overhead
 const highwaySurfaceGeo = new THREE.PlaneGeometry(TRACK_WIDTH + 0.1, HIGHWAY_LENGTH)

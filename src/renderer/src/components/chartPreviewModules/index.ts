@@ -1,6 +1,7 @@
 // Barrel exports for chartPreview modules
 export { AnimatedHighwayScene } from './AnimatedHighwayScene'
-export { AssetProvider, HighwayAssetsContext } from './AssetProvider'
+export { AssetProvider } from './AssetProvider'
+export { HighwayAssetsContext } from './AssetContext'
 export { Highway } from './Highway'
 export { Strikeline } from './Strikeline'
 export { BeatGrid } from './BeatGrid'

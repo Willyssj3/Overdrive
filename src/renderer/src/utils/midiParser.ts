@@ -1304,6 +1304,7 @@ export function serializeChartFile(
   starPowerPhrases: StarPowerPhrase[] = [],
   vocalNotes: VocalNote[] = [],
   vocalPhrases: VocalPhrase[] = [],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept to preserve positional arg order for existing callers
   _soloSections: SoloSection[] = [],
   songSections: SongSection[] = [],
   metadata: Record<string, unknown> = {},
@@ -1851,7 +1852,7 @@ export function serializeMidiBase64(
     for (const vn of sortedNotes) {
       // Lyric event (before note on)
       if (vn.lyric) {
-        let lyricText = vn.isSlide ? `+${vn.lyric}` : vn.lyric
+        const lyricText = vn.isSlide ? `+${vn.lyric}` : vn.lyric
         events.push({ type: 'lyrics', text: lyricText, deltaTime: 0, absTick: vn.tick } as RawEvent)
       }
 
@@ -1918,6 +1919,7 @@ export function serializeMidiBase64(
     for (const ev of events) {
       const delta = ev.absTick - prevTick
       prevTick = ev.absTick
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- `absTick` is destructured only to exclude it from `rest`
       const { absTick: _, ...rest } = ev
       rawEvents.push({ ...rest, deltaTime: delta } as RawMidiEvent)
     }
@@ -1950,6 +1952,7 @@ export function serializeMidiBase64(
     for (const ev of events) {
       const delta = ev.absTick - prevTick
       prevTick = ev.absTick
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- `absTick` is destructured only to exclude it from `rest`
       const { absTick: _, ...rest } = ev
       rawEvents.push({ ...rest, deltaTime: delta } as RawMidiEvent)
     }
@@ -1994,6 +1997,7 @@ export function serializeMidiBase64(
     for (const ev of events) {
       const delta = ev.absTick - prevTick
       prevTick = ev.absTick
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars -- `absTick` is destructured only to exclude it from `rest`
       const { absTick: _, ...rest } = ev
       rawEvents.push({ ...rest, deltaTime: delta } as RawMidiEvent)
     }

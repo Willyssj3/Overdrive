@@ -5,11 +5,12 @@ import { useFrame } from '@react-three/fiber'
 import { useStore } from 'zustand'
 import { getSongStore, useSettingsStore, useUIStore } from '../../stores'
 import { BASE_PIXELS_PER_TICK, TRACK_WIDTH, STRIKE_LINE_POS, HIGHWAY_LENGTH, HIT_EFFECT_TICKS, FRET_PRESS_TICKS, computeProKeysViewStart } from './constants'
-import { HighwayAssetsContext } from './AssetProvider'
+import { HighwayAssetsContext } from './AssetContext'
 import { Highway } from './Highway'
 import { Strikeline } from './Strikeline'
 import { BeatGrid } from './BeatGrid'
-import { HighwayWaveform, useHighwayWaveform } from './HighwayWaveform'
+import { HighwayWaveform } from './HighwayWaveform'
+import { useHighwayWaveform } from './useHighwayWaveform'
 import { NotesRenderer } from './NotesRenderer'
 import { HighwayEditLayer } from './HighwayEditLayer'
 import type { Instrument, Difficulty } from '../../types'
@@ -106,7 +107,7 @@ export function AnimatedHighwayScene({
   const snapDivision = useStore(store, (s) => s.snapDivision)
   const isPlaying = useStore(store, (s) => s.isPlaying)
   const assets = useContext(HighwayAssetsContext)
-  const { highwaySpeed: _highwaySpeed, leftyFlip, waveformAudioSourcePath } = useSettingsStore()
+  const { leftyFlip, waveformAudioSourcePath } = useSettingsStore()
   const showHighwayWaveform = useUIStore((s) => s.showHighwayWaveform)
 
   const pixelsPerTick = BASE_PIXELS_PER_TICK
@@ -574,7 +575,7 @@ function HitEffectsGroup({
     let particleIdx = 0
 
     // Helper to get or create a pooled sphere mesh
-    const getSphere = (color: string, opacity: number, scale: number, x: number) => {
+    const getSphere = (color: string, opacity: number, scale: number, x: number): void => {
       let item = poolRef.current.spheres[sphereIdx]
       if (!item) {
         const mat = new THREE.MeshBasicMaterial({
@@ -596,7 +597,14 @@ function HitEffectsGroup({
     }
 
     // Helper to get or create a pooled particle mesh
-    const getParticle = (color: string, opacity: number, scale: number, x: number, y: number, z: number) => {
+    const getParticle = (
+      color: string,
+      opacity: number,
+      scale: number,
+      x: number,
+      y: number,
+      z: number
+    ): void => {
       let item = poolRef.current.particles[particleIdx]
       if (!item) {
         const mat = new THREE.MeshBasicMaterial({

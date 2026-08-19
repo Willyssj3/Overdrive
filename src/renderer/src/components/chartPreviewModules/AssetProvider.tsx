@@ -1,12 +1,11 @@
 // Asset Provider - Loads FBX models and textures into context
-import { useMemo, createContext } from 'react'
+import { useMemo } from 'react'
 import { useFBX, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { extractBakedGeometry, extractBakedGroup, extractAllMeshes } from './fbxUtils'
 import { TRACK_WIDTH } from './constants'
 import type { HighwayAssets } from './types'
-
-export const HighwayAssetsContext = createContext<HighwayAssets | null>(null)
+import { HighwayAssetsContext } from './AssetContext'
 
 export function AssetProvider({ children }: { children: React.ReactNode }): React.JSX.Element {
   const normalFBX = useFBX('./highway-assets/models/NormalNote.fbx')

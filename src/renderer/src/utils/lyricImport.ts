@@ -50,7 +50,7 @@ export function parseLrc(content: string): LyricCue[] {
   const lines = content.split(/\r?\n/)
 
   for (const line of lines) {
-    const matches = [...line.matchAll(/\[(\d{1,2}:\d{2}(?::\d{2})?(?:[\.,]\d{1,3})?)\]/g)]
+    const matches = [...line.matchAll(/\[(\d{1,2}:\d{2}(?::\d{2})?(?:[.,]\d{1,3})?)\]/g)]
     if (matches.length === 0) continue
 
     const text = line.replace(/\[[^\]]+\]/g, '').trim()

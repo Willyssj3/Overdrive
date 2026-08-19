@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import * as THREE from 'three'
+import type { HighwayAssets } from './types'
 
 // Inline document canvas mock for headless Node environment execution tests
 if (typeof global.document === 'undefined') {
@@ -24,7 +25,7 @@ if (typeof global.document === 'undefined') {
         roundRect: () => {}
       })
     })
-  } as any
+  } as unknown as Document
 }
 import {
   sharedGeometries,
@@ -76,8 +77,8 @@ describe('NoteGem Performance Optimization - Shared Geometries', () => {
 })
 
 describe('NoteGem Performance Optimization - Shared Materials Caching', () => {
-  const dummyAssets1 = { noteMap: {} as THREE.Texture } as any
-  const dummyAssets2 = { noteMap: {} as THREE.Texture } as any
+  const dummyAssets1 = { noteMap: {} as THREE.Texture } as unknown as HighwayAssets
+  const dummyAssets2 = { noteMap: {} as THREE.Texture } as unknown as HighwayAssets
 
   it('should cache and reuse standard note materials for identical parameters', () => {
     clearMaterialCaches()
@@ -126,11 +127,11 @@ describe('NoteGem and KickNoteBar Component Execution', () => {
     noteEmission: {} as THREE.Texture,
     kickMap: {} as THREE.Texture,
     kickGeo: {} as THREE.BufferGeometry
-  } as any
+  } as unknown as HighwayAssets
 
   it('should render NoteGemComponent without throwing errors', () => {
     expect(() => {
-      (NoteGem as any).type({
+      NoteGem.type({
         position: [0, 0, 0],
         color: '#FF0000',
         isSelected: false,
@@ -140,7 +141,7 @@ describe('NoteGem and KickNoteBar Component Execution', () => {
     }).not.toThrow()
 
     expect(() => {
-      (NoteGem as any).type({
+      NoteGem.type({
         position: [1, 2, 3],
         color: '#00FF00',
         isSelected: true,
@@ -154,7 +155,7 @@ describe('NoteGem and KickNoteBar Component Execution', () => {
 
   it('should render KickNoteBar without throwing errors', () => {
     expect(() => {
-      (KickNoteBar as any).type({
+      KickNoteBar.type({
         z: -10,
         color: '#FFCC00',
         assets: null,
@@ -166,7 +167,7 @@ describe('NoteGem and KickNoteBar Component Execution', () => {
     }).not.toThrow()
 
     expect(() => {
-      (KickNoteBar as any).type({
+      KickNoteBar.type({
         z: -5,
         color: '#FF00FF',
         assets: dummyAssets,

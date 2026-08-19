@@ -2,20 +2,23 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest'
 import { packSng } from './sngPacker'
 import { join } from 'path'
 import { mkdir, writeFile, readFile, rm } from 'fs/promises'
-import { existsSync } from 'fs'
+import { existsSync, type Stats, type ObjectEncodingOptions, type OpenMode } from 'fs'
+
+type ReaddirOptions = BufferEncoding | (ObjectEncodingOptions & { withFileTypes?: false; recursive?: boolean }) | null
+type ReadFileOptions = BufferEncoding | (ObjectEncodingOptions & { flag?: OpenMode }) | null
 
 // Mock fs/promises to simulate long filenames that the OS might prevent writing directly
 vi.mock('fs/promises', async (importOriginal) => {
   const actual = await importOriginal<typeof import('fs/promises')>()
   return {
     ...actual,
-    readdir: async (path: string, options?: any) => {
+    readdir: async (path: string, options?: ReaddirOptions) => {
       if (String(path).includes('bad_song_long_name')) {
         return ['notes.chart', 'a'.repeat(260) + '.ogg']
       }
       return actual.readdir(path, options)
     },
-    readFile: async (path: string, options?: any) => {
+    readFile: async (path: string, options?: ReadFileOptions) => {
       if (String(path).includes('bad_song_long_name') && String(path).includes('a'.repeat(260))) {
         return Buffer.from('MOCK DATA')
       }
@@ -31,7 +34,7 @@ vi.mock('fs', async (importOriginal) => {
     ...actual,
     statSync: (path: string) => {
       if (String(path).includes('bad_song_long_name') && String(path).includes('a'.repeat(260))) {
-        return { isFile: () => true, size: 100 } as any
+        return { isFile: () => true, size: 100 } as unknown as Stats
       }
       return actual.statSync(path)
     }

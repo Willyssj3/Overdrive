@@ -1,5 +1,5 @@
 // Per-song store with scoped undo/redo
-import { create, StateCreator } from 'zustand'
+import { create, StateCreator, StoreApi, UseBoundStore } from 'zustand'
 import { temporal, TemporalState } from 'zundo'
 import { v4 as uuidv4 } from 'uuid'
 import {
@@ -400,6 +400,7 @@ const createSongStoreSlice: StateCreator<SongStoreState> = (set, get) => {
         if (selected.length === 0) return {}
         // Store notes relative to the earliest selected note's tick
         const minTick = Math.min(...selected.map((n) => n.tick))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- `id` is destructured only to exclude it from `rest`
         const clipboard = selected.map(({ id: _id, ...rest }) => ({
           ...rest,
           tick: rest.tick - minTick
@@ -434,6 +435,7 @@ const createSongStoreSlice: StateCreator<SongStoreState> = (set, get) => {
         const selected = state.song.vocalNotes.filter((n) => selectedSet.has(n.id))
         if (selected.length === 0) return {}
         const minTick = Math.min(...selected.map((n) => n.tick))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- `id` is destructured only to exclude it from `rest`
         const vocalClipboard = selected.map(({ id: _id, ...rest }) => ({
           ...rest,
           tick: rest.tick - minTick
@@ -1052,7 +1054,9 @@ export type SongStore = SongStoreState & {
 const songStoreRegistry = new Map<string, ReturnType<typeof createSongStore>>()
 
 // Create a new song store with temporal middleware
-function createSongStore(_songId: string) {
+function createSongStore(): UseBoundStore<
+  StoreApi<SongStoreState> & { temporal: StoreApi<TemporalState<{ song: SongData }>> }
+> {
   return create<SongStoreState>()(
     temporal(createSongStoreSlice, {
       // Only track state changes that should be undoable
@@ -1070,17 +1074,17 @@ function createSongStore(_songId: string) {
 }
 
 // Get or create a song store for a given song ID
-export function getSongStore(songId: string) {
+export function getSongStore(songId: string): ReturnType<typeof createSongStore> {
   let store = songStoreRegistry.get(songId)
   if (!store) {
-    store = createSongStore(songId)
+    store = createSongStore()
     songStoreRegistry.set(songId, store)
   }
   return store
 }
 
 // Remove a song store from the registry
-export function removeSongStore(songId: string) {
+export function removeSongStore(songId: string): void {
   songStoreRegistry.delete(songId)
 }
 
@@ -1090,7 +1094,7 @@ export function getRegisteredSongIds(): string[] {
 }
 
 // Hook to use the active song's store
-export function useActiveSongStore() {
+export function useActiveSongStore(): ReturnType<typeof getSongStore> {
   // This will be implemented with a context provider
   // For now, return a default store getter
   return getSongStore('default')

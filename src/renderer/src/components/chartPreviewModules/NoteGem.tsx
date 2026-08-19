@@ -6,6 +6,7 @@ import type { Note } from '../../types'
 import type { HighwayAssets } from './types'
 
 // Shared geometries to prevent GPU memory leaks and WebGL recreation overhead
+// eslint-disable-next-line react-refresh/only-export-components -- shared GPU resource cache, tightly coupled to this file's components; not worth splitting
 export const sharedGeometries = {
   noteGemFallback: new THREE.BoxGeometry(0.34, 0.06, 0.2),
   selectionRing: new THREE.RingGeometry(0.2, 0.26, 16),
@@ -87,6 +88,7 @@ const sharedBurnMaterials = new Map<string, THREE.MeshBasicMaterial>()
 const sharedKickSustainMaterials = new Map<string, THREE.MeshBasicMaterial>()
 const sharedKickHeadMaterials = new Map<string, THREE.MeshStandardMaterial>()
 
+// eslint-disable-next-line react-refresh/only-export-components -- shared material cache helper, tightly coupled to this file's components; not worth splitting
 export function clearMaterialCaches(): void {
   for (const mat of sharedMaterials.values()) mat.dispose()
   for (const mat of sharedSustainMaterials.values()) mat.dispose()
@@ -129,6 +131,7 @@ function addRimLight(mat: THREE.MeshStandardMaterial, intensity: number): void {
   mat.needsUpdate = true
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shared material cache helper, tightly coupled to this file's components; not worth splitting
 export function getSharedNoteMaterial(
   color: string,
   isSelected: boolean,
@@ -157,6 +160,7 @@ export function getSharedNoteMaterial(
   return mat
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shared material cache helper, tightly coupled to this file's components; not worth splitting
 export function getSharedSustainMaterial(
   color: string,
   isBurning: boolean,
@@ -179,6 +183,7 @@ export function getSharedSustainMaterial(
   return mat
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shared material cache helper, tightly coupled to this file's components; not worth splitting
 export function getSharedBurnMaterial(
   color: string,
   assets: HighwayAssets | null
@@ -197,6 +202,7 @@ export function getSharedBurnMaterial(
   return mat
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shared material cache helper, tightly coupled to this file's components; not worth splitting
 export function getSharedKickSustainMaterial(
   color: string,
   assets: HighwayAssets | null
@@ -215,6 +221,7 @@ export function getSharedKickSustainMaterial(
   return mat
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shared material cache helper, tightly coupled to this file's components; not worth splitting
 export function getSharedKickHeadMaterial(
   color: string,
   isSelected: boolean,
@@ -245,7 +252,6 @@ function NoteGemComponent({
   color,
   isSelected,
   sustainLength,
-  sustainOffset: _sustainOffset = 0,
   noteFlags,
   isHeadVisible = true,
   assets,

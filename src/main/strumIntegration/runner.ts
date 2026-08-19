@@ -1,6 +1,6 @@
 import { app, BrowserWindow, shell } from 'electron'
 import { execFile, spawn } from 'child_process'
-import { dirname, join } from 'path'
+import { dirname, join, sep } from 'path'
 import { mkdir, unlink, writeFile } from 'fs/promises'
 import { existsSync, mkdirSync, createWriteStream, type WriteStream } from 'fs'
 import { parseAutoChartProgressLine } from './progress'
@@ -29,8 +29,8 @@ function resolveBundledFfmpegDir(): string | null {
     // app.asar.unpacked. ffmpeg-static handles this itself by returning the
     // unpacked path at runtime, so dirname() is enough.
     let resolved = ffmpegPath
-    if (resolved.includes(`app.asar${require('path').sep}`)) {
-      resolved = resolved.replace(`app.asar${require('path').sep}`, `app.asar.unpacked${require('path').sep}`)
+    if (resolved.includes(`app.asar${sep}`)) {
+      resolved = resolved.replace(`app.asar${sep}`, `app.asar.unpacked${sep}`)
     }
     if (!existsSync(resolved)) return null
     return dirname(resolved)

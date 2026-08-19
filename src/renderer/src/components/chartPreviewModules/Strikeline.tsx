@@ -8,7 +8,7 @@ import {
   getLaneConfig, getFretX, PRO_KEYS_COLOR, VOCAL_COLOR
 } from './constants'
 import type { InstrumentRenderType } from './constants'
-import { HighwayAssetsContext } from './AssetProvider'
+import { HighwayAssetsContext } from './AssetContext'
 
 // Reusable static geometries at module level for static components
 const strikelineBaseGeo = new THREE.BoxGeometry(TRACK_WIDTH + 0.14, 0.035, 0.06)

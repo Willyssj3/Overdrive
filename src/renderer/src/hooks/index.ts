@@ -1,3 +1,4 @@
 // Hooks exports
-export { useAutosave, AutosaveProvider } from './useAutosave'
+export { useAutosave } from './useAutosave'
+export { AutosaveProvider } from './AutosaveProvider'
 export { useKeyboardShortcuts } from './useKeyboardShortcuts'

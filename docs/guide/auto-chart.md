@@ -8,7 +8,7 @@ The auto-charter is bundled but still evolving. Output quality varies by genre, 
 
 ## STRUM
 
-**STRUM** (Stem-aware Transcription, Rhythm & Universal Mapping) is the open-source audio-to-chart engine that powers Auto-Chart. This build of OCTAVE runs [Willyssj3/strum](https://github.com/Willyssj3/strum), an independent, actively-developed continuation of the original [opria123/strum](https://github.com/opria123/strum) (credited there). It's bundled with OCTAVE under [`resources/strum/`](https://github.com/Willyssj3/octave/tree/beta/resources/strum) and runs locally — no cloud, no upload.
+**STRUM** (Stem-aware Transcription, Rhythm & Universal Mapping) is the open-source audio-to-chart engine that powers Auto-Chart. This build of OCTAVE runs [Willyssj3/strum](https://github.com/Willyssj3/strum), an independent, actively-developed continuation of the original [opria123/strum](https://github.com/opria123/strum) (credited there). It's bundled with OCTAVE under [`resources/strum/`](https://github.com/Willyssj3/overdrive/tree/beta/resources/strum) and runs locally — no cloud, no upload.
 
 What STRUM does, in order:
 
@@ -41,9 +41,9 @@ That's it for the basic flow. The advanced section covers everything else.
 | **Pre-split stems folder** | A folder with `drums.wav`, `bass.wav`, `vocals.wav`, `other.wav`. Skips Demucs (much faster). |
 | **YouTube URL** | The audio is downloaded with `yt-dlp` and processed as a single file. |
 
-## Bundled Python runtime
+## Python runtime
 
-OCTAVE ships with its own Python 3.11 runtime in packaged builds — you don't need to install Python yourself. The runtime is downloaded the first time you click **Auto-Chart** (about 250 MB) and cached in:
+To keep the installer small and let runtime updates ship without a full reinstall, OCTAVE does **not** bundle Python in the installer. Instead, the first time you click **Auto-Chart** it downloads a self-contained Python 3.12.10 interpreter (~1.5 GB) and provisions it into your user-data directory. You don't need to install Python yourself, and this is a one-time cost — subsequent runs reuse the cached runtime. It's cached in:
 
 - **Windows**: `%APPDATA%/octave/python-runtime/`
 - **macOS**: `~/Library/Application Support/octave/python-runtime/`

@@ -28,3 +28,5 @@ A reduced "common modifiers" form: only the modifiers that all selected notes sh
 ## Vocals & lyrics
 
 When the Vocals instrument is active, the Property Panel doubles as the lyric editor for the selected phrase. Use `Tab` to advance to the next syllable.
+
+The **🔊 Pitch** toggle in the Vocals lane header sounds charted note pitches during playback, letting you check pitch accuracy by ear as you edit lyrics.

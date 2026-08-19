@@ -16,7 +16,7 @@ The strip across the top of the window. From left to right:
 - **Stems Mixer button** — opens the per-stem volume / mute / solo popover ([guide](/guide/stems-mixer))
 - **Auto-Chart button** — opens the auto-chart modal ([guide](/guide/auto-chart))
 - **Save / Export**
-- **Settings** — opens the [Settings modal](/reference/settings)
+- **Settings** — opens the [Settings modal](/reference/settings) (includes a General → Language switcher for English/Spanish, applied immediately across the whole app)
 
 ## Project Explorer (left panel)
 

@@ -53,13 +53,13 @@ pass before a PR can be merged into `beta`.
 
 ## Reporting Bugs
 
-- Use the [bug report template](https://github.com/opria123/octave/issues/new?template=bug_report.md)
+- Use the [bug report template](https://github.com/Willyssj3/overdrive/issues/new?template=bug_report.md)
 - Include steps to reproduce, expected vs actual behavior
 - Attach the problematic `.mid` or `.chart` file if relevant
 
 ## Feature Requests
 
-- Use the [feature request template](https://github.com/opria123/octave/issues/new?template=feature_request.md)
+- Use the [feature request template](https://github.com/Willyssj3/overdrive/issues/new?template=feature_request.md)
 - Describe the use case, not just the solution
 
 ## Releases & Beta Testing

@@ -13,9 +13,10 @@ The preview is locked to the [MIDI Editor's](/guide/midi-editor) playhead — pr
 - **Highway** — scrolling note lanes with FBX gem assets and proper YARG textures
 - **Strikeline** — the static hit line at the bottom; gems "hit" here in time with audio
 - **Beat grid** — measure / beat lines synced to the song's tempo map
-- **Star Power overlay** — visualizes star power phrases (purple gradient)
+- **Star Power overlay** — visualizes star power phrases (purple gradient); the strikeline also gets its own glow while playback is inside a charted phrase
 - **Solo overlay** — highlights solo sections
 - **Animated venue** — background environment, lighting, and characters (if assets are installed)
+- **Vocal track overlay** — piano-roll view of pitched vocal notes below the highway when Vocals is active, with a harmony-part selector and a **🔊 Pitch** toggle to hear charted note pitches during playback
 
 ## Venue assets
 
@@ -31,7 +32,7 @@ The default venue lives at `highway-assets/venue/default/`. Both folders include
 
 ## Edit overlay
 
-When the Place tool is active, the highway overlays a placement preview at the snap position. The overlay disappears during playback so you can review without distraction.
+When the Place tool is active, the highway overlays a placement preview at the snap position. The overlay disappears during playback so you can review without distraction. Placing a note also fires a brief lane-colored spark at the placement point, confirming the hit without interrupting the flow.
 
 ## Performance
 

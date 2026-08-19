@@ -172,18 +172,17 @@ npm run dev
 Overdrive can run the Overdrive Engine auto-chart pipeline to generate chart packages from audio.
 
 End users:
-- Release builds are self-contained. Users install the Overdrive app artifact only.
-- The bundled Python runtime and Overdrive Engine Python dependencies ship inside the app.
-- App auto-updates replace the app bundle, so bundled Python/runtime changes ship with the release automatically.
+- The installer does not bundle Python or the Overdrive Engine's ML dependencies — packing a full Python + torch stack into the installer would push it past 2 GB and force a full reinstall on every patch.
+- On first launch, Overdrive downloads a self-contained Python 3.12 runtime (via `python-build-standalone`) into your user-data folder and installs the pinned Overdrive Engine dependencies there. The download is roughly 1.5 GB, happens once, and survives app updates — auto-updates only replace the app bundle, so the runtime is never re-downloaded on patch.
+- A setup banner offers to provision the runtime proactively; if dismissed, the same download starts automatically the first time you use Auto-Chart.
 
 Development builds:
 - The auto-chart feature uses a local Python 3.11+ environment in development.
 - Set `OCTAVE_STRUM_PYTHON` if you want to point Overdrive at a specific interpreter.
 
 Release engineering:
-- Packaging runs `npm run prepare:python-runtime` before `electron-builder` so the current build machine's Python 3.11+ runtime and Overdrive Engine dependencies are copied into app resources.
-- Set `OCTAVE_BUNDLED_PYTHON` if the build should use a specific Python interpreter.
-- FFmpeg must still be available on `PATH` for Whisper/audio decoding.
+- `npm run build` followed by `electron-builder` packages the app as-is — there's no separate Python packaging step, since nothing Python-related ships in the installer.
+- The pinned Python version and download source live in `src/main/strumIntegration/runtimeBootstrap.ts` (currently Python 3.12.10 via `python-build-standalone`); bump it there to change what end users download on first launch.
 
 Development Python dependency install paths:
 

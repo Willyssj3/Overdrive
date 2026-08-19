@@ -77,7 +77,7 @@ Two things worth knowing before you run it:
 | Guitar / Bass / Keys | Open, Green, Red, Yellow, Blue, Orange |
 | Pro Keys | Full 25-key MIDI range |
 | Pro Guitar / Bass | 6 strings × frets, plus chord modifier |
-| Vocals | Pitched melody + HARM2 / HARM3 harmonies |
+| Vocals | Pitched melody + HARM2 / HARM3 harmonies. The lane header's **🔊 Pitch** toggle sounds charted note pitches during playback so you can verify accuracy by ear. |
 
 ## Lane swap
 

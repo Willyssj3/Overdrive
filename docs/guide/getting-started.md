@@ -8,19 +8,19 @@ OCTAVE runs on Windows, macOS, and Linux. Pick the install method that fits.
 
 | Platform | File | Notes |
 |----------|------|-------|
-| **Windows** | `octave-x.x.x-setup.exe` | NSIS installer. SmartScreen may warn on first launch — click *More info → Run anyway*. |
-| **macOS** | `octave-x.x.x.dmg` | Right-click the app and choose *Open* the first time so Gatekeeper accepts the unsigned bundle. |
-| **Linux** | `octave-x.x.x.AppImage` | `chmod +x octave-*.AppImage && ./octave-*.AppImage` |
+| **Windows** | `overdrive-x.x.x-setup.exe` | NSIS installer. SmartScreen may warn on first launch — click *More info → Run anyway*. |
+| **macOS** | `overdrive-x.x.x.dmg` | Right-click the app and choose *Open* the first time so Gatekeeper accepts the unsigned bundle. |
+| **Linux** | `overdrive-x.x.x.AppImage` | `chmod +x overdrive-*.AppImage && ./overdrive-*.AppImage` |
 
-All releases live on the [GitHub Releases page](https://github.com/opria123/octave/releases/latest).
+All releases live on the [GitHub Releases page](https://github.com/Willyssj3/overdrive/releases/latest).
 
 ## Build from source
 
 If you'd rather compile locally:
 
 ```bash
-git clone https://github.com/opria123/octave.git
-cd octave
+git clone https://github.com/Willyssj3/overdrive.git
+cd overdrive
 npm install
 npm run dev          # hot-reloading dev build
 npm run build:win    # or build:mac / build:linux for an installer

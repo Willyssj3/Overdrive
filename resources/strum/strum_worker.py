@@ -152,7 +152,7 @@ def _diagnose_basic_pitch_failure(exc: BaseException) -> None:
     import sys as _sys
     site_paths = [p for p in _sys.path if "site-packages" in p]
     print(
-        "[OCTAVE] !!! basic_pitch model failed to load. This usually means the\n"
+        "[Overdrive] !!! basic_pitch model failed to load. This usually means the\n"
         "         basic_pitch install is incomplete OR the running Python is\n"
         "         loading wheels built for a different Python version (check\n"
         "         %APPDATA%\\Python\\PythonXY\\site-packages on Windows and the\n"
@@ -160,7 +160,7 @@ def _diagnose_basic_pitch_failure(exc: BaseException) -> None:
         f"{_sys.version.split()[0]} at {_sys.executable}\n"
         f"         site-packages on path: {site_paths}\n"
         "         Fix: pip install --force-reinstall basic-pitch tensorflow\n"
-        "         under the SAME interpreter Octave launches (or set\n"
+        "         under the SAME interpreter Overdrive launches (or set\n"
         "         OCTAVE_STRUM_PYTHON to a venv that has them).",
         file=_sys.stderr, flush=True,
     )
@@ -392,11 +392,11 @@ def ensure_dependencies() -> dict[str, Any]:
         deps = ", ".join(sorted(missing))
         if os.environ.get("OCTAVE_PACKAGED") == "1":
             raise IntegrationError(
-                "This OCTAVE build is missing bundled STRUM Python dependencies: "
+                "This Overdrive build is missing bundled Overdrive Engine Python dependencies: "
                 f"{deps}. Reinstall or update the app so the bundled runtime matches the release."
             )
         raise IntegrationError(
-            "Missing Python dependencies for STRUM integration: "
+            "Missing Python dependencies for Overdrive Engine integration: "
             f"{deps}. Install the packages from {requirements_path()}."
         )
     return imported
@@ -848,7 +848,7 @@ def build_pipeline(
             bin_ok = bool(cpp_bin) and Path(cpp_bin).exists()
             model_ok = bool(cpp_model) and Path(cpp_model).exists()
             print(
-                f"[OCTAVE] transcribe_lyrics: cpp_bin={'set' if cpp_bin else 'unset'}({'exists' if bin_ok else 'missing'}) "
+                f"[Overdrive] transcribe_lyrics: cpp_bin={'set' if cpp_bin else 'unset'}({'exists' if bin_ok else 'missing'}) "
                 f"cpp_model={'set' if cpp_model else 'unset'}({'exists' if model_ok else 'missing'})",
                 file=sys.stderr, flush=True,
             )
@@ -857,11 +857,11 @@ def build_pipeline(
                     return self._transcribe_lyrics_cpp(str(audio_path), cpp_bin, cpp_model)
                 except Exception as exc:
                     import traceback as _tb
-                    print(f"[OCTAVE] !!! _transcribe_lyrics_cpp EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
+                    print(f"[Overdrive] !!! _transcribe_lyrics_cpp EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
                     _tb.print_exc(file=sys.stderr)
                     sys.stderr.flush()
                     raise
-            print("[OCTAVE] transcribe_lyrics: falling back to Python whisper", file=sys.stderr, flush=True)
+            print("[Overdrive] transcribe_lyrics: falling back to Python whisper", file=sys.stderr, flush=True)
             return super().transcribe_lyrics(audio_path)
 
         def _transcribe_lyrics_cpp(self, audio_path: str, cpp_bin: str, cpp_model: str):
@@ -907,12 +907,12 @@ def build_pipeline(
                     "-t", str(max(1, (os.cpu_count() or 4) - 1)),
                 ]
 
-                print(f"[OCTAVE] whisper.cpp invoking: {cpp_bin}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] whisper.cpp invoking: {cpp_bin}", file=sys.stderr, flush=True)
                 # Quote each arg for log so the exact command can be replayed.
                 _printable_cmd = " ".join(
                     f'"{a}"' if (" " in a or "\\" in a) else a for a in cmd
                 )
-                print(f"[OCTAVE] whisper.cpp cmd: {_printable_cmd}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] whisper.cpp cmd: {_printable_cmd}", file=sys.stderr, flush=True)
                 try:
                     result = subprocess.run(cmd, capture_output=True, timeout=AUDIO_SEPARATION_TIMEOUT_SEC)
                 except subprocess.TimeoutExpired as exc:
@@ -922,24 +922,24 @@ def build_pipeline(
                 stderr_text = (result.stderr or b"").decode("utf-8", errors="replace")
                 stdout_text = (result.stdout or b"").decode("utf-8", errors="replace")
                 print(
-                    f"[OCTAVE] whisper.cpp rc={result.returncode} stdout_len={len(stdout_text)} stderr_len={len(stderr_text)}",
+                    f"[Overdrive] whisper.cpp rc={result.returncode} stdout_len={len(stdout_text)} stderr_len={len(stderr_text)}",
                     file=sys.stderr, flush=True,
                 )
                 # The interesting diagnostic (model load, CUDA init, arg
                 # rejection) lives at the START of stderr; whisper-cli's
                 # help dump (when args fail) sits at the bottom and would
                 # otherwise crowd out the real error in a tail-only log.
-                print(f"[OCTAVE] whisper.cpp stderr head: {stderr_text[:2500]}", file=sys.stderr, flush=True)
-                print(f"[OCTAVE] whisper.cpp stderr tail: {stderr_text[-1500:]}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] whisper.cpp stderr head: {stderr_text[:2500]}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] whisper.cpp stderr tail: {stderr_text[-1500:]}", file=sys.stderr, flush=True)
                 if stdout_text:
-                    print(f"[OCTAVE] whisper.cpp stdout head: {stdout_text[:1500]}", file=sys.stderr, flush=True)
+                    print(f"[Overdrive] whisper.cpp stdout head: {stdout_text[:1500]}", file=sys.stderr, flush=True)
                 if result.returncode != 0:
                     raise RuntimeError(
                         f"whisper.cpp failed (rc={result.returncode}): {stderr_text[-2000:]}"
                     )
 
                 json_path = Path(str(out_prefix) + ".json")
-                print(f"[OCTAVE] whisper.cpp json_path={json_path} exists={json_path.exists()}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] whisper.cpp json_path={json_path} exists={json_path.exists()}", file=sys.stderr, flush=True)
                 if not json_path.exists():
                     # Surface what files whisper actually wrote.
                     try:
@@ -1010,7 +1010,7 @@ def build_pipeline(
                     words.append({"word": text, "start": start, "end": end})
 
             print(
-                f"[OCTAVE] whisper.cpp transcribed {len(words)} words "
+                f"[Overdrive] whisper.cpp transcribed {len(words)} words "
                 f"(timing offset: {self.timing_offset:+.3f}s)",
                 file=sys.stderr, flush=True,
             )
@@ -1018,8 +1018,8 @@ def build_pipeline(
                 # Surface whisper's own output so we can diagnose silent runs.
                 tail_err = stderr_text[-1500:] if stderr_text else ""
                 tail_out = stdout_text[-500:] if stdout_text else ""
-                print(f"[OCTAVE] whisper.cpp stderr tail: {tail_err}", file=sys.stderr, flush=True)
-                print(f"[OCTAVE] whisper.cpp stdout tail: {tail_out}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] whisper.cpp stderr tail: {tail_err}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] whisper.cpp stdout tail: {tail_out}", file=sys.stderr, flush=True)
 
             # Re-use the parent class's harmony-duplicate filter so the
             # downstream alignment behaves identically to the Python path.
@@ -1494,34 +1494,34 @@ def build_pipeline(
 
         def transcribe_guitar(self, other_stem: Path, tempo_bpm: float, *args, **kwargs):
             if not self.include_guitar:
-                print("[OCTAVE] >>> transcribe_guitar skipped (include_guitar=False)", file=sys.stderr, flush=True)
+                print("[Overdrive] >>> transcribe_guitar skipped (include_guitar=False)", file=sys.stderr, flush=True)
                 return None
             # TF is now bundled, so Basic Pitch uses its default TF model path
             # (matches the STRUM benchmark). CREPE capacity is left at its
             # default unless OCTAVE_CREPE_MODEL is set. Forward *args/**kwargs
             # so newer upstream signatures (e.g. full_mix=...) keep working.
-            print(f"[OCTAVE] >>> transcribe_guitar(stem={other_stem}, tempo={tempo_bpm}, args={args}, kwargs={list(kwargs.keys())})", file=sys.stderr, flush=True)
+            print(f"[Overdrive] >>> transcribe_guitar(stem={other_stem}, tempo={tempo_bpm}, args={args}, kwargs={list(kwargs.keys())})", file=sys.stderr, flush=True)
             try:
                 from src.inference.guitar_hybrid_v2 import transcribe_guitar_hybrid
                 # Bypass upstream wrapper to expose any exception directly.
                 chart = transcribe_guitar_hybrid(other_stem, tempo_bpm=tempo_bpm)
                 n_notes = len(getattr(chart, "notes", []) or [])
                 n_chords = len(getattr(chart, "chords", []) or [])
-                print(f"[OCTAVE] <<< transcribe_guitar produced {n_notes} notes / {n_chords} chords (chart={type(chart).__name__})", file=sys.stderr, flush=True)
+                print(f"[Overdrive] <<< transcribe_guitar produced {n_notes} notes / {n_chords} chords (chart={type(chart).__name__})", file=sys.stderr, flush=True)
                 return chart
             except Exception as exc:
                 import traceback as _tb
                 _diagnose_basic_pitch_failure(exc)
-                print(f"[OCTAVE] !!! transcribe_guitar EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] !!! transcribe_guitar EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
                 _tb.print_exc(file=sys.stderr)
                 sys.stderr.flush()
                 return None
 
         def transcribe_bass(self, bass_stem: Path, tempo_bpm: float, *args, **kwargs):
             if not self.include_bass:
-                print("[OCTAVE] >>> transcribe_bass skipped (include_bass=False)", file=sys.stderr, flush=True)
+                print("[Overdrive] >>> transcribe_bass skipped (include_bass=False)", file=sys.stderr, flush=True)
                 return None
-            print(f"[OCTAVE] >>> transcribe_bass(stem={bass_stem}, tempo={tempo_bpm})", file=sys.stderr, flush=True)
+            print(f"[Overdrive] >>> transcribe_bass(stem={bass_stem}, tempo={tempo_bpm})", file=sys.stderr, flush=True)
             try:
                 from src.inference.guitar_hybrid_v2 import transcribe_guitar_hybrid
                 prev_min = os.environ.get("STRUM_BP_MIN_PITCH")
@@ -1539,18 +1539,18 @@ def build_pipeline(
                         else:
                             os.environ[k] = v
                 n_notes = len(getattr(chart, "notes", []) or [])
-                print(f"[OCTAVE] <<< transcribe_bass produced {n_notes} notes", file=sys.stderr, flush=True)
+                print(f"[Overdrive] <<< transcribe_bass produced {n_notes} notes", file=sys.stderr, flush=True)
                 return chart
             except Exception as exc:
                 import traceback as _tb
                 _diagnose_basic_pitch_failure(exc)
-                print(f"[OCTAVE] !!! transcribe_bass EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] !!! transcribe_bass EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
                 _tb.print_exc(file=sys.stderr)
                 sys.stderr.flush()
                 return None
 
         def transcribe_vocals(self, vocals_stem: Path, artist: str, title: str):
-            print(f"[OCTAVE] >>> transcribe_vocals(stem={vocals_stem.name})", file=sys.stderr, flush=True)
+            print(f"[Overdrive] >>> transcribe_vocals(stem={vocals_stem.name})", file=sys.stderr, flush=True)
             try:
                 result = super().transcribe_vocals(
                     vocals_stem,
@@ -1564,23 +1564,23 @@ def build_pipeline(
                 _sanitize_vocal_phrases(lead)
                 _sanitize_vocal_phrases(harmonies)
                 n = len(lead) if lead else 0
-                print(f"[OCTAVE] <<< transcribe_vocals produced {n} lead phrases", file=sys.stderr, flush=True)
+                print(f"[Overdrive] <<< transcribe_vocals produced {n} lead phrases", file=sys.stderr, flush=True)
                 return result
             except Exception as exc:
                 import traceback as _tb
-                print(f"[OCTAVE] !!! transcribe_vocals EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] !!! transcribe_vocals EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
                 _tb.print_exc(file=sys.stderr)
                 sys.stderr.flush()
                 return None, None
 
         def transcribe_keys(self, other_stem: Path, guitar_stem: Path | None = None):
             if not self.include_keys:
-                print("[OCTAVE] >>> transcribe_keys skipped (include_keys=False)", file=sys.stderr, flush=True)
+                print("[Overdrive] >>> transcribe_keys skipped (include_keys=False)", file=sys.stderr, flush=True)
                 return None
             if self.keys_charter is None:
-                print("[OCTAVE] >>> transcribe_keys skipped (keys_charter unavailable)", file=sys.stderr, flush=True)
+                print("[Overdrive] >>> transcribe_keys skipped (keys_charter unavailable)", file=sys.stderr, flush=True)
                 return None
-            print(f"[OCTAVE] >>> transcribe_keys(stem={other_stem}, guitar_stem={guitar_stem})", file=sys.stderr, flush=True)
+            print(f"[Overdrive] >>> transcribe_keys(stem={other_stem}, guitar_stem={guitar_stem})", file=sys.stderr, flush=True)
             try:
                 # Bypass upstream wrapper's exception swallowing.
                 notes, details = self.keys_charter.transcribe(
@@ -1588,11 +1588,11 @@ def build_pipeline(
                     guitar_stem=str(guitar_stem) if guitar_stem else None,
                 )
                 n = len(notes) if notes else 0
-                print(f"[OCTAVE] <<< transcribe_keys produced {n} notes (details={details!r})", file=sys.stderr, flush=True)
+                print(f"[Overdrive] <<< transcribe_keys produced {n} notes (details={details!r})", file=sys.stderr, flush=True)
                 return notes
             except Exception as exc:
                 import traceback as _tb
-                print(f"[OCTAVE] !!! transcribe_keys EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
+                print(f"[Overdrive] !!! transcribe_keys EXCEPTION: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
                 _tb.print_exc(file=sys.stderr)
                 sys.stderr.flush()
                 return None
@@ -3005,7 +3005,7 @@ def run_pipeline(payload: dict[str, Any]) -> int:
     install_logging_bridge(run_id)
     emit_progress(run_id, "bootstrap", f"Selected Overdrive Engine device: {device}", percent=0)
     emit_device_diagnostics(run_id, torch_module, device)
-    print(f"Selected STRUM device: {device}", flush=True)
+    print(f"Selected Overdrive Engine device: {device}", flush=True)
 
     ensure_ffmpeg_available()
     source_root = bootstrap_source(cache_dir, run_id)
@@ -3208,8 +3208,8 @@ def main() -> int:
         emit_error(str(payload.get("runId", "unknown")), "Auto-chart run was cancelled.")
         return 130
     except Exception as exc:
-        emit_error(str(payload.get("runId", "unknown")), f"Unhandled STRUM worker error: {exc}")
-        print(f"Unhandled STRUM worker error: {exc}", file=sys.stderr, flush=True)
+        emit_error(str(payload.get("runId", "unknown")), f"Unhandled Overdrive Engine worker error: {exc}")
+        print(f"Unhandled Overdrive Engine worker error: {exc}", file=sys.stderr, flush=True)
         return 1
 
 

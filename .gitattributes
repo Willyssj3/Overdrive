@@ -1,0 +1,20 @@
+# Normalize line endings to LF regardless of platform/core.autocrlf settings.
+# Without this, a Windows checkout with core.autocrlf=true materializes CRLF
+# for nearly every source file while Prettier (and this repo's .prettierrc)
+# expect LF, producing tens of thousands of spurious "Delete `\r`" lint warnings.
+* text=auto eol=lf
+
+# Windows batch scripts conventionally expect CRLF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary assets: never touch line endings.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.icns binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

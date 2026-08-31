@@ -321,8 +321,11 @@ app.whenReady().then(() => {
     const filePath = decodeURIComponent(raw)
     const resolved = resolve(filePath)
 
-    // Validate: only allow access to files within a known project folder
-    if (allowedProjectPath && !resolved.startsWith(allowedProjectPath)) {
+    // Validate: only allow access to files within a known project folder.
+    // Reuses isPathAllowed() instead of a raw startsWith() so this can't drift
+    // from the separator-aware check again — a bare `resolved.startsWith(allowedProjectPath)`
+    // here used to let sibling paths through (e.g. project "proj" also matched "proj-evil").
+    if (!isPathAllowed(filePath)) {
       console.error('[song-file] Blocked access outside project folder:', resolved)
       return new Response('Forbidden', { status: 403 })
     }
